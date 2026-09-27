@@ -3,7 +3,7 @@
 Everything below runs locally. The only thing that may call the internet is the
 simulated caller's LLM (Gemini free tier) and one-time model downloads.
 
-Last updated for milestone **M5** (chaos, `callback replay`).
+Last updated for milestone **M6** (end state, entities, policy, judge).
 
 ## 1. One-time setup
 
@@ -141,7 +141,31 @@ It re-runs that call with the same seed, the same recorded caller and the same
 chaos decisions, then prints whether caller lines and chaos actions were
 identical. Exit 0 means it reproduced.
 
-## 5. Recorded mode (zero LLM cost)
+## 5. Did the agent do the job? (end state, entities, judge)
+
+`scenarios/restaurant/move-booking-scripted.yaml` checks three things after the call:
+the real booking (via the agent's `/verify` webhook), that the agent read the code
+`DX7Q2` back correctly, and a `must_not` rule. With both agents running:
+
+```bash
+uv run callback run scenarios/restaurant/move-booking-scripted.yaml                            # PASS
+uv run callback run scenarios/restaurant/move-booking-scripted.yaml --agent restaurant-buggy   # FAIL
+```
+
+The buggy run prints `entity_fidelity 0 < 1: The agent said “B X 7 Q 2” instead of
+“D X 7 Q 2”.` In `results.json`: `verifier_results` (what `/verify` returned),
+`call.transcript` (both sides as text), and the judge's `experience_*` scores
+(`"method": "judge"`, never pass/fail) with the judge's model and prompt version under
+`judge`. The first run downloads the `small` Whisper model (~460 MB) used for
+transcribing the agent after the call.
+
+To see a task failure: copy the scenario and set `match: {hour: 20}`; the run fails
+with "hour is 19, expected 20".
+
+The judge is configured in `callback.yaml` (`providers.judge`, Gemini free tier).
+Remove that line to run without it.
+
+## 6. Recorded mode (zero LLM cost)
 
 The first run of an LLM scenario records the caller's lines to
 `.callback/cache/cassettes/`. Later runs replay them without calling Gemini.
@@ -155,7 +179,7 @@ Editing the scenario's `caller:` block invalidates its recording automatically.
 If the agent's behaviour changes enough that the recorded caller no longer fits,
 the run errors (exit 2) and tells you to `--record` again.
 
-## 6. The automated test suite
+## 7. The automated test suite
 
 Callback's tests are end-to-end only: they drive the real CLI, start the real
 reference agent as a separate process, place real calls with real speech models,
@@ -176,6 +200,7 @@ uv run pytest -x -v                            # stop at first failure, verbose
 | `test_reference_agent_calls.py` | A scripted call completes, the booking really moves, good agent passes latency, buggy agent fails it |
 | `test_cli_run.py` | `callback run` end to end: results files, error exit 2, the Gemini caller reaches its goal, replay works with no API key |
 | `test_chaos.py` | The good agent passes every chaos scenario; the buggy agent is caught by barge-in, backchannel and silence; `callback replay` reproduces a call |
+| `test_verifiers.py` | End state via the webhook (pass, and a wrong expectation that fails with the exact difference), the buggy agent's garbled code is named, an unreachable webhook exits 2, judge scores are informational |
 
 Tests that need local models skip themselves when `[local]` isn't installed; the
 Gemini test skips when `GEMINI_API_KEY` isn't set.
@@ -186,7 +211,7 @@ Rebuild the synthetic scoring fixtures (only after changing them):
 uv run python tests/fixtures/build_fixtures.py
 ```
 
-## 7. Lint and types
+## 8. Lint and types
 
 ```bash
 uv run ruff check src tests && uv run ruff format --check src tests && uv run mypy
