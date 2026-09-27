@@ -53,7 +53,7 @@ Tested on macOS with Apple Silicon. Needs Python 3.12,
 
 ```bash
 brew install uv espeak-ng
-git clone https://github.com/<you>/callback.git
+git clone https://github.com/imshivamb/callback.git
 cd callback
 uv sync --extra local
 uv run callback doctor

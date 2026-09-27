@@ -42,3 +42,6 @@ docs/internal/
 !src/callback_voice/scoring/vad/assets/silero_vad.onnx
 *.bin
 models/
+
+# Local Claude Code settings
+.claude/
