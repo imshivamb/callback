@@ -1,0 +1,98 @@
+[project]
+name = "callback-voice"
+version = "0.1.0"
+description = "Chaos testing for voice agents. Real calls, real audio, one exit code."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.12"
+authors = [{ name = "Shivam" }]
+keywords = ["voice-agents", "testing", "chaos-engineering", "evals", "speech", "ci"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Multimedia :: Sound/Audio :: Speech",
+  "Topic :: Software Development :: Testing",
+]
+dependencies = [
+  "httpx>=0.28",
+  "numpy>=2.1",
+  "onnxruntime>=1.20",
+  "pydantic>=2.9",
+  "pyyaml>=6.0",
+  "rich>=13.9",
+  "soundfile>=0.12",
+  "typer>=0.15",
+  "websockets>=14.0",
+]
+
+[project.optional-dependencies]
+# Local speech models. Kokoro phonemizes through espeak-ng (GPL-3.0), so these
+# stay opt-in and Callback itself remains Apache-2.0. See docs/licensing.md.
+local = ["faster-whisper>=1.1", "kokoro-onnx>=0.4"]
+piper = ["piper-tts>=1.2"]
+livekit = ["livekit>=1.0", "livekit-api>=1.0"]
+twilio = ["twilio>=9.0"]
+
+[project.scripts]
+callback = "callback_voice.cli.app:main"
+
+[project.urls]
+Homepage = "https://github.com/callback-voice/callback"
+Documentation = "https://github.com/callback-voice/callback/tree/main/docs"
+
+[dependency-groups]
+dev = [
+  "mypy>=1.13",
+  "pytest>=8.3",
+  "pytest-asyncio>=0.24",
+  "ruff>=0.8",
+  "types-pyyaml>=6.0",
+]
+
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/callback_voice"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/callback_voice", "README.md", "LICENSE"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "PTH", "ASYNC", "N"]
+# E501: the formatter owns wrapping; long literals (messages, URLs) stay unbroken.
+# B008: Typer declares options as argument defaults by design.
+ignore = ["RUF001", "RUF002", "RUF003", "E501", "B008"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["PTH"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"
+packages = ["callback_voice"]
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["soundfile", "onnxruntime", "faster_whisper", "kokoro_onnx", "livekit.*", "twilio.*", "piper.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+  "models: needs local speech models (faster-whisper, kokoro); skipped when unavailable",
+  "integration: runs a real call against a reference agent",
+]
+addopts = "-m 'not models and not integration'"
