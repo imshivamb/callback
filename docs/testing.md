@@ -45,6 +45,12 @@ Try: *"Hi, I need to move my booking"* then *"D X 7 Q 2"* then *"Saturday, seven
 thirty"*. Interrupt it mid-sentence; say "mm-hmm" while it talks. With `-v` the
 terminal prints what the agent heard and said.
 
+Every start of the agent also writes a new log file, never overwritten:
+`.callback/agent-logs/<YYYYmmdd-HHMMSS>-<good|buggy>-<port>.log`. It records what
+the agent heard and said and why it stopped talking (e.g. `not a backchannel:
+'Amen.'`), with dated, millisecond timestamps. The path is printed at start-up.
+Agents started by the E2E tests log to `.callback/e2e-agent-logs/`.
+
 After a browser call you can check what the agent actually did to the booking:
 `curl http://127.0.0.1:8765/verify?call_id=<id>` (the id is printed in the log).
 
