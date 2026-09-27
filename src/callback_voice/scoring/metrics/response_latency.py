@@ -15,6 +15,7 @@ def response_latency(timeline: CallTimeline, threshold_p95_s: float) -> MetricRe
     before the caller spoke again (reported as findings).
     """
     samples: list[float] = []
+    times: list[float] = []
     findings: list[Finding] = []
     floor_turns = [u for u in timeline.utterances if u.takes_floor]
     for i, utt in enumerate(floor_turns):
@@ -38,6 +39,7 @@ def response_latency(timeline: CallTimeline, threshold_p95_s: float) -> MetricRe
             continue
         latency = max(0.0, reply.start_s - end)
         samples.append(round(latency, 3))
+        times.append(round(end, 3))
         if latency > threshold_p95_s:
             findings.append(
                 Finding(
@@ -50,12 +52,19 @@ def response_latency(timeline: CallTimeline, threshold_p95_s: float) -> MetricRe
     p50, p95 = percentile(samples, 50), percentile(samples, 95)
     return MetricResult(
         metrics=[
-            Metric(name="response_latency_p50_s", value=_r(p50), unit="s", samples=samples),
+            Metric(
+                name="response_latency_p50_s",
+                value=_r(p50),
+                unit="s",
+                samples=samples,
+                sample_times_s=times,
+            ),
             Metric(
                 name="response_latency_p95_s",
                 value=_r(p95),
                 unit="s",
                 samples=samples,
+                sample_times_s=times,
                 threshold=threshold_p95_s,
                 passed=None if p95 is None else p95 <= threshold_p95_s,
             ),

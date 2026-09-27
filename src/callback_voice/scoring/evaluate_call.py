@@ -18,6 +18,7 @@ from callback_voice.scoring.metrics.entity_fidelity import entity_fidelity
 from callback_voice.scoring.metrics.policy_rules import policy_rules
 from callback_voice.scoring.metrics.task_success import task_success
 from callback_voice.scoring.score_call import score_call
+from callback_voice.scoring.timeline.speech_turns import speech_turns
 from callback_voice.scoring.transcript.build_transcript import build_transcript
 
 
@@ -27,6 +28,7 @@ class CallEvaluation:
     findings: list[Finding]
     transcript: list[Turn]
     review: list[ReviewItem]
+    speech: list[Turn]
 
 
 async def evaluate_call(
@@ -78,4 +80,5 @@ async def evaluate_call(
     findings = sorted(
         [*timing.findings, *(f for r in results for f in r.findings)], key=lambda f: f.t_s
     )
-    return CallEvaluation(metrics, findings, transcript, review)
+    speech = speech_turns(timing.timeline, transcript)
+    return CallEvaluation(metrics, findings, transcript, review, speech)

@@ -93,6 +93,7 @@ async def run_trial(
         wav_path=str(paths.stereo.relative_to(run_dir)),
         events=outcome.log.events,
         transcript=score.transcript,
+        speech=score.speech,
     )
     return TrialResult(
         call_id=call_id,

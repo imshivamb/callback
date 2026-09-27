@@ -91,9 +91,13 @@ It re-runs the most recent call with that id and prints `identical` twice when t
 caller's lines and every disturbance matched. Its exit code is the replayed call's
 result.
 
-Each run writes `.callback/runs/<run id>/results.json` and, for every call, a stereo
-recording (`call.wav`, caller on the left, agent on the right) and an event log.
-[docs/testing.md](docs/testing.md) walks through all of it.
+Each run writes `.callback/runs/<run id>/report.html`: one file that opens offline
+and shows the verdict, then every call as two waveforms (caller and agent) on one
+time axis, with red pins where something went wrong, chaos markers, a latency bar
+per answer, and the audio. It opens on the first failing call; click a pin (or press
+`N`) to hear the moment. Next to it are `results.json`, `junit.xml`, and for every
+call a stereo recording (`call.wav`, caller on the left, agent on the right) and an
+event log. [docs/testing.md](docs/testing.md) walks through all of it.
 
 ## Example results
 
@@ -136,8 +140,6 @@ The audio clips are described in [docs/assets/README.md](docs/assets/README.md).
 
 ## Coming next
 
-- A single-file HTML report with both waveforms, markers where things went wrong, and
-  click-to-play audio.
 - Calling agents over real phone numbers and LiveKit rooms.
 - `pip install`.
 

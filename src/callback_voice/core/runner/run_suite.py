@@ -18,6 +18,7 @@ from callback_voice.core.runner.runtime import Runtime
 from callback_voice.core.runner.scenario_verdict import scenario_verdict
 from callback_voice.core.seeds.derive_seed import derive_seed
 from callback_voice.report.write_junit import write_junit
+from callback_voice.report.write_report import write_report
 from callback_voice.scoring.aggregate.aggregate_scenario import aggregate_scenario
 
 type OnTrial = Callable[[Scenario, TrialResult], None]
@@ -38,7 +39,7 @@ async def run_suite(
     Up to ``concurrency`` calls (callback.yaml, default 1) run at once. Trial seeds
     depend only on the base seed, scenario id and trial number, so the same trial
     always replays the same caller whatever the order calls finish in. Writes
-    ``results.json`` and ``junit.xml`` into the run folder.
+    ``results.json``, ``junit.xml`` and ``report.html`` into the run folder.
     """
     project = runtime.project
     run_id = new_run_id()
@@ -93,6 +94,7 @@ async def run_suite(
     )
     (run_dir / "results.json").write_text(result.model_dump_json(indent=2), encoding="utf-8")
     write_junit(result, run_dir / "junit.xml")
+    write_report(result, run_dir)
     return result, run_dir
 
 

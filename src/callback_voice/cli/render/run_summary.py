@@ -37,6 +37,8 @@ def run_summary(result: RunResult, run_dir: Path) -> Group:
             ),
             ("  results  ", "muted"),
             (str(run_dir / "results.json"), "brand"),
+            ("\n  report   ", "muted"),
+            (str(run_dir / "report.html"), "brand"),
             ("\n  junit    ", "muted"),
             (str(run_dir / "junit.xml"), "brand"),
         ),

@@ -25,6 +25,8 @@ class Metric(RecordModel):
     passed: bool | None = None
     detail: str | None = None
     samples: list[float] = Field(default_factory=list)
+    sample_times_s: list[float] = Field(default_factory=list)
+    """Where each sample happened on the recording clock, when the metric knows."""
 
 
 def judge_threshold(value: float, threshold: float, comparator: Comparator) -> bool:

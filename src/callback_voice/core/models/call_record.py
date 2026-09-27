@@ -21,3 +21,7 @@ class CallRecord(RecordModel):
     wav_path: str
     events: list[CallEvent] = Field(default_factory=list)
     transcript: list[Turn] = Field(default_factory=list)
+    speech: list[Turn] = Field(default_factory=list)
+    """Both sides' speech as the scorer measured it on the recording (VAD edges), with
+    the caller's line or the agent's transcribed words where known. The report draws
+    these, so it shows exactly what the metrics were computed from."""

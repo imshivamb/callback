@@ -76,13 +76,39 @@ What to look at afterwards (newest run first):
 ls -t .callback/runs | head -1
 ```
 
-Each run folder has `results.json` and one folder per call under `calls/` with:
+Each run folder has `report.html`, `results.json`, `junit.xml` and one folder per call
+under `calls/` with:
 
 | File | What it is |
 |---|---|
 | `call.wav` | Stereo recording: **left = caller**, **right = agent**, one shared clock |
 | `caller_clean.wav` | The caller's voice without chaos (noise, packet loss) |
 | `events.jsonl` | Every caller line, agent turn, chaos action, with timings |
+
+### The report
+
+`report.html` is a single file: the data and every call's audio (as MP3, about 270 KB
+a minute) are inside it, so it opens offline and can be attached to a pull request.
+It opens on the first failing call, zoomed to the failure that matters most (one a
+chaos event caused, if any). What to try:
+
+| Do | See |
+|---|---|
+| Click a failure in the list, or press `N` / `P` | Plays from just before it; the playhead moves over both waveforms |
+| Hover a pin, a turn block, a chaos diamond or a latency bar | One sentence on what happened there |
+| `1` / `2` / `3` | Hear both sides, only the caller, or only the agent |
+| `+` / `-` / `0`, or drag the thin whole-call strip | Zoom and move along the call |
+| `J` / `K` | Next / previous call |
+| `T`, `?` | Light or dark; all shortcuts |
+
+Rebuild a report (after upgrading Callback, or to leave the audio out):
+
+```bash
+uv run callback report .callback/runs/<run id>              # add --open to open it
+uv run callback report .callback/runs/<run id> --no-audio   # much smaller
+```
+
+`report.html#<call id>` opens a specific call.
 
 Open `call.wav` in any audio editor (Audacity shows both channels) to hear the
 exact moment something went wrong.
@@ -264,6 +290,7 @@ uv run pytest -x -v                            # stop at first failure, verbose
 | `test_task_bugs.py` | Each buggy task bug is caught by the end state on a real call; the good agent passes four facts; the leak rule fires |
 | `test_fact_checks.py` | A noise-masked letter goes to review; a spoken wrong letter fails; counts, times and phones are matched |
 | `test_disagreement_fixture.py` | The saved judge-vs-facts call still fails the hard check |
+| `test_report.py` | The report is one self-contained file; its timings match a fixture call's known latencies; 63-bit seeds survive; `--no-audio` and a missing run |
 | `test_baseline_gate.py` | Three calls saved as a baseline; the same agent again exits 0; the agent with 0.4 s added exits 1 on the baseline alone, with the regression in `junit.xml` |
 
 Tests that need local models skip themselves when `[local]` isn't installed; the
