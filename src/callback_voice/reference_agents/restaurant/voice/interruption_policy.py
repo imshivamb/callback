@@ -21,8 +21,10 @@ def interruption_decision(
     long "mm-hmm" can read close to 1 s).
 
     The buggy policy ignores everything during its first sentence, then yields to
-    any sound.
+    any sound. The ``ignore`` policy never yields.
     """
+    if behavior.barge_in == "ignore":
+        return "deaf"
     if behavior.barge_in == "deaf_first_sentence" and sentence_index <= 0:
         return "deaf"
     if not behavior.filter_backchannels:

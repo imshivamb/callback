@@ -94,3 +94,31 @@ def test_replay_reproduces_the_call(run_cli, chaos_project) -> None:
     replayed = run_cli("replay", "backchannel--t1", cwd=chaos_project)
     assert replayed.returncode == 0, replayed.stdout + replayed.stderr
     assert replayed.stdout.count("identical") == 2
+
+
+def test_ignored_interruption_is_an_unanswered_turn(run_cli, tmp_path, buggy_agent) -> None:
+    """The agent talks straight over the caller's interruption and never answers it;
+    the caller waits, gets no reply, goes on, and the turn counts as unanswered."""
+    shutil.copy(REPO / "scenarios" / "restaurant" / "ignored-interruption.yaml", tmp_path)
+    (tmp_path / "callback.yaml").write_text(
+        "targets:\n  restaurant-buggy-ignores-interruptions: "
+        f"{{transport: websocket, url: '{buggy_agent.url}/?barge_in=ignore'}}\n"
+    )
+    done = run_cli("run", "ignored-interruption.yaml", cwd=tmp_path)
+    assert done.returncode == 1, done.stdout + done.stderr
+    results = latest_results(tmp_path)
+
+    unanswered = metrics(results, "ignored-interruption")["unanswered_turns"]
+    assert unanswered["value"] == 1 and unanswered["passed"] is False, unanswered
+    [trial] = results["scenarios"][0]["trials"]
+    [finding] = [f for f in trial["findings"] if f["metric"] == "unanswered_turns"]
+    assert "never answered" in finding["message"] and "Saturday evening" in finding["message"]
+    notes = [e["text"] for e in trial["call"]["events"] if e["kind"] == "note"]
+    assert "no reply to the interruption; caller goes on" in notes
+
+    report = (latest_results_dir(tmp_path) / "report.html").read_text()
+    assert "doesn't answer the caller at all" in report
+
+
+def latest_results_dir(project: Path) -> Path:
+    return max((project / ".callback" / "runs").iterdir())

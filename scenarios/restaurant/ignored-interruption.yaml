@@ -1,0 +1,22 @@
+# The caller cuts in, and the agent ignores it completely: it neither stops nor
+# answers. The caller waits for a reply, gets none, and goes on. Runs against the
+# buggy agent with interruptions ignored (see callback.yaml).
+id: ignored-interruption
+agent: restaurant-buggy-ignores-interruptions
+max_duration_s: 150
+caller:
+  persona: "Arjun, in a hurry"
+  goal: "Move booking DX7Q2 to Saturday evening"
+  voice: male_us_1
+  script:
+    - "Hi, I need to move my booking to Saturday."
+    - "It's D X 7 Q 2."
+    - "Anytime between seven and nine is fine."
+    - "Seven thirty works."
+    - "Yes please."
+    - "No, that's all. Thanks, bye."
+chaos:
+  events:
+    - barge_in: {on: agent_turn, turn: 2, after_s: 0.3, say: "Sorry, it's for Saturday evening."}
+expect:
+  thresholds: {unanswered_turns: 0}

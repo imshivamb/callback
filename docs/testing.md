@@ -197,9 +197,24 @@ is how you compare two agent configs on the same suite.
 Every call is also checked for **unanswered turns** (`unanswered_turns`, limit 0): the
 caller finished, waited at least the reply-delay limit (1.5 s by default) in silence,
 and the agent said nothing. A caller who goes straight on to the next sentence gave the
-agent no opening, so that does not count. `tests/fixtures/calls/unanswered/` holds a
+agent no opening, so that does not count. A turn the agent talked over to the end is
+judged from when the agent stopped talking. `tests/fixtures/calls/unanswered/` holds a
 synthetic call with one real unanswered turn and one back-to-back pair that must not
 count.
+
+To see one on a real call, run the buggy agent with interruptions ignored completely
+(`?barge_in=ignore` on its URL; the `restaurant-buggy-ignores-interruptions` target in
+`callback.yaml`):
+
+```bash
+uv run callback agent serve --buggy --port 8766
+uv run callback run scenarios/restaurant/ignored-interruption.yaml   # FAIL, exit 1
+```
+
+The agent talks straight over "Sorry, it's for Saturday evening." and never answers it.
+The caller waits 2.5 s for a reply (noted in the event log as "no reply to the
+interruption; caller goes on"), then carries on. The report's first sentence starts
+"The agent doesn't answer the caller at all".
 
 What you should see for the buggy agent, each with a one-line reason:
 "kept talking for 1.x s" (barge-in), "stopped talking 0.1 s after the caller said

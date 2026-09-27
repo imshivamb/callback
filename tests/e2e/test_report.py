@@ -142,4 +142,4 @@ def test_summary_sentence_and_tiles_say_what_went_wrong(run_cli, tmp_path) -> No
     assert ok == {"sentence": "The agent passed every check in 1 call.", "tiles": []}
 
     old = embedded((older / "report.html").read_text())["summary"]["sentence"]
-    assert "passed" not in old and "fails checks in 1 of 1 calls" in old, old
+    assert "passed" not in old and "fails checks in 1 of 1 call (" in old, old

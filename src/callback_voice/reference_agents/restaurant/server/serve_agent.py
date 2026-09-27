@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import uuid
+from dataclasses import replace
 from urllib.parse import parse_qs, urlsplit
 
 import numpy as np
@@ -47,14 +48,17 @@ async def serve_agent(
         call_id = ws.request.headers.get(CALL_ID_HEADER) if ws.request else None
         call_id = call_id or uuid.uuid4().hex[:12]
         store = registry.open(call_id)
-        requested = (
-            parse_qs(urlsplit(ws.request.path).query).get("task_bug", [None])[0]
-            if ws.request
-            else None
-        )
-        task_bug = pick_task_bug(behavior, call_id, requested)
+        query = parse_qs(urlsplit(ws.request.path).query) if ws.request else {}
+        task_bug = pick_task_bug(behavior, call_id, query.get("task_bug", [None])[0])
+        call_behavior = behavior
+        if query.get("barge_in", [None])[0] == "ignore":
+            call_behavior = replace(behavior, barge_in="ignore")
         log.info(
-            "call %s connected (%s agent, task bug: %s)", call_id, behavior.name, task_bug or "none"
+            "call %s connected (%s agent, task bug: %s, interruptions: %s)",
+            call_id,
+            behavior.name,
+            task_bug or "none",
+            call_behavior.barge_in,
         )
         flaws = AgentFlaws(
             misread=behavior.misread,
@@ -62,7 +66,8 @@ async def serve_agent(
             leaks_other_guests=behavior.leaks_other_guests,
         )
         brain = ReservationBrain(store, flaws=flaws)
-        await AgentSession(ws, behavior, AgentModels(stt, judge_stt, tts, SileroVad()), brain).run()
+        models = AgentModels(stt, judge_stt, tts, SileroVad())
+        await AgentSession(ws, call_behavior, models, brain).run()
         log.info("call %s ended", call_id)
 
     async with serve(

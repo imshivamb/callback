@@ -99,7 +99,11 @@ class AgentSession:
             self._last_activity = time.monotonic()
             if self._holding_floor:
                 self._consider_yield()
-            elif self._turns.run_kind != "turn" and self._detector.speech_duration_s >= _LONG_RUN_S:
+            elif (
+                self._turns.run_kind != "turn"
+                and self._detector.speech_duration_s >= _LONG_RUN_S
+                and not (self._behavior.barge_in == "ignore" and self._turns.run_kind == "unheard")
+            ):
                 self._turns.promote_run()  # kept talking after we finished: a real turn
         span = self._turns.turn_complete(self._detector.now_s, self._detector.speaking)
         if span is not None:
@@ -108,7 +112,7 @@ class AgentSession:
 
     def _on_caller_start(self, t_s: float) -> None:
         if self._holding_floor:
-            deaf = (
+            deaf = self._behavior.barge_in == "ignore" or (
                 self._behavior.barge_in == "deaf_first_sentence"
                 and self._speaker.sentence_index <= 0
             )

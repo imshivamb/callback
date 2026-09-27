@@ -26,6 +26,10 @@ targets:
   restaurant-buggy-confirms-without-saving:
     transport: websocket
     url: ws://127.0.0.1:8766/?task_bug=confirms_without_saving
+  # The buggy agent ignoring interruptions completely: it neither stops nor answers.
+  restaurant-buggy-ignores-interruptions:
+    transport: websocket
+    url: ws://127.0.0.1:8766/?barge_in=ignore
 
 providers:
   # Speech runs locally for free (pip install "callback-voice[local]").

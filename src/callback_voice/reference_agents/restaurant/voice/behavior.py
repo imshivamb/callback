@@ -3,7 +3,7 @@ from typing import Final, Literal
 
 from callback_voice.reference_agents.restaurant.dialog.agent_flaws import TaskBug
 
-type BargeInPolicy = Literal["smart", "deaf_first_sentence"]
+type BargeInPolicy = Literal["smart", "deaf_first_sentence", "ignore"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -22,7 +22,10 @@ class AgentBehavior:
     barge_in: BargeInPolicy = "smart"
     """smart: yield within ~0.4 s to real speech. deaf_first_sentence: the mic is
     muted while the first sentence of each reply plays (a common anti-echo hack),
-    so early barge-ins are talked over. Caught by time-to-yield and talk-over."""
+    so early barge-ins are talked over. Caught by time-to-yield and talk-over.
+    ignore: never yields and never answers anything said over it, as if the caller had
+    not spoken (per call: ``?barge_in=ignore`` on the URL). Caught by time-to-yield and
+    unanswered turns."""
     filter_backchannels: bool = True
     """Keep talking through "mm-hmm". Without it the agent stops for any sound.
     Caught by false yield."""

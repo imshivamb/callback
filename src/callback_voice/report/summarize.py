@@ -35,7 +35,7 @@ _KINDS: dict[str, _Kind] = {
     "unanswered_turns": _Kind(
         "unanswered_turns",
         "Ignores the caller",
-        "doesn't answer the caller at all ({v} times in a call)",
+        "doesn't answer the caller at all ({times} in a call)",
         2.7,
     ),
     "time_to_yield_p95_s": _Kind(
@@ -47,7 +47,7 @@ _KINDS: dict[str, _Kind] = {
     "false_yields": _Kind(
         "false_yield",
         "Stops for “mm-hmm”",
-        "stops talking when the caller only says “mm-hmm” ({v} times in a call)",
+        "stops talking when the caller only says “mm-hmm” ({times} in a call)",
         4,
     ),
     "silence_reprompt_s": _Kind(
@@ -176,7 +176,7 @@ def _problems(scenario: ScenarioResult, result: RunResult) -> list[dict[str, Any
                 "metric": "",
                 "finding": "",
                 "title": "Failed checks",
-                "phrase": f"fails checks in {len(failed)} of {len(scored)} calls ({first})",
+                "phrase": f"fails checks in {len(failed)} of {_count(len(scored), 'call')} ({first})",
                 "weight": 9,
                 "scenario_id": scenario.scenario_id,
                 "value": None,
@@ -197,7 +197,7 @@ def _problem(
         "metric": a.name,
         "finding": kind.finding,
         "title": kind.title,
-        "phrase": kind.phrase.format(v=value, limit=limit),
+        "phrase": kind.phrase.format(v=value, limit=limit, times=_times(a.value)),
         "weight": kind.weight,
         "scenario_id": scenario.scenario_id,
         "value": value,
@@ -233,11 +233,11 @@ def _how_often(trials: list[TrialResult], a: Aggregate) -> str:
     if a.name in ("response_latency_p95_s", "time_to_yield_p95_s") and a.threshold is not None:
         samples = [s for t in scored if (m := t.metric(a.name)) for s in m.samples]
         over = sum(s > a.threshold for s in samples)
-        noun = "replies" if a.name.startswith("response") else "interruptions"
-        return f"{over} of {len(samples)} {noun} over the limit"
+        noun = "reply" if a.name.startswith("response") else "interruption"
+        return f"{over} of {_count(len(samples), noun)} over the limit"
     source = next(spec.source for spec in SPECS if spec.name == a.name)
     failed = sum(1 for t in scored if (m := t.metric(source)) is not None and m.passed is False)
-    return f"in {failed} of {len(scored)} calls"
+    return f"in {failed} of {_count(len(scored), 'call')}"
 
 
 def _locate(trials: list[TrialResult], finding: str, metric: str = "") -> dict[str, Any]:
@@ -266,6 +266,20 @@ def _regressed(scenario: ScenarioResult, result: RunResult) -> bool:
 
 def _order(p: dict[str, Any]) -> tuple[float, str]:
     return (float(p["weight"]), str(p["scenario_id"]))
+
+
+def _count(n: int, noun: str) -> str:
+    """``1 call``, ``3 calls``, ``2 replies``."""
+    if n == 1:
+        return f"1 {noun}"
+    return (
+        f"{n} {noun[:-1] + 'ies' if noun.endswith('y') and noun[-2] not in 'aeiou' else noun + 's'}"
+    )
+
+
+def _times(v: float | None) -> str:
+    n = round(v or 0)
+    return "once" if n == 1 else "twice" if n == 2 else f"{n} times"
 
 
 def _join(phrases: list[str]) -> str:
