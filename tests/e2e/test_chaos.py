@@ -72,6 +72,16 @@ def test_buggy_agent_is_caught_by_each_chaos_scenario(run_cli, chaos_project) ->
     results = latest_results(chaos_project)
 
     assert metrics(results, "barge-in")["time_to_yield_p95_s"]["passed"] is False
+    # After cutting in, the caller waits for the agent to answer the interruption: its
+    # next line comes after the agent's next turn starts, so nothing goes unanswered.
+    assert metrics(results, "barge-in")["unanswered_turns"]["value"] == 0
+    barge = next(sc for sc in results["scenarios"] if sc["scenario_id"] == "barge-in")
+    events = barge["trials"][0]["call"]["events"]
+    cut_in = next(e for e in events if e["data"].get("tag") == "barge_in")
+    after = [e for e in events if e["t_s"] > cut_in["end_s"]]
+    first_line = next(e for e in after if e["kind"] == "caller_utterance")
+    answer = next(e for e in after if e["kind"] == "agent_turn_start")
+    assert answer["t_s"] < first_line["t_s"], (answer, first_line)
     assert metrics(results, "backchannel")["false_yields"]["passed"] is False
     assert metrics(results, "silent-caller")["silence_reprompt_s"]["passed"] is False
     silent = next(sc for sc in results["scenarios"] if sc["scenario_id"] == "silent-caller")

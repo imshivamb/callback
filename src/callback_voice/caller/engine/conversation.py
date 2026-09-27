@@ -23,6 +23,10 @@ _NUDGE_S = 12.0
 _MAX_NUDGES = 2
 _GOODBYE_WAIT_S = 4.0
 _AFTER_GOODBYE_S = 0.4
+_REPLY_TO_BARGE_IN_S = 2.5
+"""After cutting in, how long a caller waits in silence for the agent to respond before
+going on. Longer than the default reply-delay limit (1.5 s), so an agent that ignores
+the interruption is still counted as leaving the caller unanswered."""
 
 
 class Conversation:
@@ -31,8 +35,10 @@ class Conversation:
     When the agent finishes a turn the caller transcribes it (only if the brain needs
     the words), asks the brain for a line, lets chaos rewrite it, renders it and
     queues it. If the agent resumes before the line starts, the plan is dropped and
-    re-made when the agent is done. Also nudges an agent that goes silent, and hangs
-    up once the caller's goal is done and the agent has said goodbye.
+    re-made when the agent is done. After a barge-in the caller waits for the agent
+    to respond to it rather than answering the turn it interrupted straight away.
+    Also nudges an agent that goes silent, and hangs up once the caller's goal is done
+    and the agent has said goodbye.
     """
 
     def __init__(
@@ -59,6 +65,8 @@ class Conversation:
         self._nudges = 0
         self._committed = False
         self._held: Utterance | None = None
+        self._barged_in_at: float | None = None  # end of our barge-in, until the agent responds
+        self._interrupted: AgentTurnEnded | None = None  # the turn we cut into
         self._timing: dict[str, float] = {}
         self.error: BaseException | None = None
 
@@ -71,6 +79,8 @@ class Conversation:
         # is done; a line the brain already decided is held and said then instead.
         if self._task is not None and not self._task.done() and not self._committed:
             self._task.cancel()
+        if self._barged_in_at is not None:  # the agent is responding to our interruption
+            self._barged_in_at, self._interrupted = None, None
         waiting = self._voice.withdraw_if_waiting()
         if waiting is not None:  # the agent reprompted during a deliberate silence
             waiting.lead_silence_s = 0.0
@@ -85,13 +95,23 @@ class Conversation:
             held, self._held = self._held, None
             self._voice.say(held)
             return
+        current = self._voice.current
+        if current is not None and current.tag == "barge_in":
+            self._interrupted = ended  # ended under our barge-in; wait once it's done
+            return
         if self._voice.busy or (self._task is not None and not self._task.done()):
+            return
+        if self._barged_in_at is not None and ended.start_s < self._barged_in_at:
+            # The turn we cut into: a person waits for the agent to answer the interruption.
+            self._interrupted = ended
             return
         self._begin_planning(self._agent_audio.slice(ended.start_s - 0.1, ended.end_s + 0.1))
 
     def on_utterance_done(self, utterance: Utterance, end_s: float) -> None:
         if utterance.takes_floor:
             self._last_floor_end = end_s
+        if utterance.tag == "barge_in":
+            self._barged_in_at = end_s
         if utterance is self._final:
             self._final = None
             self.hang_up_at = end_s + _GOODBYE_WAIT_S
@@ -102,6 +122,13 @@ class Conversation:
             not self._voice.busy and not agent_active and (self._task is None or self._task.done())
         )
         if not idle or self.hang_up_at is not None or self._final is not None:
+            return
+        if self._interrupted is not None and self._barged_in_at is not None:
+            quiet_since = max(self._barged_in_at, self._interrupted.end_s)
+            if t_s - quiet_since >= _REPLY_TO_BARGE_IN_S:
+                turn, self._interrupted, self._barged_in_at = self._interrupted, None, None
+                self._log.add(t_s, "note", text="no reply to the interruption; caller goes on")
+                self._begin_planning(self._agent_audio.slice(turn.start_s - 0.1, turn.end_s + 0.1))
             return
         limit = _FIRST_NUDGE_S if self._ctx.agent_turn == 0 else _NUDGE_S
         if t_s - self._last_floor_end < limit:
