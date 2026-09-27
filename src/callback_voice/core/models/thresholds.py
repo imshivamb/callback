@@ -14,3 +14,4 @@ class Thresholds(StrictModel):
     task_success_rate: float = Field(default=0.8, ge=0, le=1)
     entity_fidelity: float = Field(default=1.0, ge=0, le=1)
     policy_violations: int = Field(default=0, ge=0)
+    unanswered_turns: int = Field(default=0, ge=0)

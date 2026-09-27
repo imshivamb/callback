@@ -35,6 +35,10 @@ def test_scores_match_known_timings(name: str) -> None:
     assert talk is not None and talk.value is not None
     assert abs(talk.value - truth["talk_over_ratio"]) <= 0.03, f"talk-over {talk.value}"
 
+    unanswered = score.metric("unanswered_turns")
+    assert unanswered is not None
+    assert unanswered.value == len(truth.get("unanswered_turns", [])), unanswered
+
 
 def test_failures_become_located_findings() -> None:
     score = score_call(CALLS / "barge_in_ignored", Thresholds(), SileroVad())
@@ -46,3 +50,21 @@ def test_failures_become_located_findings() -> None:
     slow = score_call(CALLS / "turn_taking", Thresholds(), SileroVad())
     assert [round(f.t_s, 1) for f in slow.findings if f.metric == "response_latency"] != []
     assert slow.metric("response_latency_p95_s").passed is False  # type: ignore[union-attr]
+
+
+def test_unanswered_turn_fails_only_when_the_caller_waited() -> None:
+    truth = json.loads((CALLS / "unanswered" / "truth.json").read_text())
+    [want] = truth["unanswered_turns"]
+    score = score_call(CALLS / "unanswered", Thresholds(), SileroVad())
+
+    metric = score.metric("unanswered_turns")
+    assert metric is not None and metric.method == "deterministic"
+    assert metric.value == 1 and metric.threshold == 0 and metric.passed is False
+    [finding] = [f for f in score.findings if f.metric == "unanswered_turns"]
+    assert finding.severity == "fail" and abs(finding.t_s - want["t_s"]) <= TOLERANCE_S
+    assert want["text"] in finding.message and "waited 3.0 s" in finding.message, finding.message
+    # The back-to-back pair left the agent no opening: neither a finding nor a warning.
+    assert not [f for f in score.findings if "never answered" in f.message and f is not finding]
+
+    lenient = score_call(CALLS / "unanswered", Thresholds(unanswered_turns=1), SileroVad())
+    assert lenient.metric("unanswered_turns").passed is True  # type: ignore[union-attr]

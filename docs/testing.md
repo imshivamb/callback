@@ -194,6 +194,13 @@ uv run callback run scenarios/chaos --agent restaurant-buggy   # buggy: FAIL, ex
 `--agent` runs every scenario against another target from `callback.yaml`, which
 is how you compare two agent configs on the same suite.
 
+Every call is also checked for **unanswered turns** (`unanswered_turns`, limit 0): the
+caller finished, waited at least the reply-delay limit (1.5 s by default) in silence,
+and the agent said nothing. A caller who goes straight on to the next sentence gave the
+agent no opening, so that does not count. `tests/fixtures/calls/unanswered/` holds a
+synthetic call with one real unanswered turn and one back-to-back pair that must not
+count.
+
 What you should see for the buggy agent, each with a one-line reason:
 "kept talking for 1.x s" (barge-in), "stopped talking 0.1 s after the caller said
 mm-hmm" (backchannel), "went quiet for 12.8 s and the agent never checked in"

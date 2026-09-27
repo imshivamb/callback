@@ -66,5 +66,13 @@ SPECS: Final[tuple[AggregateSpec, ...]] = (
         "<=",
         lambda t: t.policy_violations,
     ),
+    AggregateSpec(
+        "unanswered_turns",
+        "unanswered_turns",
+        "max",
+        "count",
+        "<=",
+        lambda t: t.unanswered_turns,
+    ),
     AggregateSpec("call_pass_rate", "", "rate", "ratio", ">=", None),
 )

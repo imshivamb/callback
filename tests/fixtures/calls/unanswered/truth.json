@@ -1,0 +1,16 @@
+{
+  "response_latencies_s": [
+    0.8,
+    0.9,
+    0.8
+  ],
+  "time_to_yield_s": [],
+  "talk_over_ratio": 0.0,
+  "unanswered_turns": [
+    {
+      "t_s": 12.09,
+      "waited_s": 3.0,
+      "text": "It's D X 7 Q 2."
+    }
+  ]
+}

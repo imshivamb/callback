@@ -2,7 +2,7 @@ from callback_voice.core.models.finding import Finding
 from callback_voice.core.models.metric import Metric
 
 _UNITS = {"s": " s", "ratio": "", "count": ""}
-_EXPLAINED = frozenset({"task_success", "entity_fidelity", "policy_violations"})
+_EXPLAINED = frozenset({"task_success", "entity_fidelity", "policy_violations", "unanswered_turns"})
 _FAILING_ENDS = {"max_duration": "the call hit max_duration_s without finishing"}
 
 

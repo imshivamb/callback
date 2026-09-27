@@ -1,0 +1,5 @@
+{"t_s": 4.37, "kind": "caller_utterance", "end_s": 6.18, "text": "Hi, I need to move my booking.", "data": {"tag": "line"}}
+{"t_s": 10.4, "kind": "caller_utterance", "end_s": 12.12, "text": "It's D X 7 Q 2.", "data": {"tag": "line"}}
+{"t_s": 15.06, "kind": "caller_utterance", "end_s": 16.19, "text": "Hello? Are you there?", "data": {"tag": "line"}}
+{"t_s": 18.64, "kind": "caller_utterance", "end_s": 19.71, "text": "Saturday works.", "data": {"tag": "line"}}
+{"t_s": 19.8, "kind": "caller_utterance", "end_s": 21.19, "text": "Seven thirty, please.", "data": {"tag": "line"}}

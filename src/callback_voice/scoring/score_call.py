@@ -43,7 +43,7 @@ def score_call(call_dir: Path, thresholds: Thresholds, vad: VoiceActivityModel) 
         duration_s=audio.duration_s,
     )
     results = [
-        response_latency(timeline, thresholds.response_latency_p95_s),
+        response_latency(timeline, thresholds.response_latency_p95_s, thresholds.unanswered_turns),
         time_to_yield(timeline, thresholds.time_to_yield_p95_s),
         talk_over(
             timeline, thresholds.talk_over_ratio, yield_grace_s=thresholds.time_to_yield_p95_s

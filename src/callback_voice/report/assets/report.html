@@ -284,6 +284,7 @@ const GLOSSARY = /** @type {Object<string, [string, string]>} */ ({
   falseyield: ["False yield", "The agent stopped talking for a “mm-hmm” or “okay” it should have ignored."],
   silence: ["Silence check-in", "When the caller goes quiet, how long before the agent checks in."],
   passed: ["Calls passed", "Calls in which every hard check passed."],
+  unanswered: ["Unanswered turns", "The caller finished, waited at least the reply-delay limit, and the agent said nothing. A caller who goes straight on to the next sentence doesn't count: the agent had no opening."],
   events: ["Events", "Amber ◆ marks a disturbance Callback caused on purpose (an interruption, noise, silence). Red ▼ marks a problem; hover it for one sentence."],
   caller: ["Caller", "The simulated caller, recorded on the left channel. Shaded blocks are where it was speaking."],
   agent: ["Agent", "Your agent, recorded on the right channel. Shaded blocks are where it was speaking."],
@@ -295,21 +296,23 @@ const METRIC_LABELS = {
   response_latency_p95_s: "Reply delay, p95", response_latency_p50_s: "Reply delay, p50",
   time_to_yield_p95_s: "Time to yield, p95", talk_over_ratio: "Talk-over", false_yields: "False yields",
   silence_reprompt_s: "Silence check-in", entity_fidelity: "Facts correct", policy_violations: "Policy violations",
+  unanswered_turns: "Unanswered turns",
 };
 /** @type {Object<string, string>} */
 const METRIC_TERMS = {
   response_latency_p95_s: "p95", response_latency_p50_s: "p50", time_to_yield_p95_s: "yield",
   talk_over_ratio: "talkover", false_yields: "falseyield", silence_reprompt_s: "silence", call_pass_rate: "passed",
+  unanswered_turns: "unanswered",
 };
 /** @type {Object<string, string>} */
 const FINDING_LABELS = {
   response_latency: "Slow reply", time_to_yield: "Late to yield", talk_over: "Talk-over",
   false_yield: "False yield", silence_reprompt: "No check-in", task_success: "Task not done",
-  entity_fidelity: "Wrong fact", policy_violations: "Policy broken",
+  entity_fidelity: "Wrong fact", policy_violations: "Policy broken", unanswered_turns: "Never answered",
 };
 /** @type {Object<string, number>} */
 const FINDING_WEIGHT = {
-  task_success: 0, entity_fidelity: 1, policy_violations: 2, time_to_yield: 3, false_yield: 4,
+  task_success: 0, entity_fidelity: 1, policy_violations: 2, unanswered_turns: 2.7, time_to_yield: 3, false_yield: 4,
   silence_reprompt: 5, talk_over: 6, response_latency: 7,
 };
 
@@ -370,7 +373,9 @@ function statusMark(c) {
 
 /** @param {Finding} f */
 function findingLabel(f) {
-  return /never answered/i.test(f.message) ? "Never answered" : FINDING_LABELS[f.metric] || f.metric;
+  // older runs recorded an unanswered turn as a response-latency warning
+  if (f.metric === "response_latency" && /never answered/i.test(f.message)) return "Never answered";
+  return FINDING_LABELS[f.metric] || f.metric;
 }
 
 /** Which problem a call opens on: one a chaos event caused, else the most serious. @param {Call} c */
@@ -1085,7 +1090,7 @@ function renderDiff(d, unit) {
   return h("span", { class: d.direction === "better" ? "status pass" : "muted", title: `was ${fmt(d.baseline, unit)}` }, [text + (d.direction === "worse" ? " (noise)" : "")]);
 }
 function renderDetails() {
-  const terms = ["p95", "p50", "range", "limit", "wait", "yield", "talkover", "falseyield", "silence", "passed", "events"];
+  const terms = ["p95", "p50", "range", "limit", "wait", "unanswered", "yield", "talkover", "falseyield", "silence", "passed", "events"];
   return h("details", { class: "more" }, [
     h("summary", {}, ["Details: every number across calls, and what the terms mean"]),
     ...DATA.scenarios.map(renderScenario),

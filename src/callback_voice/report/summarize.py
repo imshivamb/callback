@@ -19,7 +19,7 @@ class _Kind:
     finding: str  # the per-call finding metric that locates it
     title: str  # tile title
     phrase: str  # "the agent ..." phrase; {v} and {limit} are formatted values
-    weight: int  # lower is more serious; decides order
+    weight: float  # lower is more serious; decides order
 
 
 _KINDS: dict[str, _Kind] = {
@@ -31,6 +31,12 @@ _KINDS: dict[str, _Kind] = {
     ),
     "policy_violations": _Kind(
         "policy_violations", "Says what it must not", "says something it must not", 2
+    ),
+    "unanswered_turns": _Kind(
+        "unanswered_turns",
+        "Ignores the caller",
+        "doesn't answer the caller at all ({v} times in a call)",
+        2.7,
     ),
     "time_to_yield_p95_s": _Kind(
         "time_to_yield",
@@ -72,6 +78,7 @@ _NAMES = {
     "task_success_rate": "task success",
     "entity_fidelity": "facts correct",
     "policy_violations": "policy violations",
+    "unanswered_turns": "unanswered turns",
     "call_pass_rate": "calls passed",
 }
 

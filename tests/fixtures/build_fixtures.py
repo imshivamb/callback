@@ -2,9 +2,9 @@
 
 Real Kokoro speech is placed on each channel at exact sample positions, so true
 speech edges are known to the sample. Truth is written next to each call in
-``truth.json``. Re-run after changing a fixture:
+``truth.json``. Re-run after changing a fixture (name some to rebuild only those):
 
-    uv run python tests/fixtures/build_fixtures.py
+    uv run python tests/fixtures/build_fixtures.py [unanswered ...]
 """
 
 import asyncio
@@ -20,6 +20,7 @@ from callback_voice.audio.wav import write_wav
 from callback_voice.providers.tts.kokoro_tts import KokoroTts
 
 HERE = Path(__file__).parent / "calls"
+ONLY: set[str] | None = None  # set from the command line: build only these fixtures
 _WINDOW = SAMPLE_RATE // 100
 
 
@@ -61,6 +62,8 @@ class Call:
         return on, off
 
     def save(self) -> None:
+        if ONLY is not None and self.name not in ONLY:
+            return
         out = HERE / self.name
         n = round(self.end_s * SAMPLE_RATE)
         write_wav(out / "call.wav", np.stack([self.caller[:n], self.agent[:n]], axis=1))
@@ -70,6 +73,7 @@ class Call:
 
 
 async def main() -> None:
+    """Build every fixture, or only those named on the command line (``ONLY``)."""
     agent_tts, caller_tts = KokoroTts("af_heart"), KokoroTts("am_michael")
 
     async def a(text: str) -> Audio:
@@ -137,8 +141,39 @@ async def main() -> None:
     call.caller = clean + noise
     call.truth = {"response_latencies_s": [0.9], "time_to_yield_s": [], "talk_over_ratio": 0.0}
     call.save()
-    write_wav(HERE / "noisy_line" / "caller_clean.wav", clean[: round(call.end_s * SAMPLE_RATE)])
+    if ONLY is None or "noisy_line" in ONLY:
+        write_wav(
+            HERE / "noisy_line" / "caller_clean.wav", clean[: round(call.end_s * SAMPLE_RATE)]
+        )
+
+    # 5. An unanswered turn: the caller asks, waits 3 s in silence, and has to ask again.
+    #    Then two lines back to back (0.15 s apart): the agent had no opening after the
+    #    first, so that one is not an unanswered turn.
+    call = Call("unanswered")
+    _, g_end = call.place("agent", greeting, 0.5)
+    ask = "Hi, I need to move my booking."
+    _, c_end = call.say(await c(ask), ask, g_end + 0.7)
+    _, a_end = call.place("agent", reply, c_end + 0.8)
+    ignored = "It's D X 7 Q 2."
+    _, i_end = call.say(await c(ignored), ignored, a_end + 0.7)
+    again = "Hello? Are you there?"
+    _, again_end = call.say(await c(again), again, i_end + 3.0)
+    _, a_end = call.place("agent", short, again_end + 0.9)
+    first, second = "Saturday works.", "Seven thirty, please."
+    _, f_end = call.say(await c(first), first, a_end + 0.7)
+    _, s_end = call.say(await c(second), second, f_end + 0.15)
+    call.place("agent", short, s_end + 0.8)
+    call.truth = {
+        "response_latencies_s": [0.8, 0.9, 0.8],
+        "time_to_yield_s": [],
+        "talk_over_ratio": 0.0,
+        "unanswered_turns": [{"t_s": round(i_end, 3), "waited_s": 3.0, "text": ignored}],
+    }
+    call.save()
 
 
 if __name__ == "__main__":
+    import sys
+
+    ONLY = set(sys.argv[1:]) or None
     asyncio.run(main())

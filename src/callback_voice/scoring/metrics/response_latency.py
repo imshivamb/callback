@@ -7,15 +7,20 @@ from callback_voice.scoring.timeline.call_timeline import CallTimeline
 _ONSET_SLACK_S = 0.02
 
 
-def response_latency(timeline: CallTimeline, threshold_p95_s: float) -> MetricResult:
+def response_latency(
+    timeline: CallTimeline, threshold_p95_s: float, max_unanswered: int = 0
+) -> MetricResult:
     """Caller stops talking -> first agent audio, for every caller turn that expects an answer.
 
     Turns where the agent was already talking when the caller finished are left out
-    (that is talk-over, measured separately), as are turns the agent never answered
-    before the caller spoke again (reported as findings).
+    (that is talk-over, measured separately). A turn the agent never answered is an
+    *unanswered turn* only if the caller then waited at least the latency limit before
+    speaking again: a caller who goes straight on to the next sentence gave the agent no
+    opening, and that is not the agent's fault.
     """
     samples: list[float] = []
     times: list[float] = []
+    unanswered = 0
     findings: list[Finding] = []
     floor_turns = [u for u in timeline.utterances if u.takes_floor]
     for i, utt in enumerate(floor_turns):
@@ -27,13 +32,18 @@ def response_latency(timeline: CallTimeline, threshold_p95_s: float) -> MetricRe
             floor_turns[i + 1].speech.start_s if i + 1 < len(floor_turns) else timeline.duration_s
         )
         if reply is None or reply.start_s >= next_caller:
-            if i + 1 < len(floor_turns):
+            waited = next_caller - end
+            if i + 1 < len(floor_turns) and waited >= threshold_p95_s:
+                unanswered += 1
                 findings.append(
                     Finding(
-                        metric="response_latency",
+                        metric="unanswered_turns",
                         t_s=end,
-                        severity="warn",
-                        message=f"The agent never answered “{_short(utt.text)}”.",
+                        end_s=next_caller,
+                        message=(
+                            f"The caller waited {waited:.1f} s and the agent never answered "
+                            f"“{_short(utt.text)}”."
+                        ),
                     )
                 )
             continue
@@ -67,6 +77,13 @@ def response_latency(timeline: CallTimeline, threshold_p95_s: float) -> MetricRe
                 sample_times_s=times,
                 threshold=threshold_p95_s,
                 passed=None if p95 is None else p95 <= threshold_p95_s,
+            ),
+            Metric(
+                name="unanswered_turns",
+                value=unanswered,
+                unit="count",
+                threshold=max_unanswered,
+                passed=unanswered <= max_unanswered,
             ),
         ],
         findings=findings,
