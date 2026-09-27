@@ -46,7 +46,12 @@ class Runtime:
     @cached_property
     def scoring_stt(self) -> SpeechToText:
         """A larger STT for transcribing the agent after the call (accuracy over speed)."""
-        return build_stt(self.project.providers.scoring_stt)
+        return build_stt(self.project.providers.scoring_stt, words=True)
+
+    @cached_property
+    def careful_stt(self) -> SpeechToText:
+        """Second opinion on a doubtful fact: same model, wider beam search."""
+        return build_stt(self.project.providers.scoring_stt, words=True, beam_size=5)
 
     @cached_property
     def judge(self) -> ChatModel | None:

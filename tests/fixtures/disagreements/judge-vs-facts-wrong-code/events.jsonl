@@ -1,0 +1,22 @@
+{"t_s":0.0,"kind":"call_start","data":{"transport":"websocket"}}
+{"t_s":0.064,"kind":"agent_turn_start","data":{"turn":1}}
+{"t_s":6.56,"kind":"agent_turn_end","text":"Thanks for calling Olive and Ember. I'm Ava, the Reservations Assistant. How can I help you today?","data":{"turn":1,"stt_s":0.345}}
+{"t_s":8.1,"kind":"caller_utterance","end_s":11.28,"text":"Hi, I need to change an existing reservation.","data":{"tag":"line","caller_timing":{"brain_s":1.548,"tts_s":0.001}}}
+{"t_s":13.568,"kind":"agent_turn_start","data":{"turn":2}}
+{"t_s":20.38,"kind":"agent_turn_end","text":"Sure, I can help move your booking. What's the booking reference? It's the five character code in your confirmation.","data":{"turn":2,"stt_s":0.345}}
+{"t_s":21.78,"kind":"caller_utterance","end_s":23.85,"text":"It is D X 7 Q 2.","data":{"tag":"line","caller_timing":{"brain_s":1.414,"tts_s":0.001}}}
+{"t_s":26.016,"kind":"agent_turn_start","data":{"turn":3}}
+{"t_s":36.48,"kind":"agent_turn_end","text":"Thanks Priya, I found your booking reference BX7 Q2, a table for 4 on Friday at 8 pm. What day in time would you like instead?","data":{"turn":3,"stt_s":0.384}}
+{"t_s":40.28,"kind":"caller_utterance","end_s":47.4,"text":"Actually it is D X 7 Q 2, and I want to move it to Saturday anytime between 7 and 9 pm.","data":{"tag":"line","caller_timing":{"brain_s":1.442,"tts_s":2.367}}}
+{"t_s":49.664,"kind":"agent_turn_start","data":{"turn":4}}
+{"t_s":56.6,"kind":"agent_turn_end","text":"Let me check Saturday. I have 7pm or 7pm available. Which would you prefer?","data":{"turn":4,"stt_s":0.31}}
+{"t_s":58.78,"kind":"caller_utterance","end_s":61.45,"text":"I will take the 7 pm slot please.","data":{"tag":"line","caller_timing":{"brain_s":1.618,"tts_s":0.574}}}
+{"t_s":63.712,"kind":"agent_turn_start","data":{"turn":5}}
+{"t_s":68.94,"kind":"agent_turn_end","text":"Saturday at 7pm is available. Shall I move your table for four to then?","data":{"turn":5,"stt_s":0.321}}
+{"t_s":70.74,"kind":"caller_utterance","end_s":72.33,"text":"Yes please, go ahead.","data":{"tag":"line","caller_timing":{"brain_s":1.392,"tts_s":0.417}}}
+{"t_s":74.528,"kind":"agent_turn_start","data":{"turn":6}}
+{"t_s":84.52,"kind":"agent_turn_end","text":"Done, your table for four is now on Saturday at 7pm. Your reference is still B, X7 Q2. Is there anything else I can help with?","data":{"turn":6,"stt_s":0.39}}
+{"t_s":86.38,"kind":"caller_utterance","end_s":88.77,"text":"No that is all, thanks so much. Bye!","data":{"tag":"line","caller_timing":{"brain_s":1.335,"tts_s":0.524}}}
+{"t_s":90.912,"kind":"agent_turn_start","data":{"turn":7}}
+{"t_s":92.78,"kind":"clock_drift","data":{"max_lateness_s":0.283185082997079}}
+{"t_s":92.78,"kind":"call_end","text":"caller_hangup"}

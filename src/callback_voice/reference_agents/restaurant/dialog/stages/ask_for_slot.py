@@ -25,6 +25,11 @@ def ask_for_slot(ctx: TurnContext) -> Reply:
         if s.hour is not None
         else f"Let me check {say_day(s.day)}. "
     )
+    if ctx.flaws.leaks_other_guests:  # bug: explains availability with another guest's booking
+        other = next((b for b in ctx.store.on_day(s.day) if b.ref != s.ref), None)
+        if other is not None:
+            surname = other.name.split()[-1]
+            lead += f"The {surname} party already has {say_time(other.hour, other.minute)}. "
     if not options:
         s.stage = "new_time"
         return Reply(lead + "I don't have anything open around then. Would another day work?")

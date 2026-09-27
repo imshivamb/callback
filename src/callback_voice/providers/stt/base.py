@@ -9,6 +9,7 @@ class Word:
     text: str
     start_s: float
     end_s: float
+    probability: float = 1.0
 
 
 @dataclass(frozen=True, slots=True)

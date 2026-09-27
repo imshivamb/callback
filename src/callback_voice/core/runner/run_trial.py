@@ -68,6 +68,7 @@ async def run_trial(
             scenario.expect,
             vad=runtime.make_vad(),
             stt=runtime.scoring_stt,
+            careful_stt=runtime.careful_stt,
             judge=runtime.judge,
             state=state,
             language=scenario.caller.language,
@@ -102,6 +103,7 @@ async def run_trial(
         metrics=score.metrics,
         findings=score.findings,
         failure_reasons=reasons,
+        review=score.review,
         verifier_results=[state] if state is not None else [],
         call=record,
     )

@@ -26,6 +26,9 @@ class BookingStore:
     def find(self, ref: str) -> Booking | None:
         return self._bookings.get(ref.upper())
 
+    def on_day(self, day: str) -> list[Booking]:
+        return [b for b in self._bookings.values() if b.day == day and b.status != "cancelled"]
+
     def is_free(self, day: str, hour: int, minute: int) -> bool:
         return (day, hour, minute) not in _FULL and (hour, minute) in _SLOTS
 

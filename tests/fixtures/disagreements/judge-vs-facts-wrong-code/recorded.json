@@ -1,0 +1,185 @@
+{
+  "source_run": "20260927-103325",
+  "call_id": "move-booking-persona--t1",
+  "agent": "restaurant-buggy",
+  "judge": {
+    "provider": "gemini",
+    "model": "gemini-flash-lite-latest",
+    "prompt_version": "judge-v1"
+  },
+  "judge_metrics": [
+    {
+      "name": "experience_concise",
+      "value": 4.0,
+      "unit": "score",
+      "method": "judge",
+      "threshold": null,
+      "comparator": "<=",
+      "passed": null,
+      "detail": "The agent efficiently assisted the caller in changing their reservation time, handling a minor transcription error smoothly.",
+      "samples": []
+    },
+    {
+      "name": "experience_no_repetition",
+      "value": 5.0,
+      "unit": "score",
+      "method": "judge",
+      "threshold": null,
+      "comparator": "<=",
+      "passed": null,
+      "detail": "The agent efficiently assisted the caller in changing their reservation time, handling a minor transcription error smoothly.",
+      "samples": []
+    },
+    {
+      "name": "experience_handles_frustration",
+      "value": 5.0,
+      "unit": "score",
+      "method": "judge",
+      "threshold": null,
+      "comparator": "<=",
+      "passed": null,
+      "detail": "The agent efficiently assisted the caller in changing their reservation time, handling a minor transcription error smoothly.",
+      "samples": []
+    }
+  ],
+  "hard_checks": [
+    {
+      "name": "task_success",
+      "value": 1.0,
+      "unit": "ratio",
+      "method": "deterministic",
+      "threshold": 0.8,
+      "comparator": ">=",
+      "passed": true,
+      "detail": "end state matches",
+      "samples": []
+    },
+    {
+      "name": "entity_fidelity",
+      "value": 0.0,
+      "unit": "ratio",
+      "method": "deterministic",
+      "threshold": 1.0,
+      "comparator": ">=",
+      "passed": false,
+      "detail": "0/1 expected entities spoken correctly",
+      "samples": []
+    }
+  ],
+  "entity_findings": [
+    {
+      "metric": "entity_fidelity",
+      "t_s": 25.98,
+      "end_s": 35.28,
+      "message": "The agent said \u201cB X 7 Q 2\u201d instead of \u201cD X 7 Q 2\u201d.",
+      "severity": "fail",
+      "chaos_id": null
+    }
+  ],
+  "transcript": [
+    {
+      "speaker": "agent",
+      "start_s": 0.05,
+      "end_s": 5.47,
+      "text": "Thanks for calling Olive and Ember. I'm Ava, the Reservations Assistant. How can I help you today?",
+      "interrupted_by": null,
+      "chaos_ids": []
+    },
+    {
+      "speaker": "caller",
+      "start_s": 8.14,
+      "end_s": 11.25,
+      "text": "Hi, I need to change an existing reservation.",
+      "interrupted_by": null,
+      "chaos_ids": []
+    },
+    {
+      "speaker": "agent",
+      "start_s": 13.44,
+      "end_s": 19.29,
+      "text": "Sure, I can help move your booking. What's the booking reference? It's the five character code in your confirmation.",
+      "interrupted_by": null,
+      "chaos_ids": []
+    },
+    {
+      "speaker": "caller",
+      "start_s": 21.81,
+      "end_s": 23.79,
+      "text": "It is D X 7 Q 2.",
+      "interrupted_by": null,
+      "chaos_ids": []
+    },
+    {
+      "speaker": "agent",
+      "start_s": 25.98,
+      "end_s": 35.28,
+      "text": "Thanks Priya. I found your booking, reference BX7Q2, a table for four on Friday at 8pm. What day and time would you like instead?",
+      "interrupted_by": null,
+      "chaos_ids": []
+    },
+    {
+      "speaker": "caller",
+      "start_s": 40.31,
+      "end_s": 47.37,
+      "text": "Actually it is D X 7 Q 2, and I want to move it to Saturday anytime between 7 and 9 pm.",
+      "interrupted_by": null,
+      "chaos_ids": []
+    },
+    {
+      "speaker": "agent",
+      "start_s": 49.63,
+      "end_s": 55.55,
+      "text": "Let me check Saturday. I have 7pm or 7, 30pm available. Which would you prefer?",
+      "interrupted_by": null,
+      "chaos_ids": []
+    },
+    {
+      "speaker": "caller",
+      "start_s": 58.81,
+      "end_s": 61.34,
+      "text": "I will take the 7 pm slot please.",
+      "interrupted_by": null,
+      "chaos_ids": []
+    },
+    {
+      "speaker": "agent",
+      "start_s": 63.61,
+      "end_s": 67.87,
+      "text": "Saturday at 7pm is available. Shall I move your table for 4 to then?",
+      "interrupted_by": null,
+      "chaos_ids": []
+    },
+    {
+      "speaker": "caller",
+      "start_s": 70.78,
+      "end_s": 72.26,
+      "text": "Yes please, go ahead.",
+      "interrupted_by": null,
+      "chaos_ids": []
+    },
+    {
+      "speaker": "agent",
+      "start_s": 74.45,
+      "end_s": 83.37,
+      "text": "Done! Your table for 4 is now on Saturday at 7pm. Your reference is still bx7q2. Is there anything else I can help with?",
+      "interrupted_by": null,
+      "chaos_ids": []
+    },
+    {
+      "speaker": "caller",
+      "start_s": 86.42,
+      "end_s": 88.73,
+      "text": "No that is all, thanks so much. Bye!",
+      "interrupted_by": null,
+      "chaos_ids": []
+    },
+    {
+      "speaker": "agent",
+      "start_s": 90.89,
+      "end_s": 92.78,
+      "text": "You're all set. Thanks for calling all",
+      "interrupted_by": null,
+      "chaos_ids": []
+    }
+  ]
+}

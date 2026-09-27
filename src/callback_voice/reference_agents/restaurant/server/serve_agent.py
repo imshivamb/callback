@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import uuid
+from urllib.parse import parse_qs, urlsplit
 
 import numpy as np
 from websockets.asyncio.server import ServerConnection, serve
@@ -10,6 +11,7 @@ from callback_voice.providers.stt.faster_whisper_stt import FasterWhisperStt
 from callback_voice.providers.tts.cached_tts import CachedTts
 from callback_voice.providers.tts.kokoro_tts import KokoroTts
 from callback_voice.providers.vad.silero_vad import SileroVad
+from callback_voice.reference_agents.restaurant.dialog.agent_flaws import AgentFlaws
 from callback_voice.reference_agents.restaurant.dialog.reservation_brain import (
     GREETING,
     REPROMPT,
@@ -19,6 +21,7 @@ from callback_voice.reference_agents.restaurant.server.call_registry import Call
 from callback_voice.reference_agents.restaurant.server.http_routes import make_http_routes
 from callback_voice.reference_agents.restaurant.voice.agent_session import AgentModels, AgentSession
 from callback_voice.reference_agents.restaurant.voice.behavior import AgentBehavior
+from callback_voice.reference_agents.restaurant.voice.pick_task_bug import pick_task_bug
 from callback_voice.reference_agents.restaurant.voice.split_sentences import split_sentences
 
 log = logging.getLogger("callback.reference_agent")
@@ -44,8 +47,21 @@ async def serve_agent(
         call_id = ws.request.headers.get(CALL_ID_HEADER) if ws.request else None
         call_id = call_id or uuid.uuid4().hex[:12]
         store = registry.open(call_id)
-        log.info("call %s connected (%s agent)", call_id, behavior.name)
-        brain = ReservationBrain(store, misread=behavior.misread)
+        requested = (
+            parse_qs(urlsplit(ws.request.path).query).get("task_bug", [None])[0]
+            if ws.request
+            else None
+        )
+        task_bug = pick_task_bug(behavior, call_id, requested)
+        log.info(
+            "call %s connected (%s agent, task bug: %s)", call_id, behavior.name, task_bug or "none"
+        )
+        flaws = AgentFlaws(
+            misread=behavior.misread,
+            task_bug=task_bug,
+            leaks_other_guests=behavior.leaks_other_guests,
+        )
+        brain = ReservationBrain(store, flaws=flaws)
         await AgentSession(ws, behavior, AgentModels(stt, judge_stt, tts, SileroVad()), brain).run()
         log.info("call %s ended", call_id)
 
@@ -64,8 +80,12 @@ async def serve_agent(
 
 
 async def _warm_up(stt: FasterWhisperStt, tts: CachedTts, behavior: AgentBehavior) -> None:
-    import numpy as np
+    """Load and exercise every model before the first call.
 
+    The TTS engine is run directly: the cached greeting would be a cache hit and leave
+    the model cold, so the first new phrase in a call would take over a second.
+    """
     await stt.transcribe(np.zeros(8000, dtype=np.float32), language="en")
+    await tts.inner.synthesize("Warming up.", voice=behavior.voice)
     for sentence in [*split_sentences(GREETING), *split_sentences(REPROMPT)]:
         await tts.synthesize(sentence, voice=behavior.voice)

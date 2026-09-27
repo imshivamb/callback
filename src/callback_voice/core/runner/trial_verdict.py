@@ -24,7 +24,10 @@ def trial_verdict(
             unit = _UNITS.get(m.unit, "")
             reason = f"{m.name} {m.value:g}{unit} {op} {m.threshold:g}{unit}"
             if m.name in _EXPLAINED:  # a bare number says nothing about what went wrong
-                why = next((f.message for f in findings if f.metric == m.name), None)
+                why = next(
+                    (f.message for f in findings if f.metric == m.name and f.severity == "fail"),
+                    None,
+                )
                 reason += f": {why}" if why else ""
             reasons.append(reason)
         else:

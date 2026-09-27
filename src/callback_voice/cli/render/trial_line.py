@@ -33,4 +33,12 @@ def trial_line(result: TrialResult, trials: int) -> RenderableType:
         )
     ]
     lines += [Text(f"      {reason}", style="fail") for reason in result.failure_reasons]
+    if result.review:
+        checks = ", ".join(item.check for item in result.review)
+        lines.append(
+            Text(
+                f"      ▲ {len(result.review)} check(s) need a person to listen: {checks}",
+                style="warn",
+            )
+        )
     return Group(*lines)

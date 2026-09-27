@@ -1,52 +1,51 @@
 from callback_voice.core.models.finding import Finding
 from callback_voice.core.models.metric import Metric
-from callback_voice.core.models.turn import Turn
+from callback_voice.scoring.facts.fact_result import FactResult
 from callback_voice.scoring.metrics.metric_result import MetricResult
-from callback_voice.text.near_miss_code import near_miss_code
-from callback_voice.text.spoken_code_match import entity_spoken
 
 
-def entity_fidelity(
-    transcript: list[Turn], entities: tuple[str, ...], threshold: float
-) -> MetricResult:
-    """Share of expected entities the agent actually said correctly, from its own audio.
-
-    Each entity must appear in the transcript of the agent channel, however it was
-    spelled out. A near miss (e.g. BX7Q2 for DX7Q2) is reported with the wrong value.
+def entity_fidelity(results: list[FactResult], threshold: float) -> MetricResult:
+    """Share of settled facts the agent said correctly. Uncertain facts are left out
+    (they go to review) so a transcription mistake cannot fail the agent.
     """
-    if not entities:
+    if not results:
         return MetricResult(metrics=[])
-    agent_turns = [t for t in transcript if t.speaker == "agent"]
+    settled = [r for r in results if r.status != "uncertain"]
+    correct = sum(r.status == "correct" for r in settled)
+    uncertain = len(results) - len(settled)
     findings: list[Finding] = []
-    correct = 0
-    for entity in entities:
-        if any(entity_spoken(entity, t.text) for t in agent_turns):
-            correct += 1
-            continue
-        wrong = next(
-            ((t, miss) for t in agent_turns if (miss := near_miss_code(entity, t.text))), None
-        )
-        if wrong is not None:
-            turn, miss = wrong
+    for r in results:
+        if r.status == "wrong":
             findings.append(
                 Finding(
                     metric="entity_fidelity",
-                    t_s=turn.start_s,
-                    end_s=turn.end_s,
-                    message=f"The agent said “{' '.join(miss)}” instead of “{' '.join(entity)}”.",
+                    t_s=r.t_s,
+                    end_s=r.end_s,
+                    message=f"The agent said “{r.heard}” instead of “{_spoken(r)}” ({r.fact.name}).",
                 )
             )
-        else:
-            first = agent_turns[0].start_s if agent_turns else 0.0
+        elif r.status == "missing":
             findings.append(
                 Finding(
                     metric="entity_fidelity",
-                    t_s=first,
-                    severity="fail",
-                    message=f"The agent never said “{entity}”.",
+                    t_s=r.t_s,
+                    message=f"The agent never said {r.fact.name} (“{r.fact.value}”).",
                 )
             )
-    value = round(correct / len(entities), 3)
+        elif r.status == "uncertain":
+            findings.append(
+                Finding(
+                    metric="entity_fidelity",
+                    t_s=r.t_s,
+                    end_s=r.end_s,
+                    severity="warn",
+                    message=f"Uncertain, review: {r.fact.name}: {r.reason}.",
+                )
+            )
+    value = round(correct / len(settled), 3) if settled else None
+    detail = f"{correct}/{len(settled)} facts correct" + (
+        f"; {uncertain} uncertain (review)" if uncertain else ""
+    )
     return MetricResult(
         metrics=[
             Metric(
@@ -55,9 +54,20 @@ def entity_fidelity(
                 unit="ratio",
                 threshold=threshold,
                 comparator=">=",
-                passed=value >= threshold,
-                detail=f"{correct}/{len(entities)} expected entities spoken correctly",
-            )
+                passed=None if value is None else value >= threshold,
+                detail=detail,
+            ),
+            Metric(
+                name="facts_uncertain",
+                value=uncertain,
+                unit="count",
+                detail="needs a person to listen",
+            ),
         ],
         findings=findings,
     )
+
+
+def _spoken(result: FactResult) -> str:
+    value = result.fact.value
+    return " ".join(value) if result.fact.kind == "code" else value

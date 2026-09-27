@@ -11,6 +11,16 @@ targets:
   restaurant-buggy:
     transport: websocket
     url: ws://127.0.0.1:8766
+  # The buggy agent with one specific task bug forced (otherwise one is picked per call).
+  restaurant-buggy-wrong-hour:
+    transport: websocket
+    url: ws://127.0.0.1:8766/?task_bug=wrong_hour
+  restaurant-buggy-ignores-party-change:
+    transport: websocket
+    url: ws://127.0.0.1:8766/?task_bug=ignores_party_change
+  restaurant-buggy-confirms-without-saving:
+    transport: websocket
+    url: ws://127.0.0.1:8766/?task_bug=confirms_without_saving
 
 providers:
   # Speech runs locally for free (pip install "callback-voice[local]").

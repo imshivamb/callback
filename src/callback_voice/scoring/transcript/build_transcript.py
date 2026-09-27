@@ -1,5 +1,5 @@
 from callback_voice.audio.format import SAMPLE_RATE, Audio
-from callback_voice.core.models.turn import Turn
+from callback_voice.core.models.turn import Turn, TurnWord
 from callback_voice.providers.stt.base import SpeechToText
 from callback_voice.scoring.timeline.call_timeline import CallTimeline
 from callback_voice.scoring.transcript.agent_turn_spans import agent_turn_spans
@@ -20,7 +20,18 @@ async def build_transcript(
     for span in agent_turn_spans(timeline):
         start = max(0, round((span.start_s - _PAD_S) * SAMPLE_RATE))
         end = round((span.end_s + _PAD_S) * SAMPLE_RATE)
-        text = (await stt.transcribe(agent_audio[start:end], language=language)).text.strip()
+        heard = await stt.transcribe(agent_audio[start:end], language=language)
+        offset = start / SAMPLE_RATE
+        words = [
+            TurnWord(
+                text=w.text,
+                start_s=round(offset + w.start_s, 3),
+                end_s=round(offset + w.end_s, 3),
+                p=round(w.probability, 3),
+            )
+            for w in heard.words
+        ]
+        text = heard.text.strip()
         cut_in = next(
             (
                 u
@@ -36,6 +47,7 @@ async def build_transcript(
                 end_s=round(span.end_s, 3),
                 text=text,
                 interrupted_by=cut_in.chaos_id if cut_in else None,
+                words=words,
             )
         )
     for utt in timeline.utterances:

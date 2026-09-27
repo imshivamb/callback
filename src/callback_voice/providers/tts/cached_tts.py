@@ -25,6 +25,11 @@ class CachedTts:
     def identity(self) -> str:
         return self._inner.identity
 
+    @property
+    def inner(self) -> TextToSpeech:
+        """The uncached engine, e.g. to warm it up: a cache hit never loads the model."""
+        return self._inner
+
     def key(self, text: str, *, voice: str | None, speed: float, language: str) -> str:
         material = "\x1f".join([self.identity, voice or "", f"{speed:.3f}", language, text])
         return hashlib.sha256(material.encode()).hexdigest()[:32]

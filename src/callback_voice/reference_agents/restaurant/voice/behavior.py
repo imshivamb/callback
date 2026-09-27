@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Final, Literal
 
+from callback_voice.reference_agents.restaurant.dialog.agent_flaws import TaskBug
+
 type BargeInPolicy = Literal["smart", "deaf_first_sentence"]
 
 
@@ -26,6 +28,12 @@ class AgentBehavior:
     Caught by false yield."""
     misread: dict[str, str] = field(default_factory=dict)
     """Characters garbled when reading codes aloud. Caught by entity fidelity."""
+    task_bugs: tuple[TaskBug, ...] = ()
+    """Task bugs this profile may have; one is picked per call (see pick_task_bug).
+    Caught by task success."""
+    leaks_other_guests: bool = False
+    """Names another guest's booking when explaining availability. Caught by a
+    ``must_not`` pattern rule."""
     reprompt_after_s: float | None = 5.0
     """Reprompt a silent caller. None never reprompts. Caught by silence handling."""
     voice: str = "af_heart"
@@ -38,6 +46,8 @@ BUGGY: Final = AgentBehavior(
     barge_in="deaf_first_sentence",
     filter_backchannels=False,
     misread={"D": "B"},
+    task_bugs=("wrong_hour", "ignores_party_change", "confirms_without_saving"),
+    leaks_other_guests=True,
     reprompt_after_s=None,
 )
 BEHAVIORS: Final = {b.name: b for b in (GOOD, BUGGY)}

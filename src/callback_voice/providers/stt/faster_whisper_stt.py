@@ -11,11 +11,19 @@ from callback_voice.providers.stt.whisper_language import whisper_language
 class FasterWhisperStt:
     """Local Whisper via CTranslate2. Free; the model downloads on first use."""
 
-    def __init__(self, model: str = "base", *, compute_type: str = "int8", words: bool = False):
-        self.name = f"faster-whisper:{model}"
+    def __init__(
+        self,
+        model: str = "base",
+        *,
+        compute_type: str = "int8",
+        words: bool = False,
+        beam_size: int = 1,
+    ):
+        self.name = f"faster-whisper:{model}" + (f"+beam{beam_size}" if beam_size > 1 else "")
         self._model_name = model
         self._compute_type = compute_type
         self._words = words
+        self._beam_size = beam_size
         self._lock = asyncio.Lock()
 
     async def transcribe(self, audio: Audio, *, language: str | None = None) -> Transcript:
@@ -27,7 +35,7 @@ class FasterWhisperStt:
         segments, info = model.transcribe(
             audio,
             language=language,
-            beam_size=1,
+            beam_size=self._beam_size,
             vad_filter=False,
             word_timestamps=self._words,
             condition_on_previous_text=False,
@@ -37,7 +45,9 @@ class FasterWhisperStt:
         for segment in segments:
             texts.append(segment.text.strip())
             for w in segment.words or ():
-                words.append(Word(w.word.strip(), float(w.start), float(w.end)))
+                words.append(
+                    Word(w.word.strip(), float(w.start), float(w.end), float(w.probability))
+                )
         return Transcript(" ".join(t for t in texts if t), info.language, tuple(words))
 
 

@@ -2,6 +2,7 @@ from typing import Any
 
 from pydantic import Field, field_validator
 
+from callback_voice.core.models.expected_fact import ExpectedFact
 from callback_voice.core.models.must_not_rule import MustNotRule
 from callback_voice.core.models.strict_model import StrictModel
 from callback_voice.core.models.thresholds import Thresholds
@@ -37,6 +38,6 @@ class Expectation(StrictModel):
     """
 
     state: StateCheck | None = None
-    entities_spoken: tuple[str, ...] = ()
+    entities_spoken: tuple[ExpectedFact, ...] = ()
     must_not: tuple[str | MustNotRule, ...] = ()
     thresholds: Thresholds = Field(default_factory=Thresholds)

@@ -5,6 +5,7 @@ from callback_voice.reference_agents.restaurant.bookings.booking_store import (
     MAX_PARTY,
     BookingStore,
 )
+from callback_voice.reference_agents.restaurant.dialog.agent_flaws import AgentFlaws
 from callback_voice.reference_agents.restaurant.dialog.dialog_state import DialogState, Stage
 from callback_voice.reference_agents.restaurant.dialog.reply import Reply
 from callback_voice.reference_agents.restaurant.dialog.stages.ask_for_slot import ask_for_slot
@@ -50,10 +51,10 @@ class ReservationBrain:
     so that Callback's own CI can assert exact outcomes against it.
     """
 
-    def __init__(self, store: BookingStore, *, misread: dict[str, str] | None = None) -> None:
+    def __init__(self, store: BookingStore, *, flaws: AgentFlaws | None = None) -> None:
         self.store = store
         self.state = DialogState()
-        self._misread = misread or {}
+        self._flaws = flaws or AgentFlaws()
 
     def greet(self) -> Reply:
         return self._remember(Reply(GREETING))
@@ -66,7 +67,7 @@ class ReservationBrain:
         said = understand(
             text, expecting_time=s.stage in {"new_time", "choose_slot", "new_details"}
         )
-        ctx = TurnContext(said, s, self.store, self._misread)
+        ctx = TurnContext(said, s, self.store, self._flaws)
 
         if said.has("repeat") and s.last_reply:
             return Reply(f"Of course. {s.last_reply}")
@@ -108,6 +109,9 @@ class ReservationBrain:
             return ""
         if size > MAX_PARTY:
             return f"For groups over {MAX_PARTY}, our events team will need to help. "
+        if ctx.flaws.task_bug == "ignores_party_change":
+            # Bug: acknowledge the new size out loud, keep the old one everywhere.
+            return f"No problem, I've updated your booking to {size} people. "
         s.party_size = size
         booking = ctx.store.find(s.ref) if s.ref else None
         if booking is not None and booking.status == "moved" and booking.party_size != size:
