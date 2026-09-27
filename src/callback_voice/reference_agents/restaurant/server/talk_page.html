@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Olive &amp; Ember · Talk</title>
+<style>
+  :root {
+    --bg: #0e0f11; --panel: #16171a; --line: #26282d; --text: #ecebe7; --muted: #8a8f98;
+    --signal: #ff5b1f; --caller: #ffb37a; --agent: #7cc4ff; --ok: #3ddc97;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+    --sans: ui-sans-serif, -apple-system, "Inter", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg);
+         color: var(--text); font: 15px/1.5 var(--sans); padding: 16px; }
+  main { width: min(560px, 100%); border: 1px solid var(--line); border-radius: 18px;
+         background: var(--panel); padding: 28px; }
+  .eyebrow { font: 11px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  h1 { font-size: 26px; font-weight: 600; letter-spacing: -.02em; margin: 10px 0 4px; }
+  p { color: var(--muted); margin: 0 0 22px; }
+  canvas { width: 100%; height: 120px; display: block; border-radius: 12px; background: #0b0c0e;
+           border: 1px solid var(--line); }
+  .legend { display: flex; gap: 18px; font: 12px var(--mono); color: var(--muted); margin: 10px 0 22px; }
+  .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  button { appearance: none; border: 0; border-radius: 999px; padding: 14px 22px; font: 600 15px var(--sans);
+           background: var(--signal); color: #120800; cursor: pointer; width: 100%; }
+  button[data-live="true"] { background: #2a2c31; color: var(--text); }
+  button:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
+  .status { margin-top: 14px; font: 12px var(--mono); color: var(--muted); min-height: 1.5em; }
+  .tip { margin-top: 18px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Callback · reference agent</div>
+  <h1>Call Olive &amp; Ember</h1>
+  <p>Talk to the restaurant reservations agent from your browser. Try moving booking <b>DX7Q2</b> to Saturday, then interrupt it mid-sentence.</p>
+  <canvas id="scope" width="1024" height="240" aria-label="Live audio from you and the agent"></canvas>
+  <div class="legend"><span><i style="background:var(--caller)"></i>you</span><span><i style="background:var(--agent)"></i>agent</span></div>
+  <button id="call" data-live="false">Start call</button>
+  <div class="status" id="status" role="status">Use headphones so the agent does not hear itself.</div>
+  <div class="tip">This page streams 16 kHz PCM over the same WebSocket protocol Callback uses.</div>
+</main>
+<script>
+const RATE = 16000;
+const worklet = `
+class Mic extends AudioWorkletProcessor {
+  constructor() { super(); this.buf = []; this.pos = 0; this.step = sampleRate / ${RATE}; }
+  process(inputs) {
+    const ch = inputs[0][0]; if (!ch) return true;
+    for (; this.pos < ch.length; this.pos += this.step) this.buf.push(ch[Math.floor(this.pos)]);
+    this.pos -= ch.length;
+    while (this.buf.length >= 320) {
+      const out = new Int16Array(320);
+      for (let i = 0; i < 320; i++) out[i] = Math.max(-1, Math.min(1, this.buf[i])) * 32767;
+      this.buf.splice(0, 320); this.port.postMessage(out.buffer, [out.buffer]);
+    }
+    return true;
+  }
+}
+registerProcessor('mic', Mic);`;
+
+const button = document.getElementById('call');
+const status = document.getElementById('status');
+const canvas = document.getElementById('scope');
+const g = canvas.getContext('2d');
+const levels = { caller: new Array(256).fill(0), agent: new Array(256).fill(0) };
+let ws, ctx, stream, nextAt = 0;
+
+function level(int16) {
+  let s = 0; for (const v of int16) s += (v / 32768) ** 2;
+  return Math.min(1, Math.sqrt(s / int16.length) * 4);
+}
+function push(side, value) { levels[side].push(value); levels[side].shift(); }
+function draw() {
+  const w = canvas.width, h = canvas.height, mid = h / 2, bar = w / 256;
+  g.clearRect(0, 0, w, h);
+  g.fillStyle = '#26282d'; g.fillRect(0, mid, w, 1);
+  levels.caller.forEach((v, i) => { g.fillStyle = '#ffb37a'; g.fillRect(i * bar, mid - v * mid, bar - 1, v * mid); });
+  levels.agent.forEach((v, i) => { g.fillStyle = '#7cc4ff'; g.fillRect(i * bar, mid + 1, bar - 1, v * mid); });
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+async function start() {
+  stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+  ctx = new AudioContext();
+  await ctx.audioWorklet.addModule(URL.createObjectURL(new Blob([worklet], { type: 'text/javascript' })));
+  const mic = new AudioWorkletNode(ctx, 'mic');
+  ctx.createMediaStreamSource(stream).connect(mic);
+  ws = new WebSocket(`ws://${location.host}/`);
+  ws.binaryType = 'arraybuffer';
+  mic.port.onmessage = (e) => { if (ws.readyState === 1) { ws.send(e.data); push('caller', level(new Int16Array(e.data))); } };
+  ws.onmessage = (e) => {
+    const pcm = new Int16Array(e.data); push('agent', level(pcm));
+    const buffer = ctx.createBuffer(1, pcm.length, RATE); const data = buffer.getChannelData(0);
+    for (let i = 0; i < pcm.length; i++) data[i] = pcm[i] / 32768;
+    const src = ctx.createBufferSource(); src.buffer = buffer; src.connect(ctx.destination);
+    nextAt = Math.max(nextAt, ctx.currentTime + 0.05); src.start(nextAt); nextAt += buffer.duration;
+  };
+  ws.onopen = () => { status.textContent = 'Connected. Say hello.'; };
+  ws.onclose = () => stop('Call ended.');
+  button.textContent = 'Hang up'; button.dataset.live = 'true';
+}
+function stop(message) {
+  if (ws && ws.readyState <= 1) { ws.send(JSON.stringify({ type: 'hangup' })); ws.close(); }
+  stream?.getTracks().forEach((t) => t.stop()); ctx?.close(); ws = ctx = stream = null; nextAt = 0;
+  button.textContent = 'Start call'; button.dataset.live = 'false';
+  status.textContent = message;
+}
+button.onclick = () => (ws ? stop('Call ended.') : start().catch((err) => stop(`Could not start: ${err.message}`)));
+</script>
+</body>
+</html>

@@ -26,7 +26,7 @@ def check_kokoro() -> CheckResult:
         )
     from callback_voice.providers.tts.kokoro_files import kokoro_files_present
 
-    cached = "model cached" if kokoro_files_present() else "model downloads on first use (~120 MB)"
+    cached = "model cached" if kokoro_files_present() else "model downloads on first use (~200 MB)"
     return CheckResult(
         "local models", "kokoro-tts", "ok", f"espeak-ng at {espeak.library}; {cached}"
     )

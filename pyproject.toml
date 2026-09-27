@@ -33,6 +33,7 @@ dependencies = [
 # stay opt-in and Callback itself remains Apache-2.0. See docs/licensing.md.
 local = ["faster-whisper>=1.1", "kokoro-onnx>=0.4"]
 piper = ["piper-tts>=1.2"]
+anthropic = ["anthropic>=1.0"]
 livekit = ["livekit>=1.0", "livekit-api>=1.0"]
 twilio = ["twilio>=9.0"]
 
@@ -84,7 +85,7 @@ packages = ["callback_voice"]
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["soundfile", "onnxruntime", "faster_whisper", "kokoro_onnx", "livekit.*", "twilio.*", "piper.*"]
+module = ["soundfile", "onnxruntime", "faster_whisper", "kokoro_onnx", "kokoro_onnx.*", "anthropic", "livekit.*", "twilio.*", "piper.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

@@ -9,7 +9,7 @@ import sys
 import typer
 
 from callback_voice import __version__
-from callback_voice.cli.commands import doctor, validate
+from callback_voice.cli.commands import agent, doctor, validate
 from callback_voice.cli.console import console, err_console
 from callback_voice.cli.render.error_panel import error_panel
 from callback_voice.errors import CallbackError
@@ -27,7 +27,7 @@ app = typer.Typer(
     pretty_exceptions_enable=False,
 )
 
-for command in (doctor, validate):
+for command in (doctor, validate, agent):
     command.register(app)
 
 

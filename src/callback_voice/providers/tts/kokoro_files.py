@@ -6,7 +6,7 @@ from callback_voice.core.paths import model_cache_dir
 from callback_voice.errors import ProviderError
 
 _RELEASE = "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0"
-MODEL_FILE = "kokoro-v1.0.int8.onnx"
+MODEL_FILE = "kokoro-v1.0.fp16.onnx"
 VOICES_FILE = "voices-v1.0.bin"
 
 
@@ -19,7 +19,7 @@ def kokoro_files_present() -> bool:
 
 
 def ensure_kokoro_files() -> tuple[Path, Path]:
-    """Download the Kokoro v1.0 int8 model (Apache-2.0) and voices once; return their paths."""
+    """Download the Kokoro v1.0 fp16 model (Apache-2.0) and voices once; return their paths."""
     directory = kokoro_dir()
     directory.mkdir(parents=True, exist_ok=True)
     for name in (MODEL_FILE, VOICES_FILE):
