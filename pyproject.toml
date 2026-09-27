@@ -92,8 +92,3 @@ ignore_missing_imports = true
 testpaths = ["tests"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
-markers = [
-  "models: needs local speech models (faster-whisper, kokoro); skipped when unavailable",
-  "integration: runs a real call against a reference agent",
-]
-addopts = "-m 'not models and not integration'"

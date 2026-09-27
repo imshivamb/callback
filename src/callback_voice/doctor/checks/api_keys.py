@@ -12,6 +12,8 @@ def check_api_keys(providers: ProvidersConfig) -> list[CheckResult]:
     results: list[CheckResult] = []
     for role, choice in providers.model_dump(exclude_none=True).items():
         env = choice.get("api_key_env")
+        if role == "llm":
+            continue  # covered, with a live model check, by check_caller_llm
         if not env:
             continue
         name = f"{role}: {choice['name']}"

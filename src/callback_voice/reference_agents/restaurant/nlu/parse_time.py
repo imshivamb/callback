@@ -24,13 +24,16 @@ class TimeRequest:
 
 def parse_time(text: str, *, expecting_time: bool = False) -> TimeRequest | None:
     """Dinner times as people say them: "8pm", "seven thirty", "half past 7",
-    "19:00", "between seven and nine", "7 to 9pm", "anytime after 7".
+    "19:00", "between seven and nine", "7 to 9pm", "anytime after 7", and Whisper's "730".
 
     Bare hours are read as evening, since the restaurant serves dinner only. With
     ``expecting_time`` (the agent just asked for a time) a lone number counts too.
     """
     lowered = text.lower().replace("p.m.", "pm").replace("a.m.", "am")
-    clock = re.search(r"\b(\d{1,2}):(\d{2})\b", lowered)
+    # "7:30", "7.30", and Whisper's compact "730" / "1930" all mean a clock time.
+    clock = re.search(r"\b(\d{1,2})[:.](\d{2})\b", lowered) or re.search(
+        r"\b(\d{1,2})(00|15|30|45)\b", lowered
+    )
     if clock:
         return TimeRequest(hour=_evening(int(clock.group(1))), minute=int(clock.group(2)))
     words = tokens(re.sub(r"(\d)(am|pm)\b", r"\1 \2", lowered).replace("-", " to "))

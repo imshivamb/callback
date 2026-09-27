@@ -18,12 +18,18 @@ class ProviderChoice(StrictModel):
 
 
 class ProvidersConfig(StrictModel):
-    """Which implementation backs each interface. Defaults are the free local path."""
+    """Which implementation backs each interface.
+
+    Speech runs locally for free. The caller/judge LLM defaults to Gemini's free
+    tier; ``ollama`` keeps everything local.
+    """
 
     stt: ProviderChoice = ProviderChoice(name="faster-whisper", model="base")
     scoring_stt: ProviderChoice = ProviderChoice(name="faster-whisper", model="small")
     tts: ProviderChoice = ProviderChoice(name="kokoro", voice="af_heart")
-    llm: ProviderChoice = ProviderChoice(name="ollama", model="qwen3:4b")
+    llm: ProviderChoice = ProviderChoice(
+        name="gemini", model="gemini-flash-latest", api_key_env="GEMINI_API_KEY"
+    )
     judge: ProviderChoice | None = None
     vad: ProviderChoice = ProviderChoice(name="silero")
 
