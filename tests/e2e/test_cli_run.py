@@ -73,6 +73,7 @@ def test_scripted_run_passes_and_writes_results(run_cli, write, tmp_path, good_a
     assert good_agent.verify(trial["call_id"])["status"] == "moved"
 
 
+@needs_local  # the scripted caller needs local TTS before it can dial
 def test_unreachable_agent_is_an_error_not_a_failure(run_cli, write) -> None:
     project(write, "ws://127.0.0.1:9", SCRIPTED)
     done = run_cli("run", "scenarios")

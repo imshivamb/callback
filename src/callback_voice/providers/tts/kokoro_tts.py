@@ -49,7 +49,7 @@ class KokoroTts:
 @cache
 def _engine() -> Any:
     try:
-        from kokoro_onnx import EspeakConfig, Kokoro  # type: ignore[attr-defined]
+        from kokoro_onnx import EspeakConfig, Kokoro  # type: ignore[attr-defined,unused-ignore]
     except ImportError as exc:
         raise ProviderUnavailableError(
             "kokoro-onnx is not installed", hint='pip install "callback-voice[local]"'

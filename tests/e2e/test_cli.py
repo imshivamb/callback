@@ -104,3 +104,13 @@ def test_invalid_config_names_the_field(run_cli, write) -> None:
     write("ok.yaml", "id: x\nagent: bot\ncaller: {persona: p, goal: g}\n")
     done = run_cli("validate", "ok.yaml")
     assert done.returncode == 2 and "targets.bot" in done.stderr
+
+
+@pytest.mark.parametrize(
+    ("args", "message"),
+    [(("validate",), "Missing"), (("nosuchcmd",), "No such command")],
+)
+def test_usage_errors_exit_2_with_a_message_not_a_traceback(run_cli, args, message) -> None:
+    done = run_cli(*args)
+    assert done.returncode == 2, done.stderr
+    assert message in done.stderr and "Traceback" not in done.stderr

@@ -228,6 +228,17 @@ uv run pytest -x -v                            # stop at first failure, verbose
 Tests that need local models skip themselves when `[local]` isn't installed; the
 Gemini test skips when `GEMINI_API_KEY` isn't set.
 
+On GitHub, the `ci` workflow runs on every push and pull request. It installs
+without `[local]` and with no keys, so only the fast tests run (CLI contract and
+scoring on the committed fixture calls; the tests take seconds). The full suite with real
+calls is the `e2e` workflow, started by hand from the Actions tab (Run workflow).
+To run the same fast set locally, use a separate environment without `[local]`:
+
+```bash
+UV_PROJECT_ENVIRONMENT=.venv-fast uv sync --locked
+UV_PROJECT_ENVIRONMENT=.venv-fast uv run pytest -rs
+```
+
 Rebuild the synthetic scoring fixtures (only after changing them):
 
 ```bash

@@ -68,10 +68,12 @@ def main() -> None:
         err_console.print("[muted]interrupted[/]")
         sys.exit(EXIT_ERROR)
     except Exception as exc:
-        from click import ClickException
-
-        if isinstance(exc, ClickException):
-            exc.show()
+        # A usage error (missing argument, unknown command). Typer raises its own
+        # vendored copy of Click's ClickException, and `click` itself is not a
+        # dependency, so match on the interface rather than the class.
+        show = getattr(exc, "show", None)
+        if callable(show) and hasattr(exc, "exit_code"):
+            show()
             sys.exit(EXIT_ERROR)
         # A bug is still a runtime error: exit 2, never 1 (which means "agent failed").
         err_console.print_exception(show_locals=False)

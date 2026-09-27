@@ -1,5 +1,10 @@
 name: ci
 
+# Fast checks on every push: lint, types, and the tests that need no speech models
+# and no API keys (CLI behaviour and scoring on the committed fixture calls). Tests
+# that need the local speech models skip themselves without the `local` extra. The
+# full end-to-end suite with real calls is the manual `e2e` workflow.
+
 on:
   push:
     branches: [main]
@@ -13,32 +18,19 @@ jobs:
   python:
     name: python (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 45
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-    env:
-      CALLBACK_MODEL_DIR: ~/.cache/callback/models
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-      - name: espeak-ng (for Kokoro TTS)
-        run: |
-          if [ "$RUNNER_OS" = "Linux" ]; then sudo apt-get update && sudo apt-get install -y espeak-ng
-          else brew install espeak-ng; fi
-      - name: Cache speech models
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/callback
-            ~/.cache/huggingface
-          key: speech-models-v1
-      - run: uv sync --python 3.12 --locked --extra local
+      - run: uv sync --python 3.12 --locked
       - run: uv run ruff check src tests
       - run: uv run ruff format --check src tests
       - run: uv run mypy
-      - name: End-to-end tests (real CLI, real calls, local models)
-        run: uv run pytest
+      - name: Fast tests (no speech models, no API keys)
+        run: uv run pytest -rs
