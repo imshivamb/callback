@@ -1,0 +1,25 @@
+# Callback project config. Secrets never go here: only the names of env vars.
+# A .env file next to this one is loaded automatically (shell exports win).
+
+targets:
+  # The bundled reference agents. Start them with:
+  #   callback agent serve              (good, port 8765)
+  #   callback agent serve --buggy --port 8766
+  restaurant-good:
+    transport: websocket
+    url: ws://127.0.0.1:8765
+  restaurant-buggy:
+    transport: websocket
+    url: ws://127.0.0.1:8766
+
+providers:
+  # Speech runs locally for free (pip install "callback-voice[local]").
+  stt: {name: faster-whisper, model: base}
+  tts: {name: kokoro, voice: af_heart}
+  # The simulated caller's brain. Gemini free tier; set GEMINI_API_KEY.
+  llm: {name: gemini, model: gemini-flash-lite-latest}
+
+concurrency: 1
+cost_cap_usd: 1.0
+# auto: replay a recorded caller when one exists, record otherwise.
+recorded: auto

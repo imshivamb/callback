@@ -28,7 +28,7 @@ class ProvidersConfig(StrictModel):
     scoring_stt: ProviderChoice = ProviderChoice(name="faster-whisper", model="small")
     tts: ProviderChoice = ProviderChoice(name="kokoro", voice="af_heart")
     llm: ProviderChoice = ProviderChoice(
-        name="gemini", model="gemini-flash-latest", api_key_env="GEMINI_API_KEY"
+        name="gemini", model="gemini-flash-lite-latest", api_key_env="GEMINI_API_KEY"
     )
     judge: ProviderChoice | None = None
     vad: ProviderChoice = ProviderChoice(name="silero")

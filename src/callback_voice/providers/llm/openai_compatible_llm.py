@@ -14,12 +14,19 @@ class OpenAiCompatibleLlm:
     name = "openai-compatible"
 
     def __init__(
-        self, model: str, base_url: str, api_key_env: str | None, usd_per_1k_tokens: float = 0.0
+        self,
+        model: str,
+        base_url: str,
+        api_key_env: str | None,
+        usd_per_1k_tokens: float = 0.0,
+        *,
+        send_seed: bool = True,
     ) -> None:
         self.model = model
         self.usd_per_1k_tokens = usd_per_1k_tokens
         self._url = base_url.rstrip("/")
         self._key_env = api_key_env
+        self._send_seed = send_seed
 
     async def complete(
         self,
@@ -44,7 +51,7 @@ class OpenAiCompatibleLlm:
             "temperature": temperature,
             "max_tokens": max_tokens,
         }
-        if seed is not None:
+        if seed is not None and self._send_seed:
             body["seed"] = seed % 2**31
         if json_mode:
             body["response_format"] = {"type": "json_object"}

@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import time
 
 import numpy as np
 
@@ -56,6 +57,9 @@ class Conversation:
         self._final: Utterance | None = None
         self._last_floor_end = 0.0
         self._nudges = 0
+        self._committed = False
+        self._held: Utterance | None = None
+        self._timing: dict[str, float] = {}
         self.error: BaseException | None = None
 
     def start(self) -> None:
@@ -63,13 +67,19 @@ class Conversation:
             self._begin_planning(agent_said_audio=None)
 
     def on_agent_turn_started(self) -> None:
-        if self._task is not None and not self._task.done():
-            self._task.cancel()  # the agent kept going; answer when it is really done
+        # The agent kept going. An undecided plan is dropped and re-made when the agent
+        # is done; a line the brain already decided is held and said then instead.
+        if self._task is not None and not self._task.done() and not self._committed:
+            self._task.cancel()
 
     def on_agent_turn_ended(self, ended: AgentTurnEnded) -> None:
         if self._final is not None or self.hang_up_at is not None:
             if self._final is None:  # our goodbye is done; the agent answered it
                 self.hang_up_at = min(self.hang_up_at or 1e9, self._ctx.t_s + _AFTER_GOODBYE_S)
+            return
+        if self._held is not None:
+            held, self._held = self._held, None
+            self._voice.say(held)
             return
         if self._voice.busy or (self._task is not None and not self._task.done()):
             return
@@ -107,10 +117,12 @@ class Conversation:
             self._task.cancel()
 
     def _begin_planning(self, agent_said_audio: np.ndarray | None) -> None:
+        self._committed = False
         self._task = asyncio.create_task(self._plan(agent_said_audio))
         self._task.add_done_callback(self._record_failure)
 
     async def _plan(self, agent_audio: np.ndarray | None) -> None:
+        began = time.monotonic()
         agent_said = ""
         if agent_audio is not None and self._brain.needs_agent_text and self._stt is not None:
             agent_said = (
@@ -120,9 +132,12 @@ class Conversation:
                 self._ctx.t_s,
                 "agent_turn_end",
                 text=agent_said,
-                data={"turn": self._ctx.agent_turn},
+                data={"turn": self._ctx.agent_turn, "stt_s": round(time.monotonic() - began, 3)},
             )
+        thinking = time.monotonic()
         line = await self._brain.next_line(agent_said)
+        self._committed = True
+        self._timing = {"brain_s": round(time.monotonic() - thinking, 3)}
         if line is None:
             self.hang_up_at = self._ctx.t_s
             return
@@ -135,7 +150,10 @@ class Conversation:
         await self._say(plan)
 
     async def _say(self, plan: LinePlan) -> None:
+        rendering = time.monotonic()
         audio = await self._speech.render(plan.text) if plan.text else np.zeros(0, np.float32)
+        timing = {**self._timing, "tts_s": round(time.monotonic() - rendering, 3)}
+        self._timing = {}
         if plan.dtmf:
             audio = np.concatenate([audio, dtmf_tones(plan.dtmf)])
         utterance = Utterance(
@@ -148,9 +166,13 @@ class Conversation:
         )
         if plan.dtmf:
             utterance.data["dtmf"] = plan.dtmf
+        utterance.data["caller_timing"] = timing
         if plan.hang_up:
             self._final = utterance
-        self._voice.say(utterance)
+        if self._ctx.agent_in_turn and plan.tag == "line":
+            self._held = utterance  # wait for the agent to finish, then say it
+        else:
+            self._voice.say(utterance)
 
     def _record_failure(self, task: asyncio.Task[None]) -> None:
         with contextlib.suppress(asyncio.CancelledError):

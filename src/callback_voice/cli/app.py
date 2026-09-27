@@ -5,13 +5,15 @@ Exit codes are a contract with CI: 0 pass, 1 threshold or regression failure,
 """
 
 import sys
+from pathlib import Path
 
 import typer
 
 from callback_voice import __version__
-from callback_voice.cli.commands import agent, doctor, validate
+from callback_voice.cli.commands import agent, doctor, run, validate
 from callback_voice.cli.console import console, err_console
 from callback_voice.cli.render.error_panel import error_panel
+from callback_voice.core.config.load_dotenv import load_dotenv
 from callback_voice.errors import CallbackError
 
 EXIT_PASS = 0
@@ -27,7 +29,7 @@ app = typer.Typer(
     pretty_exceptions_enable=False,
 )
 
-for command in (doctor, validate, agent):
+for command in (run, validate, doctor, agent):
     command.register(app)
 
 
@@ -48,8 +50,12 @@ def _root(
 
 def main() -> None:
     """Console-script entry point."""
+    load_dotenv(Path.cwd())
     try:
-        app(standalone_mode=False)
+        # Outside standalone mode Click *returns* the code of `typer.Exit(n)` instead of
+        # raising it, so it has to be passed on explicitly.
+        code = app(standalone_mode=False)
+        sys.exit(code if isinstance(code, int) else EXIT_PASS)
     except CallbackError as error:
         err_console.print(error_panel(error))
         sys.exit(EXIT_ERROR)

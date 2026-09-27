@@ -1,0 +1,18 @@
+# A scripted caller: fixed lines, no LLM, fully deterministic.
+id: move-booking-scripted
+agent: restaurant-good
+trials: 1
+max_duration_s: 120
+caller:
+  persona: "Arjun, calling on his lunch break"
+  goal: "Move booking DX7Q2 to Saturday evening"
+  voice: male_us_1
+  script:
+    - "Hi, I need to move my booking to Saturday."
+    - "It's D X 7 Q 2."
+    - "Anytime between seven and nine is fine."
+    - "Seven thirty works."
+    - "Yes please."
+    - "No, that's all. Thanks, bye."
+expect:
+  thresholds: {response_latency_p95_s: 1.5}

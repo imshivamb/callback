@@ -9,12 +9,16 @@ KNOWN_ENDPOINTS: Final = {
     "gemini": (
         "https://generativelanguage.googleapis.com/v1beta/openai",
         "GEMINI_API_KEY",
-        "gemini-flash-latest",
+        "gemini-flash-lite-latest",
     ),
     "groq": ("https://api.groq.com/openai/v1", "GROQ_API_KEY", "llama-3.3-70b-versatile"),
     "openrouter": ("https://openrouter.ai/api/v1", "OPENROUTER_API_KEY", None),
     "openai": ("https://api.openai.com/v1", "OPENAI_API_KEY", None),
 }
+
+
+# Endpoints that reject the OpenAI ``seed`` field.
+_NO_SEED: Final = frozenset({"gemini"})
 
 
 def build_llm(choice: ProviderChoice) -> ChatModel:
@@ -36,7 +40,13 @@ def build_llm(choice: ProviderChoice) -> ChatModel:
             model = choice.model or model
             if not model or not base_url:
                 raise ProviderError(f"LLM provider {choice.name!r} needs model and base_url")
-            return OpenAiCompatibleLlm(model, base_url, key_env, choice.usd_per_1k_tokens or 0.0)
+            return OpenAiCompatibleLlm(
+                model,
+                base_url,
+                key_env,
+                choice.usd_per_1k_tokens or 0.0,
+                send_seed=choice.name not in _NO_SEED,
+            )
         case other:
             raise ProviderError(
                 f"unknown LLM provider {other!r}",
