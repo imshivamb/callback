@@ -11,7 +11,9 @@ from callback_voice.core.models.trial_result import TrialResult
 from callback_voice.core.runner.runtime import Runtime
 from callback_voice.core.runner.trial_verdict import trial_verdict
 from callback_voice.errors import CallbackError
-from callback_voice.scoring.score_call import score_call
+from callback_voice.scoring.evaluate_call import evaluate_call
+from callback_voice.scoring.verifiers.check_state import check_state
+from callback_voice.scoring.verifiers.resolve_webhook import resolve_webhook
 from callback_voice.transports.build_transport import build_transport
 
 
@@ -52,7 +54,24 @@ async def run_trial(
         outcome = await CallSession(setup).run()
         paths = outcome.recorder.save(call_dir)
         outcome.log.save(call_dir / "events.jsonl")
-        score = score_call(call_dir, scenario.expect.thresholds, runtime.make_vad())
+        state = None
+        if scenario.expect.state is not None:  # ask right away, while the call's state is fresh
+            state = await check_state(
+                scenario.expect.state,
+                resolve_webhook(scenario.expect.state.webhook, target),
+                call_id=call_id,
+                scenario_id=scenario.id,
+                trial=trial,
+            )
+        score = await evaluate_call(
+            call_dir,
+            scenario.expect,
+            vad=runtime.make_vad(),
+            stt=runtime.scoring_stt,
+            judge=runtime.judge,
+            state=state,
+            language=scenario.caller.language,
+        )
     except CallbackError as exc:
         return _errored(
             scenario, trial, seed, call_id, str(exc) + (f" ({exc.hint})" if exc.hint else "")
@@ -72,6 +91,7 @@ async def run_trial(
         end_reason=outcome.end_reason,
         wav_path=str(paths.stereo.relative_to(run_dir)),
         events=outcome.log.events,
+        transcript=score.transcript,
     )
     return TrialResult(
         call_id=call_id,
@@ -82,6 +102,7 @@ async def run_trial(
         metrics=score.metrics,
         findings=score.findings,
         failure_reasons=reasons,
+        verifier_results=[state] if state is not None else [],
         call=record,
     )
 

@@ -13,7 +13,7 @@ caller:
   patience: medium
 expect:
   state:
-    webhook: "http://127.0.0.1:8765/verify"
+    webhook: /verify
     match: {status: moved, day: saturday, hour_between: [19, 21]}
   entities_spoken: ["DX7Q2"]
   thresholds: {response_latency_p95_s: 1.5}

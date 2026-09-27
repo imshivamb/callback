@@ -68,6 +68,7 @@ async def run_suite(
         providers={k: v.name for k, v in project.providers if v is not None}
         | {"llm": runtime.llm_choice.name},
         vad={"provider": project.providers.vad.name},
+        judge=runtime.judge_info,
         scenarios=scenario_results,
         passed=code == EXIT_PASS,
         exit_code=code,

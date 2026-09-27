@@ -43,6 +43,28 @@ class Runtime:
     def llm(self) -> ChatModel:
         return build_llm(self.llm_choice)
 
+    @cached_property
+    def scoring_stt(self) -> SpeechToText:
+        """A larger STT for transcribing the agent after the call (accuracy over speed)."""
+        return build_stt(self.project.providers.scoring_stt)
+
+    @cached_property
+    def judge(self) -> ChatModel | None:
+        """The optional LLM judge; None unless ``providers.judge`` is configured."""
+        choice = self.project.providers.judge
+        return build_llm(choice) if choice is not None else None
+
+    @property
+    def judge_info(self) -> dict[str, str] | None:
+        """What to record in results so judged numbers are reproducible and auditable."""
+        choice = self.project.providers.judge
+        if choice is None:
+            return None
+        from callback_voice.scoring.judge.judge_prompt import JUDGE_PROMPT_VERSION
+
+        model = self.judge.model if self.judge is not None else choice.model or ""
+        return {"provider": choice.name, "model": model, "prompt_version": JUDGE_PROMPT_VERSION}
+
     async def warm_up(self, scenarios: list[Scenario]) -> None:
         """Load models before the first call so the caller's first turn is not slowed
         by a one-off model load (which the agent would hear as dead air)."""

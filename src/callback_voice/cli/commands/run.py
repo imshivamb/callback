@@ -58,12 +58,15 @@ def run(
     plan = [(s, t) for s in scenarios for t in range(1, (trials or s.trials) + 1)]
 
     runtime = Runtime(project, mode, llm_choice)
+    judge = runtime.judge
     estimate = estimate_cost(
         plan,
         runtime.llm.usd_per_1k_tokens if _uses_llm(plan) and mode != "replay" else 0.0,
         replaying=mode == "replay",
+        judge_usd_per_1k=judge.usd_per_1k_tokens if judge is not None else None,
     )
-    console.print(run_plan(estimate, llm_choice.name, mode))
+    judge_name = project.providers.judge.name if project.providers.judge else None
+    console.print(run_plan(estimate, llm_choice.name, judge_name, mode))
     if estimate.usd > project.cost_cap_usd and not yes:
         if not console.is_terminal:
             raise ConfigError(

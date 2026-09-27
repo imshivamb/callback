@@ -2,6 +2,7 @@ from callback_voice.core.models.finding import Finding
 from callback_voice.core.models.metric import Metric
 
 _UNITS = {"s": " s", "ratio": "", "count": ""}
+_EXPLAINED = frozenset({"task_success", "entity_fidelity", "policy_violations"})
 _FAILING_ENDS = {"max_duration": "the call hit max_duration_s without finishing"}
 
 
@@ -21,7 +22,11 @@ def trial_verdict(
         if m.value is not None and m.threshold is not None:
             op = ">" if m.comparator == "<=" else "<"
             unit = _UNITS.get(m.unit, "")
-            reasons.append(f"{m.name} {m.value:g}{unit} {op} {m.threshold:g}{unit}")
+            reason = f"{m.name} {m.value:g}{unit} {op} {m.threshold:g}{unit}"
+            if m.name in _EXPLAINED:  # a bare number says nothing about what went wrong
+                why = next((f.message for f in findings if f.metric == m.name), None)
+                reason += f": {why}" if why else ""
+            reasons.append(reason)
         else:
             first = next((f.message for f in findings if m.name.startswith(f.metric)), "failed")
             reasons.append(f"{m.name}: {first}")
