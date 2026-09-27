@@ -16,3 +16,16 @@ matter.
 
 The figure was drawn from the full recording of the first call; the clips were cut from
 the full recordings with `soundfile`.
+
+## Baseline example
+
+[`example-results/baseline-gate/`](example-results/baseline-gate/) holds the three
+runs of [`tests/e2e/test_baseline_gate.py`](../../tests/e2e/test_baseline_gate.py),
+three calls each with a scripted caller:
+
+| File | What it is |
+|---|---|
+| `1-good-agent-baseline.json` | The good agent; saved as baseline `main` (`baseline-main.json`) |
+| `2-good-agent-vs-baseline.json` | The same agent again with `--baseline main`: p95 0.913 s against 0.930 s, no regression, exit 0 |
+| `3-slower-agent-vs-baseline.json` | The good agent with `--add-latency 0.4`: p95 1.313 s, under the 1.5 s limit but a regression against the baseline, exit 1 |
+| `3-slower-agent-junit.xml` | The JUnit file of that run, with the regression as a failed test case |

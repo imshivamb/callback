@@ -122,6 +122,12 @@ The audio clips are described in [docs/assets/README.md](docs/assets/README.md).
   plain-English rules. Its scores are recorded but never fail a run. In one saved call
   it rated the buggy agent 4–5 out of 5 while the agent read the booking code back
   wrong ([the call](tests/fixtures/disagreements/judge-vs-facts-wrong-code/README.md)).
+- **Repeated calls, honest ranges.** A scenario runs several times; limits apply
+  across its calls, with 95% confidence ranges. A saved baseline catches a regression
+  even under the limits: in [this test](tests/e2e/test_baseline_gate.py)
+  ([results](docs/assets/example-results/baseline-gate/)) a 0.4 s
+  slower agent (p95 0.93 s → 1.31 s, limit 1.5 s) exits 1 against the baseline while
+  the unchanged agent exits 0. Each run also writes `junit.xml`.
 - **Reproducible.** Every call is seeded and can be replayed. AI caller lines are
   recorded on the first run and replayed afterwards without calling the model.
 - **Local and free by default.** Speech recognition, voices and voice activity
@@ -130,9 +136,6 @@ The audio clips are described in [docs/assets/README.md](docs/assets/README.md).
 
 ## Coming next
 
-- Repeat each scenario many times and report pass rates with confidence ranges.
-- Compare a run against a saved baseline and fail CI only on real regressions, with
-  JUnit output.
 - A single-file HTML report with both waveforms, markers where things went wrong, and
   click-to-play audio.
 - Calling agents over real phone numbers and LiveKit rooms.

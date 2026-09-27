@@ -114,3 +114,22 @@ def test_usage_errors_exit_2_with_a_message_not_a_traceback(run_cli, args, messa
     done = run_cli(*args)
     assert done.returncode == 2, done.stderr
     assert message in done.stderr and "Traceback" not in done.stderr
+
+
+def test_unknown_baseline_is_an_error_before_any_call(run_cli, write) -> None:
+    write("callback.yaml", CONFIG)
+    write("scenarios/move.yaml", SPEC_EXAMPLE)
+    done = run_cli("run", "scenarios", "--baseline", "nope")
+    assert done.returncode == 2 and "no baseline 'nope'" in done.stderr
+
+
+def test_misspelt_min_effect_is_an_error(run_cli, write) -> None:
+    write("callback.yaml", CONFIG + "min_effect: {response_latency_p59_s: 0.1}\n")
+    write("scenarios/move.yaml", SPEC_EXAMPLE)
+    done = run_cli("run", "scenarios")
+    assert done.returncode == 2 and "response_latency_p59_s" in done.stderr
+
+
+def test_baseline_save_without_runs_is_an_error(run_cli) -> None:
+    done = run_cli("baseline", "save", "main")
+    assert done.returncode == 2 and "no runs" in done.stderr

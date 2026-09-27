@@ -1,4 +1,5 @@
 import asyncio
+from dataclasses import replace
 from pathlib import Path
 
 import typer
@@ -22,6 +23,12 @@ def serve(
     log_dir: Path = typer.Option(
         Path(".callback/agent-logs"), "--log-dir", help="Where each run's log file is written."
     ),
+    add_latency: float = typer.Option(
+        0.0,
+        "--add-latency",
+        min=0.0,
+        help="Wait this many extra seconds before every reply (simulate a slower agent).",
+    ),
 ) -> None:
     from callback_voice.reference_agents.restaurant.server.configure_agent_logging import (
         configure_agent_logging,
@@ -30,6 +37,12 @@ def serve(
     from callback_voice.reference_agents.restaurant.voice.behavior import BUGGY, GOOD
 
     behavior = BUGGY if buggy else GOOD
+    if add_latency:
+        behavior = replace(
+            behavior,
+            name=f"{behavior.name}+{add_latency:g}s",
+            think_delay_s=behavior.think_delay_s + add_latency,
+        )
     log_path = configure_agent_logging(log_dir, behavior.name, port, verbose=verbose)
     ready = asyncio.Event()
 
@@ -42,6 +55,8 @@ def serve(
             if task in done:
                 task.result()
         label = "[fail]buggy[/]" if buggy else "[pass]good[/]"
+        if add_latency:
+            label += f" [warn]+{add_latency:g} s latency[/]"
         console.print(
             f"Olive & Ember ({label}) · ws://{host}:{port} · talk in a browser at "
             f"[brand]http://{host}:{port}[/] · Ctrl+C to stop"

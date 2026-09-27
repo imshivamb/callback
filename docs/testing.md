@@ -91,6 +91,46 @@ To see the buggy agent fail, start it on 8766 and point a scenario at
 `restaurant-buggy` (edit `agent:` in a copy of the scripted scenario), then run
 it: expect `FAIL`, exit code 1, and "The agent took 2.2 s to respond" lines.
 
+### Trials, confidence ranges and baselines
+
+A scenario runs `trials` times (or `--trials N`). Its limits apply to numbers across
+all its calls, each with a 95% range: rates (task success, calls passed) use a Wilson
+interval, and latencies pool every answered turn and use a seeded bootstrap that
+resamples whole calls. So `task_success_rate: 0.8` lets one call in five miss its task.
+A call that drops, runs out of time, or fails a check that has no number (the agent
+never checked in on a silent caller) still fails the scenario.
+
+Save a run as a baseline, then compare later runs with it:
+
+```bash
+uv run callback run scenarios/restaurant/move-booking-scripted.yaml --trials 3
+uv run callback baseline save main                   # the latest run; --run ID for another
+uv run callback run scenarios/restaurant/move-booking-scripted.yaml --trials 3 --baseline main
+```
+
+A number counts as a regression only when it got worse, its 95% range no longer
+overlaps the baseline's, and it moved by at least a minimum effect (0.1 s for
+latencies and time to yield by default; set others with `min_effect:` in
+`callback.yaml`). A regression exits 1 even when every limit still passes.
+
+To see one, start a slower copy of the good agent and run against it:
+
+```bash
+uv run callback agent serve --add-latency 0.4 --port 8767
+```
+
+and run the same scenario with `--agent restaurant-slow --baseline main` (the
+`restaurant-slow` target in `callback.yaml` points at port 8767). The summary marks the regressed lines
+`REGRESSED`, and `results.json` lists every comparison under `baseline_diff`.
+
+Each run folder also has `junit.xml` for CI test reporters: one test suite per
+scenario, a test case per call, per limit and per baseline comparison. A call that
+failed inside a scenario that still passes is reported in its `system-out`, not as a
+failure.
+
+`concurrency:` in `callback.yaml` (default 1) runs that many calls at once. Calls on
+the same machine compete for CPU, so latency numbers are most comparable at 1.
+
 ## 4. Chaos: break the call on purpose
 
 Four ready-made chaos scenarios live in `scenarios/chaos/` (scripted callers, no
@@ -224,6 +264,7 @@ uv run pytest -x -v                            # stop at first failure, verbose
 | `test_task_bugs.py` | Each buggy task bug is caught by the end state on a real call; the good agent passes four facts; the leak rule fires |
 | `test_fact_checks.py` | A noise-masked letter goes to review; a spoken wrong letter fails; counts, times and phones are matched |
 | `test_disagreement_fixture.py` | The saved judge-vs-facts call still fails the hard check |
+| `test_baseline_gate.py` | Three calls saved as a baseline; the same agent again exits 0; the agent with 0.4 s added exits 1 on the baseline alone, with the regression in `junit.xml` |
 
 Tests that need local models skip themselves when `[local]` isn't installed; the
 Gemini test skips when `GEMINI_API_KEY` isn't set.

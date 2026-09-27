@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="callback" time="224.54" tests="9" failures="2" errors="0">
+  <testsuite name="gate" tests="9" failures="2" errors="0">
+    <testcase classname="gate" name="trial 1 (gate--t1)" time="74.36" />
+    <testcase classname="gate" name="trial 2 (gate--t2)" time="74.36" />
+    <testcase classname="gate" name="trial 3 (gate--t3)" time="74.36" />
+    <testcase classname="gate" name="aggregate response_latency_p95_s" />
+    <testcase classname="gate" name="aggregate talk_over_ratio" />
+    <testcase classname="gate" name="baseline response_latency_p95_s">
+      <failure message="response_latency_p95_s regressed: 0.93 → 1.313 (Δ +0.383)">response_latency_p95_s regressed: 0.93 → 1.313 (Δ +0.383)</failure>
+    </testcase>
+    <testcase classname="gate" name="baseline response_latency_p50_s">
+      <failure message="response_latency_p50_s regressed: 0.88 → 1.3 (Δ +0.42)">response_latency_p50_s regressed: 0.88 → 1.3 (Δ +0.42)</failure>
+    </testcase>
+    <testcase classname="gate" name="baseline talk_over_ratio" />
+    <testcase classname="gate" name="baseline call_pass_rate" />
+  </testsuite>
+</testsuites>

@@ -91,3 +91,9 @@ def good_agent() -> Iterator[RunningAgent]:
 @pytest.fixture(scope="session")
 def buggy_agent() -> Iterator[RunningAgent]:
     yield from _serve("--buggy")
+
+
+@pytest.fixture(scope="session")
+def slow_agent() -> Iterator[RunningAgent]:
+    """The good agent with 0.4 s added before every reply: an injected latency regression."""
+    yield from _serve("--add-latency", "0.4")

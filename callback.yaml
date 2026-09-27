@@ -11,6 +11,11 @@ targets:
   restaurant-buggy:
     transport: websocket
     url: ws://127.0.0.1:8766
+  # The good agent made 0.4 s slower, to see a baseline catch a regression:
+  #   callback agent serve --add-latency 0.4 --port 8767
+  restaurant-slow:
+    transport: websocket
+    url: ws://127.0.0.1:8767
   # The buggy agent with one specific task bug forced (otherwise one is picked per call).
   restaurant-buggy-wrong-hour:
     transport: websocket

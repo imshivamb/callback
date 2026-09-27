@@ -33,8 +33,15 @@ def trial_verdict(
         else:
             first = next((f.message for f in findings if m.name.startswith(f.metric)), "failed")
             reasons.append(f"{m.name}: {first}")
-    if end_reason in _FAILING_ENDS:
-        reasons.append(_FAILING_ENDS[end_reason])
-    if end_reason.startswith("connection_lost"):
-        reasons.append(f"the call dropped: {end_reason}")
+    if (ended_badly := end_reason_failure(end_reason)) is not None:
+        reasons.append(ended_badly)
     return not reasons, reasons
+
+
+def end_reason_failure(end_reason: str) -> str | None:
+    """Why the way a call ended is itself a failure, or None if it ended normally."""
+    if end_reason in _FAILING_ENDS:
+        return _FAILING_ENDS[end_reason]
+    if end_reason.startswith("connection_lost"):
+        return f"the call dropped: {end_reason}"
+    return None

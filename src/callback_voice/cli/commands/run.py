@@ -41,8 +41,13 @@ def run(
     agent: str | None = typer.Option(
         None, "--agent", "-a", help="Run every scenario against this target instead."
     ),
+    baseline: str | None = typer.Option(
+        None, "--baseline", "-b", help="Compare with this saved baseline; a regression exits 1."
+    ),
     config: Path | None = typer.Option(None, "--config", "-c", help="Path to callback.yaml."),
 ) -> None:
+    from callback_voice.core.baseline.load_baseline import load_baseline
+    from callback_voice.core.baseline.min_effect import min_effect
     from callback_voice.core.runner.run_suite import run_suite
     from callback_voice.core.runner.runtime import Runtime
 
@@ -53,6 +58,9 @@ def run(
     if agent is not None:
         scenarios = [s.model_copy(update={"agent": agent}) for s in scenarios]
     check_targets_exist(scenarios, project)
+    # Before any call is placed: a missing baseline or a bad min_effect is exit 2 now.
+    reference = load_baseline(project.resolve(project.baseline_dir), baseline) if baseline else None
+    effects = min_effect(project.min_effect)
     mode: RecordedMode = "record" if record else "replay" if replay else project.recorded
     llm_choice = LOCAL_LLM if local else project.providers.llm
     plan = [(s, t) for s in scenarios for t in range(1, (trials or s.trials) + 1)]
@@ -82,7 +90,16 @@ def run(
     def on_trial(scenario: Scenario, result: TrialResult) -> None:
         console.print(trial_line(result, trials or scenario.trials))
 
-    result, run_dir = asyncio.run(run_suite(plan, runtime, base_seed=seed, on_trial=on_trial))
+    result, run_dir = asyncio.run(
+        run_suite(
+            plan,
+            runtime,
+            base_seed=seed,
+            on_trial=on_trial,
+            baseline=reference,
+            min_effect=effects,
+        )
+    )
     console.print(run_summary(result, run_dir))
     raise typer.Exit(result.exit_code)
 
