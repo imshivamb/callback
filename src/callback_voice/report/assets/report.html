@@ -7,15 +7,15 @@
 <style>
 :root {
   color-scheme: light;
-  --page: #f9f9f7;
+  --page: #f6f5f2;
   --surface: #fcfcfb;
-  --surface-2: #f3f2ee;
+  --surface-2: #efeee9;
   --ink: #0b0b0b;
-  --ink-2: #52514e;
+  --ink-2: #4a4945;
   --muted: #6f6d67;
-  --hairline: #e1e0d9;
+  --hairline: #e3e2dc;
   --axis: #c3c2b7;
-  --border: rgba(11, 11, 11, 0.10);
+  --border: rgba(11, 11, 11, 0.09);
   --caller: #2a78d6;
   --agent: #1baf7a;
   --caller-block: rgba(42, 120, 214, 0.10);
@@ -30,196 +30,192 @@
   --pin-span: rgba(208, 59, 59, 0.13);
   --playhead: #0b0b0b;
   --focus: #2a78d6;
-  --shadow: 0 1px 2px rgba(11, 11, 11, 0.06), 0 4px 16px rgba(11, 11, 11, 0.06);
+  --selected-bg: #1c5cab;
+  --selected-ink: #ffffff;
+  --shadow: 0 1px 2px rgba(11, 11, 11, 0.05), 0 6px 20px rgba(11, 11, 11, 0.05);
 }
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) {
     color-scheme: dark;
-    --page: #0d0d0d;
-    --surface: #1a1a19;
-    --surface-2: #232321;
-    --ink: #ffffff;
-    --ink-2: #c3c2b7;
-    --muted: #9a988f;
-    --hairline: #2c2c2a;
-    --axis: #383835;
-    --border: rgba(255, 255, 255, 0.10);
-    --caller: #3987e5;
-    --agent: #199e70;
-    --caller-block: rgba(57, 135, 229, 0.16);
-    --agent-block: rgba(25, 158, 112, 0.18);
-    --good-ink: #0ca30c;
-    --warn-ink: #fab219;
-    --critical: #e25555;
-    --critical-ink: #ff7b7b;
-    --chaos: #e0a445;
-    --pin-span: rgba(226, 85, 85, 0.20);
-    --playhead: #ffffff;
-    --focus: #3987e5;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);
+    --page: #0d0d0d; --surface: #1a1a19; --surface-2: #242422; --ink: #ffffff; --ink-2: #d0cfc6;
+    --muted: #9a988f; --hairline: #2c2c2a; --axis: #3d3d3a; --border: rgba(255, 255, 255, 0.09);
+    --caller: #3987e5; --agent: #199e70;
+    --caller-block: rgba(57, 135, 229, 0.16); --agent-block: rgba(25, 158, 112, 0.18);
+    --good-ink: #2fc42f; --warn-ink: #fab219;
+    --critical: #e25555; --critical-ink: #ff8080;
+    --chaos: #e0a445; --pin-span: rgba(226, 85, 85, 0.20); --playhead: #ffffff; --focus: #3987e5;
+    --selected-bg: #86b6ef; --selected-ink: #0b0b0b;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 20px rgba(0, 0, 0, 0.3);
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --page: #0d0d0d;
-  --surface: #1a1a19;
-  --surface-2: #232321;
-  --ink: #ffffff;
-  --ink-2: #c3c2b7;
-  --muted: #9a988f;
-  --hairline: #2c2c2a;
-  --axis: #383835;
-  --border: rgba(255, 255, 255, 0.10);
-  --caller: #3987e5;
-  --agent: #199e70;
-  --caller-block: rgba(57, 135, 229, 0.16);
-  --agent-block: rgba(25, 158, 112, 0.18);
-  --good-ink: #0ca30c;
-  --warn-ink: #fab219;
-  --critical: #e25555;
-  --critical-ink: #ff7b7b;
-  --chaos: #e0a445;
-  --pin-span: rgba(226, 85, 85, 0.20);
-  --playhead: #ffffff;
-  --focus: #3987e5;
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);
+  --page: #0d0d0d; --surface: #1a1a19; --surface-2: #242422; --ink: #ffffff; --ink-2: #d0cfc6;
+  --muted: #9a988f; --hairline: #2c2c2a; --axis: #3d3d3a; --border: rgba(255, 255, 255, 0.09);
+  --caller: #3987e5; --agent: #199e70;
+  --caller-block: rgba(57, 135, 229, 0.16); --agent-block: rgba(25, 158, 112, 0.18);
+  --good-ink: #2fc42f; --warn-ink: #fab219;
+  --critical: #e25555; --critical-ink: #ff8080;
+  --chaos: #e0a445; --pin-span: rgba(226, 85, 85, 0.20); --playhead: #ffffff; --focus: #3987e5;
+    --selected-bg: #86b6ef; --selected-ink: #0b0b0b;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body {
   background: var(--page);
   color: var(--ink);
-  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+  font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
 }
-button { font: inherit; color: inherit; }
-:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.wrap { max-width: 1280px; margin: 0 auto; padding: 24px 16px 64px; }
-.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; }
+button { font: inherit; color: inherit; -webkit-appearance: none; appearance: none; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 32px 16px 80px; }
 .num { font-variant-numeric: tabular-nums; }
 .muted { color: var(--muted); }
-.ink2 { color: var(--ink-2); }
+.panel {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: var(--shadow);
+}
 
-/* Verdict header */
-.verdict { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+/* 1. Verdict and the one sentence */
+.top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 6px 14px; border-radius: 999px; font-weight: 700; letter-spacing: 0.04em;
-  color: #fff;
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px;
+  font-weight: 700; letter-spacing: 0.04em; font-size: 13px; color: #fff;
 }
 .badge.pass { background: var(--good); }
 .badge.fail, .badge.error { background: var(--critical); }
-.verdict h1 { font-size: 22px; margin: 0; font-weight: 650; }
-.meta { margin-top: 6px; display: flex; gap: 6px 18px; flex-wrap: wrap; color: var(--muted); }
-.toolbar { margin-left: auto; display: flex; gap: 8px; }
+.what { font-weight: 600; font-size: 15px; }
+.toolbar { margin-left: auto; display: flex; gap: 6px; }
 .ghost {
   background: transparent; border: 1px solid var(--border); border-radius: 8px;
-  padding: 5px 10px; cursor: pointer; color: var(--ink-2);
+  padding: 4px 10px; cursor: pointer; color: var(--ink-2); font-size: 13px;
 }
 .ghost:hover { background: var(--surface-2); }
+.sentence { font-size: 22px; line-height: 1.35; font-weight: 600; margin: 16px 0 6px; max-width: 60ch; letter-spacing: -0.01em; }
+.meta { color: var(--muted); font-size: 12.5px; display: flex; gap: 4px 14px; flex-wrap: wrap; }
 
-/* Scenario cards */
-h2 { font-size: 15px; margin: 28px 0 10px; font-weight: 650; }
-.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr)); gap: 12px; }
-.aggs td.num, .aggs th { white-space: nowrap; }
-.card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-  padding: 14px 16px; box-shadow: var(--shadow);
+/* 2. Problem tiles */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 12px; margin-top: 22px; }
+.tile { padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; border-left: 4px solid var(--critical); }
+.tile h3 { margin: 0; font-size: 14px; font-weight: 650; }
+.tile .big { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+.tile .big small { font-size: 13px; font-weight: 500; color: var(--muted); margin-left: 6px; letter-spacing: 0; }
+.tile .detail { color: var(--ink-2); font-size: 13px; }
+.hearit {
+  align-self: flex-start; margin-top: 8px; border: 0; border-radius: 8px; padding: 6px 12px;
+  background: var(--ink); color: var(--surface); cursor: pointer; font-weight: 600; font-size: 13px;
 }
-.card header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
-.card header b { font-size: 14.5px; }
-.status { font-weight: 650; white-space: nowrap; }
-.status.pass { color: var(--good-ink); }
-.status.fail { color: var(--critical-ink); }
-.status.warn { color: var(--warn-ink); }
-table { border-collapse: collapse; width: 100%; }
-td, th { padding: 3px 6px 3px 0; text-align: left; vertical-align: top; }
-th { font-weight: 500; color: var(--muted); font-size: 12px; border-bottom: 1px solid var(--hairline); }
-.aggs td { border-bottom: 1px solid var(--hairline); }
-.aggs tr:last-child td { border-bottom: 0; }
-.reasons { margin: 8px 0 0; padding-left: 18px; color: var(--critical-ink); }
-.reasons li { margin: 2px 0; }
+.hearit:hover { opacity: 0.9; }
 
-/* Calls */
-.calls { display: grid; grid-template-columns: 260px 1fr; gap: 12px; align-items: start; }
-@media (max-width: 860px) { .calls { grid-template-columns: 1fr; } }
-.calllist {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-  padding: 6px; max-height: 70vh; overflow: auto;
+/* 3. The call */
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; margin: 36px 0 10px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin-bottom: 10px; }
+.tabs .group { color: var(--muted); font-size: 12.5px; margin: 0 2px 0 8px; }
+.tabs .group:first-child { margin-left: 0; }
+.tab {
+  display: inline-flex; gap: 6px; align-items: center; border: 1px solid var(--border);
+  background: var(--surface); color: var(--ink); border-radius: 999px; padding: 4px 12px; cursor: pointer; font-size: 13px;
 }
-.calllist .group { font-size: 12px; color: var(--muted); padding: 8px 8px 4px; }
-.callbtn {
-  display: flex; width: 100%; gap: 8px; align-items: center; text-align: left;
-  padding: 6px 8px; border: 0; border-radius: 8px; background: transparent; cursor: pointer;
-}
-.callbtn:hover { background: var(--surface-2); }
-.callbtn[aria-current="true"] { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--focus); }
-.callbtn .count { margin-left: auto; color: var(--muted); font-size: 12px; }
-.view {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-  padding: 14px 16px; box-shadow: var(--shadow); min-width: 0;
-}
-.view h3 { margin: 0; font-size: 16px; font-weight: 650; }
-.transport { display: flex; align-items: center; gap: 10px; margin: 12px 0 8px; flex-wrap: wrap; }
+/* Selected: an accent fill with bold text, so it can never read as disabled (6.6:1 light, 9.3:1 dark). */
+.tab[aria-current="true"] { background: var(--selected-bg); color: var(--selected-ink); border-color: var(--selected-bg); font-weight: 600; }
+.tab[aria-current="true"] .status { color: inherit; }
+.call { padding: 18px 20px 20px; }
+.callhead { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.callhead b { font-size: 16px; }
+.transport { display: flex; align-items: center; gap: 12px; margin: 14px 0 12px; flex-wrap: wrap; }
 .play {
-  width: 36px; height: 36px; border-radius: 50%; border: 0; cursor: pointer;
-  background: var(--ink); color: var(--surface); font-size: 14px;
+  width: 38px; height: 38px; border-radius: 50%; border: 0; cursor: pointer;
+  background: var(--ink); color: var(--surface); font-size: 14px; flex: none;
 }
-.hear { display: inline-flex; align-items: center; gap: 4px; }
-.hear button {
-  border: 1px solid var(--border); background: transparent; border-radius: 7px;
-  padding: 3px 9px; cursor: pointer; color: var(--ink-2);
-}
-.hear button[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
-.legend { display: flex; gap: 14px; margin-left: auto; color: var(--ink-2); font-size: 12.5px; flex-wrap: wrap; }
-.key { display: inline-flex; align-items: center; gap: 6px; }
-.swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
-.canvaswrap { position: relative; }
-canvas { display: block; width: 100%; cursor: crosshair; border-radius: 8px; }
-canvas.overview { cursor: pointer; margin-bottom: 4px; background: var(--surface-2); }
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; background: transparent; padding: 4px 10px; cursor: pointer; color: var(--ink); font-size: 13px; }
+.seg button + button { border-left: 1px solid var(--border); }
+.seg button[aria-pressed="true"] { background: var(--selected-bg); color: var(--selected-ink); font-weight: 600; }
+.hint { margin-left: auto; color: var(--muted); font-size: 12.5px; }
+
+.timeline { display: grid; grid-template-columns: 156px 1fr; }
+.labels { display: flex; flex-direction: column; }
+.label { display: flex; flex-direction: column; justify-content: center; padding-right: 10px; }
+.label b { font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+.label .sub { color: var(--muted); font-size: 11.5px; }
+.dot { width: 9px; height: 9px; border-radius: 3px; display: inline-block; flex: none; }
+canvas { display: block; width: 100%; }
+#timeline-canvas { cursor: pointer; }
+#overview { cursor: grab; border-radius: 6px; background: var(--surface-2); }
 .tip {
   position: absolute; pointer-events: none; z-index: 5; max-width: 340px;
   background: var(--ink); color: var(--surface); padding: 6px 9px; border-radius: 8px;
   font-size: 12.5px; box-shadow: var(--shadow); display: none;
 }
-.findings { list-style: none; margin: 10px 0 0; padding: 0; }
-.findings li button {
-  display: flex; gap: 10px; width: 100%; text-align: left; align-items: baseline;
-  border: 0; background: transparent; padding: 6px 8px; border-radius: 8px; cursor: pointer;
+
+/* Problems in this call */
+.problems { list-style: none; margin: 16px 0 0; padding: 0; border-top: 1px solid var(--hairline); }
+.problems > li { border-bottom: 1px solid var(--hairline); }
+.prob { display: flex; gap: 10px; width: 100%; text-align: left; align-items: baseline; border: 0; background: transparent; padding: 9px 6px; cursor: pointer; border-radius: 8px; }
+.prob:hover, .prob[aria-current="true"] { background: var(--surface-2); }
+.prob .when { color: var(--muted); min-width: 58px; font-variant-numeric: tabular-nums; }
+.prob .kind { font-weight: 600; white-space: nowrap; }
+.prob .count { color: var(--muted); font-weight: 500; }
+.times { display: flex; flex-wrap: wrap; gap: 4px; padding: 0 6px 10px 74px; }
+.chip { border: 1px solid var(--border); border-radius: 6px; background: transparent; padding: 1px 7px; cursor: pointer; font-size: 12px; font-variant-numeric: tabular-nums; }
+.chip[aria-current="true"] { background: var(--selected-bg); color: var(--selected-ink); border-color: var(--selected-bg); font-weight: 600; }
+.sev { font-weight: 700; }
+.sev.fail { color: var(--critical-ink); }
+.sev.warn { color: var(--warn-ink); }
+.status.pass { color: var(--good-ink); font-weight: 700; }
+.status.fail { color: var(--critical-ink); font-weight: 700; }
+.note { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+.error-box { border: 1px solid var(--critical); color: var(--critical-ink); border-radius: 8px; padding: 8px 10px; margin-top: 10px; white-space: pre-wrap; }
+
+/* 4. Details */
+details.more { margin-top: 28px; }
+details.more > summary { cursor: pointer; font-weight: 600; color: var(--ink-2); padding: 6px 0; }
+.scen { padding: 14px 16px; margin-top: 12px; }
+.scen header { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.scen p { margin: 4px 0 10px; color: var(--ink-2); }
+table { border-collapse: collapse; width: 100%; }
+td, th { padding: 5px 10px 5px 0; text-align: left; vertical-align: baseline; }
+th { font-weight: 500; color: var(--muted); font-size: 12px; border-bottom: 1px solid var(--hairline); white-space: nowrap; }
+.aggs td { border-bottom: 1px solid var(--hairline); }
+.aggs tr:last-child td { border-bottom: 0; }
+.aggs td.num { white-space: nowrap; }
+dl.glossary { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 12px 0 0; }
+dl.glossary dt { font-weight: 600; }
+dl.glossary dd { margin: 0; color: var(--ink-2); }
+
+/* ⓘ explanations: hover or keyboard focus shows the text; screen readers get it as the label */
+.info {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--axis); background: transparent;
+  color: var(--muted); font-size: 10.5px; font-weight: 700; cursor: help; padding: 0; line-height: 1;
+  font-family: Georgia, serif; font-style: italic;
 }
-.findings li button:hover, .findings li button[aria-current="true"] { background: var(--surface-2); }
-.findings .when { color: var(--muted); min-width: 64px; }
-.pin { font-weight: 700; }
-.pin.fail { color: var(--critical-ink); }
-.pin.warn { color: var(--warn-ink); }
-details { margin-top: 12px; }
-summary { cursor: pointer; color: var(--ink-2); }
-.turns td { border-bottom: 1px solid var(--hairline); font-size: 13px; }
-.note { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
-.error-box {
-  border: 1px solid var(--critical); color: var(--critical-ink); border-radius: 8px;
-  padding: 8px 10px; margin-top: 10px; white-space: pre-wrap;
+.info:hover::after, .info:focus::after {
+  content: attr(data-tip); position: absolute; left: 0; top: calc(100% + 6px);
+  width: max-content; max-width: 280px; background: var(--ink); color: var(--surface); padding: 7px 10px;
+  border-radius: 8px; font: 400 12.5px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+  text-align: left; z-index: 20; box-shadow: var(--shadow); white-space: normal;
 }
 
-/* Keyboard help */
-dialog {
-  border: 1px solid var(--border); border-radius: 12px; background: var(--surface);
-  color: var(--ink); padding: 18px 20px; box-shadow: var(--shadow);
-}
+dialog { border: 1px solid var(--border); border-radius: 14px; background: var(--surface); color: var(--ink); padding: 18px 22px; box-shadow: var(--shadow); }
 dialog::backdrop { background: rgba(0, 0, 0, 0.35); }
-kbd {
-  font: 12px ui-monospace, Menlo, monospace; border: 1px solid var(--border);
-  border-bottom-width: 2px; border-radius: 5px; padding: 1px 5px; background: var(--surface-2);
+kbd { font: 12px ui-monospace, Menlo, monospace; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 5px; padding: 1px 5px; background: var(--surface-2); }
+@media (max-width: 700px) {
+  .sentence { font-size: 18px; }
+  .timeline { grid-template-columns: 84px 1fr; }
+  .label .sub, .hint { display: none; }
 }
 </style>
 </head>
 <body>
-<div class="wrap" id="app"></div>
+<main class="wrap" id="app"></main>
 <audio id="audio" preload="auto"></audio>
 <dialog id="help">
   <h3 style="margin-top:0">Keyboard shortcuts</h3>
   <table>
     <tr><td><kbd>Space</kbd></td><td>Play / pause</td></tr>
-    <tr><td><kbd>N</kbd> <kbd>P</kbd></td><td>Next / previous failure (plays from just before it)</td></tr>
+    <tr><td><kbd>N</kbd> <kbd>P</kbd></td><td>Next / previous problem (plays from just before it)</td></tr>
     <tr><td><kbd>J</kbd> <kbd>K</kbd></td><td>Next / previous call</td></tr>
     <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Back / forward 1 s (<kbd>Shift</kbd>: 5 s)</td></tr>
     <tr><td><kbd>+</kbd> <kbd>−</kbd> <kbd>0</kbd></td><td>Zoom in / out / whole call (or drag the whole-call strip)</td></tr>
@@ -239,20 +235,22 @@ kbd {
  * @typedef {{who: "caller"|"agent", start: number, end: number, text: string}} SpeechTurn
  * @typedef {{t: number, end: number|null, type: string, id: string|null, text: string|null, phase: string|null, data: Object<string, unknown>}} ChaosMark
  * @typedef {{t: number, v: number}} LatencyPoint
- * @typedef {{name: string, value: number|null, unit: string, threshold: number|null, comparator: string, passed: boolean|null, method: string}} MetricRow
  * @typedef {{call_id: string, scenario_id: string, trial: number, seed: string, passed: boolean, error: string|null,
  *   failure_reasons: string[], findings: Finding[], review: {check: string, heard: string|null, reason: string, t_s: number|null}[],
- *   metrics: MetricRow[], duration_s?: number, end_reason?: string, chaos?: ChaosMark[], speech?: SpeechTurn[],
+ *   duration_s?: number, end_reason?: string, chaos?: ChaosMark[], speech?: SpeechTurn[],
  *   latency?: LatencyPoint[], latency_limit?: number|null, remeasured?: boolean,
  *   peaks?: {caller: number[], agent: number[]}, audio_s?: number, audio?: string}} Call
  * @typedef {{name: string, value: number|null, ci_low: number|null, ci_high: number|null, n: number, unit: string,
  *   threshold: number|null, comparator: string, passed: boolean|null}} Aggregate
- * @typedef {{metric: string, baseline: number|null, current: number|null, delta: number|null,
- *   direction: string, regressed: boolean}} Diff
- * @typedef {{scenario_id: string, agent: string, passed: boolean, failure_reasons: string[],
+ * @typedef {{metric: string, baseline: number|null, current: number|null, delta: number|null, direction: string, regressed: boolean}} Diff
+ * @typedef {{scenario_id: string, agent: string, passed: boolean, sentence: string, failure_reasons: string[],
  *   aggregates: Aggregate[], baseline: Diff[], calls: Call[]}} Scenario
+ * @typedef {{title: string, value: string|null, limit: string|null, detail: string, scenario_id: string,
+ *   call_id: string|null, t_s: number|null, trial: number|null}} Tile
  * @typedef {{run: {run_id: string, created_at: string, callback_version: string, git_sha: string|null, mode: string,
- *   duration_s: number, exit_code: number, passed: boolean, baseline_name: string|null}, scenarios: Scenario[]}} RunReport
+ *   duration_s: number, exit_code: number, passed: boolean, baseline_name: string|null},
+ *   summary: {sentence: string, tiles: Tile[]}, scenarios: Scenario[]}} RunReport
+ * @typedef {{key: string, label: string, severity: "fail"|"warn", items: number[]}} Group
  */
 
 /** @type {RunReport} */
@@ -260,16 +258,59 @@ const DATA = JSON.parse(/** @type {HTMLElement} */ (document.getElementById("rep
 const app = /** @type {HTMLElement} */ (document.getElementById("app"));
 const audio = /** @type {HTMLAudioElement} */ (document.getElementById("audio"));
 const help = /** @type {HTMLDialogElement} */ (document.getElementById("help"));
-
 /** @type {Call[]} */
 const CALLS = DATA.scenarios.flatMap((s) => s.calls);
 const PRE_ROLL_S = 0.75;
+const FOCUS_SPAN_S = 14;
 
 const state = {
   /** @type {Call|null} */ call: null,
-  /** index into the current call's findings, -1 for none */ finding: -1,
+  /** index into the call's findings; -1 for none */ finding: -1,
   view: { t0: 0, t1: 1 },
   /** @type {number|null} */ raf: null,
+};
+
+// ---------- words ----------
+
+/** Short explanations for every term the page uses: [term, explanation]. */
+const GLOSSARY = /** @type {Object<string, [string, string]>} */ ({
+  p95: ["p95 (95th percentile)", "95 out of every 100 replies were faster than this. It shows the slow cases without letting one outlier decide."],
+  p50: ["p50 (median)", "The typical value: half were faster, half slower."],
+  range: ["95% range", "Where the true value probably lies, judging from only these calls. More calls make it narrower."],
+  limit: ["Limit", "The pass/fail threshold set in the scenario. Only these hard checks can fail a run."],
+  wait: ["Wait before reply", "From the moment the caller stops talking to the agent's first sound, measured on the recording. Each bar is one reply."],
+  yield: ["Time to yield", "When the caller cuts in, how long the agent keeps talking before it stops."],
+  talkover: ["Talk-over", "The share of the caller's speech that the agent talked over."],
+  falseyield: ["False yield", "The agent stopped talking for a “mm-hmm” or “okay” it should have ignored."],
+  silence: ["Silence check-in", "When the caller goes quiet, how long before the agent checks in."],
+  passed: ["Calls passed", "Calls in which every hard check passed."],
+  events: ["Events", "Amber ◆ marks a disturbance Callback caused on purpose (an interruption, noise, silence). Red ▼ marks a problem; hover it for one sentence."],
+  caller: ["Caller", "The simulated caller, recorded on the left channel. Shaded blocks are where it was speaking."],
+  agent: ["Agent", "Your agent, recorded on the right channel. Shaded blocks are where it was speaking."],
+});
+
+/** @type {Object<string, string>} */
+const METRIC_LABELS = {
+  task_success_rate: "Task success", call_pass_rate: "Calls passed",
+  response_latency_p95_s: "Reply delay, p95", response_latency_p50_s: "Reply delay, p50",
+  time_to_yield_p95_s: "Time to yield, p95", talk_over_ratio: "Talk-over", false_yields: "False yields",
+  silence_reprompt_s: "Silence check-in", entity_fidelity: "Facts correct", policy_violations: "Policy violations",
+};
+/** @type {Object<string, string>} */
+const METRIC_TERMS = {
+  response_latency_p95_s: "p95", response_latency_p50_s: "p50", time_to_yield_p95_s: "yield",
+  talk_over_ratio: "talkover", false_yields: "falseyield", silence_reprompt_s: "silence", call_pass_rate: "passed",
+};
+/** @type {Object<string, string>} */
+const FINDING_LABELS = {
+  response_latency: "Slow reply", time_to_yield: "Late to yield", talk_over: "Talk-over",
+  false_yield: "False yield", silence_reprompt: "No check-in", task_success: "Task not done",
+  entity_fidelity: "Wrong fact", policy_violations: "Policy broken",
+};
+/** @type {Object<string, number>} */
+const FINDING_WEIGHT = {
+  task_success: 0, entity_fidelity: 1, policy_violations: 2, time_to_yield: 3, false_yield: 4,
+  silence_reprompt: 5, talk_over: 6, response_latency: 7,
 };
 
 // ---------- small helpers ----------
@@ -290,6 +331,12 @@ function h(tag, attrs = {}, children = []) {
   }
   for (const c of children) if (c !== null && c !== undefined && c !== false) el.append(c);
   return el;
+}
+
+/** An ⓘ that explains a term on hover or keyboard focus. @param {string} key */
+function info(key) {
+  const [term, text] = GLOSSARY[key] || [key, ""];
+  return h("button", { class: "info", type: "button", "data-tip": text, "aria-label": `${term}: ${text}` }, ["i"]);
 }
 
 /** @param {number|null|undefined} v @param {string} unit */
@@ -315,36 +362,18 @@ function css(name) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
-const METRIC_LABELS = /** @type {Object<string, string>} */ ({
-  task_success_rate: "Task success",
-  call_pass_rate: "Calls passed",
-  response_latency_p95_s: "Response latency p95",
-  response_latency_p50_s: "Response latency p50",
-  time_to_yield_p95_s: "Time to yield p95",
-  talk_over_ratio: "Talk-over",
-  false_yields: "False yields",
-  silence_reprompt_s: "Silence reprompt",
-  entity_fidelity: "Facts correct",
-  policy_violations: "Policy violations",
-});
-
-const FINDING_LABELS = /** @type {Object<string, string>} */ ({
-  response_latency: "Slow answer",
-  time_to_yield: "Late to yield",
-  talk_over: "Talk-over",
-  false_yield: "False yield",
-  silence_reprompt: "Silence",
-  task_success: "Task",
-  entity_fidelity: "Fact",
-  policy_violations: "Policy",
-});
-
-/** Which failure a call opens on: the one a chaos event caused, else the most telling. */
-const FINDING_WEIGHT = /** @type {Object<string, number>} */ ({
-  task_success: 0, entity_fidelity: 1, policy_violations: 2, time_to_yield: 3, false_yield: 4,
-  silence_reprompt: 5, talk_over: 6, response_latency: 7,
-});
 /** @param {Call} c */
+function statusMark(c) {
+  if (c.error) return h("span", { class: "status fail", "aria-label": "could not run" }, ["!"]);
+  return c.passed ? h("span", { class: "status pass", "aria-label": "passed" }, ["✓"]) : h("span", { class: "status fail", "aria-label": "failed" }, ["✕"]);
+}
+
+/** @param {Finding} f */
+function findingLabel(f) {
+  return /never answered/i.test(f.message) ? "Never answered" : FINDING_LABELS[f.metric] || f.metric;
+}
+
+/** Which problem a call opens on: one a chaos event caused, else the most serious. @param {Call} c */
 function primaryFinding(c) {
   let best = -1, bestScore = Infinity;
   c.findings.forEach((f, i) => {
@@ -355,240 +384,241 @@ function primaryFinding(c) {
   return best;
 }
 
-/** Metric names in a reason → the words people use. @param {string} reason */
-function humanize(reason) {
-  return reason
-    .replace(/\b([a-z_]+_(?:s|ratio|rate|yields|violations|fidelity|success))\b/g, (m) => METRIC_LABELS[m] || FINDING_LABELS[m] || m)
-    .replace(/95% CI/g, "95% range");
+/**
+ * Repeated problems of one kind become one group, so the unique ones stand out.
+ * The primary problem's group comes first, then failures before warnings, by seriousness.
+ * @param {Call} c @returns {Group[]}
+ */
+function groupFindings(c) {
+  /** @type {Map<string, Group>} */
+  const groups = new Map();
+  c.findings.forEach((f, i) => {
+    const label = findingLabel(f);
+    const key = `${label}:${f.severity}`;
+    const g = groups.get(key) || { key, label, severity: f.severity, items: [] };
+    g.items.push(i);
+    groups.set(key, g);
+  });
+  const primary = primaryFinding(c);
+  return [...groups.values()].sort((a, b) => {
+    if (a.items.includes(primary)) return -1;
+    if (b.items.includes(primary)) return 1;
+    if (a.severity !== b.severity) return a.severity === "fail" ? -1 : 1;
+    return (FINDING_WEIGHT[c.findings[a.items[0]].metric] ?? 50) - (FINDING_WEIGHT[c.findings[b.items[0]].metric] ?? 50);
+  });
 }
 
-/** A failed across-call number as one sentence. @param {Aggregate} a */
-function aggregateReason(a) {
-  const label = METRIC_LABELS[a.name] || a.name;
-  const side = a.comparator === "<=" ? "over" : "under";
-  const range = a.ci_low !== null && a.ci_high !== null ? ` (95% range ${fmt(a.ci_low, a.unit)} – ${fmt(a.ci_high, a.unit)})` : "";
-  return `${label} ${fmt(a.value, a.unit)}, ${side} the ${fmt(a.threshold, a.unit)} limit${range}.`;
+/** "2.15–2.22 s (limit 1.5 s)" from messages like "took 2.15 s … (limit 1.50 s)". @param {Call} c @param {Group} g */
+function groupRange(c, g) {
+  const nums = g.items.map((i) => Number((c.findings[i].message.match(/(\d+\.\d+) s/) || [])[1])).filter((n) => !Number.isNaN(n));
+  if (nums.length < 2) return "";
+  const lo = Math.min(...nums), hi = Math.max(...nums);
+  const limit = (c.findings[g.items[0]].message.match(/limit (\d+\.\d+) s/) || [])[1];
+  return `${lo.toFixed(2)}–${hi.toFixed(2)} s${limit ? ` (limit ${Number(limit)} s)` : ""}`;
 }
 
-// ---------- header and scenario cards ----------
+// ---------- 1 + 2: verdict, one sentence, problem tiles ----------
 
-function renderHeader() {
+function renderTop() {
   const run = DATA.run;
   const word = run.exit_code === 0 ? "PASS" : run.exit_code === 1 ? "FAIL" : "ERROR";
   const cls = run.exit_code === 0 ? "pass" : run.exit_code === 1 ? "fail" : "error";
-  const passedScenarios = DATA.scenarios.filter((s) => s.passed).length;
-  const regressions = DATA.scenarios.flatMap((s) => s.baseline).filter((d) => d.regressed).length;
-  const calls = CALLS.length;
-  const passedCalls = CALLS.filter((c) => c.passed).length;
-  const headline = [
-    `${passedScenarios} of ${DATA.scenarios.length} scenario${DATA.scenarios.length === 1 ? "" : "s"} passed`,
-    `${passedCalls} of ${calls} call${calls === 1 ? "" : "s"} passed`,
-    run.baseline_name ? `${regressions} regression${regressions === 1 ? "" : "s"} vs ${run.baseline_name}` : null,
-  ].filter(Boolean).join(" · ");
+  const scen = DATA.scenarios;
+  const what = scen.length === 1
+    ? `${scen[0].scenario_id} · ${CALLS.length} call${CALLS.length === 1 ? "" : "s"} · ${scen[0].agent}`
+    : `${scen.length} scenarios · ${CALLS.length} calls`;
   const when = new Date(run.created_at);
+  const tiles = DATA.summary.tiles.map((t) => h("article", { class: "panel tile" }, [
+    h("h3", {}, [t.title]),
+    t.value ? h("div", { class: "big num" }, [t.value, t.limit ? h("small", {}, [t.limit.startsWith("was") ? t.limit : `limit ${t.limit.replace(/^[≤≥] /, "")}`]) : null]) : null,
+    h("div", { class: "detail" }, [t.detail, scen.length > 1 ? ` · ${t.scenario_id}` : ""]),
+    t.call_id !== null && t.t_s !== null ? h("button", {
+      class: "hearit", onclick: () => hearAt(/** @type {string} */ (t.call_id), /** @type {number} */ (t.t_s)),
+    }, [`▶ Hear it · trial ${t.trial}, ${clock(t.t_s)}`]) : null,
+  ]));
   return h("header", {}, [
-    h("div", { class: "verdict" }, [
+    h("div", { class: "top" }, [
       h("span", { class: `badge ${cls}`, role: "status" }, [word === "PASS" ? "✓ PASS" : word === "FAIL" ? "✕ FAIL" : "! ERROR"]),
-      h("h1", {}, [headline]),
+      h("span", { class: "what" }, [what]),
       h("div", { class: "toolbar" }, [
         h("button", { class: "ghost", onclick: toggleTheme, title: "Light / dark (T)" }, ["◐ Theme"]),
         h("button", { class: "ghost", onclick: () => help.showModal(), title: "Keyboard shortcuts (?)" }, ["⌨ Keys"]),
       ]),
     ]),
+    h("p", { class: "sentence" }, [DATA.summary.sentence]),
     h("div", { class: "meta num" }, [
-      h("span", {}, [`run ${run.run_id}`]),
-      h("span", {}, [when.toLocaleString()]),
-      h("span", {}, [`exit ${run.exit_code}`]),
-      h("span", {}, [`${Math.round(run.duration_s)} s`]),
-      run.git_sha ? h("span", { class: "mono" }, [run.git_sha.slice(0, 7)]) : null,
+      h("span", {}, [`run ${run.run_id}`]), h("span", {}, [when.toLocaleString()]),
+      h("span", {}, [`exit code ${run.exit_code}`]), h("span", {}, [`${Math.round(run.duration_s)} s`]),
+      run.baseline_name ? h("span", {}, [`compared with baseline ${run.baseline_name}`]) : null,
+      run.git_sha ? h("span", {}, [`commit ${run.git_sha.slice(0, 7)}`]) : null,
       h("span", {}, [`callback ${run.callback_version}`]),
-      h("span", {}, [`caller ${run.mode}`]),
     ]),
+    tiles.length ? h("div", { class: "tiles" }, tiles) : null,
   ]);
 }
 
-/** @param {Scenario} s */
-function renderCard(s) {
-  const regressed = s.baseline.some((d) => d.regressed);
-  const ok = s.passed && !regressed;
-  const diffs = new Map(s.baseline.map((d) => [d.metric, d]));
-  const rows = s.aggregates.map((a) => {
-    const d = diffs.get(a.name);
-    const mark = a.passed === null ? h("span", { class: "muted", title: "No limit: shown for information" }, ["–"])
-      : a.passed ? h("span", { class: "status pass" }, ["✓"]) : h("span", { class: "status fail" }, ["✕ over"]);
-    const range = a.ci_low !== null && a.ci_high !== null ? `${fmt(a.ci_low, a.unit)} – ${fmt(a.ci_high, a.unit)}` : "";
-    const limit = a.threshold !== null ? `${a.comparator === "<=" ? "≤" : "≥"} ${fmt(a.threshold, a.unit)}` : "";
-    return h("tr", {}, [
-      h("td", {}, [METRIC_LABELS[a.name] || a.name]),
-      h("td", { class: "num" }, [h("b", {}, [fmt(a.value, a.unit)])]),
-      h("td", { class: "num muted" }, [range]),
-      h("td", { class: "num muted" }, [limit]),
-      h("td", {}, [mark]),
-      h("td", { class: "num" }, [d ? renderDiff(d, a.unit) : ""]),
-    ]);
-  });
-  return h("article", { class: "card" }, [
-    h("header", {}, [
-      h("span", { class: `status ${ok ? "pass" : "fail"}` }, [ok ? "✓ Pass" : regressed && s.passed ? "✕ Regressed" : "✕ Fail"]),
-      h("b", {}, [s.scenario_id]),
-      h("span", { class: "muted" }, [`${s.agent} · ${s.calls.length} call${s.calls.length === 1 ? "" : "s"}`]),
-    ]),
-    !rows.length ? h("p", { class: "muted" }, ["No across-call numbers: this run was made by an older Callback."]) : h("table", { class: "aggs" }, [
-      h("thead", {}, [h("tr", {}, [
-        h("th", {}, ["Across calls"]), h("th", {}, ["Value"]), h("th", {}, ["95% range"]),
-        h("th", {}, ["Limit"]), h("th", {}, [""]), h("th", {}, [DATA.run.baseline_name ? `vs ${DATA.run.baseline_name}` : ""]),
-      ])]),
-      h("tbody", {}, rows),
-    ]),
-    cardReasons(s),
-  ]);
+/** Open the call, jump to the moment and play it. @param {string} callId @param {number} t */
+function hearAt(callId, t) {
+  const c = CALLS.find((x) => x.call_id === callId);
+  if (!c) return;
+  if (state.call !== c) selectCall(c);
+  const i = c.findings.findIndex((f) => Math.abs(f.t_s - t) < 0.01);
+  if (i >= 0) jumpTo(i, true);
+  else {
+    audio.currentTime = Math.max(0, t - PRE_ROLL_S);
+    state.view = around(t, c.audio_s || c.duration_s || 1);
+    if (c.audio) audio.play();
+    draw();
+  }
+  document.getElementById("call")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-/** Failed across-call numbers from the data, then failures no number covers. @param {Scenario} s */
-function cardReasons(s) {
-  const fromAggregates = s.aggregates.filter((a) => a.passed === false).map(aggregateReason);
-  const regressions = s.baseline.filter((d) => d.regressed).map((d) => {
-    const unit = s.aggregates.find((a) => a.name === d.metric)?.unit || "";
-    return `${METRIC_LABELS[d.metric] || d.metric} regressed: ${fmt(d.baseline, unit)} → ${fmt(d.current, unit)} against ${DATA.run.baseline_name}.`;
-  });
-  const other = s.failure_reasons.filter((r) => !s.aggregates.length || /^trial \d+:/.test(r)).map(humanize);
-  const all = [...fromAggregates, ...regressions, ...other];
-  return all.length ? h("ul", { class: "reasons" }, all.map((r) => h("li", {}, [r]))) : null;
-}
+// ---------- 3: the call ----------
 
-/** @param {Diff} d @param {string} unit */
-function renderDiff(d, unit) {
-  if (d.delta === null) return h("span", { class: "muted" }, [d.direction]);
-  const arrow = d.direction === "same" ? "=" : d.delta > 0 ? "▲" : "▼";
-  const sign = d.delta > 0 ? "+" : d.delta < 0 ? "−" : "±";
-  const text = `${arrow} ${sign}${fmt(Math.abs(d.delta), unit)}`;
-  if (d.regressed) return h("span", { class: "status fail", title: `was ${fmt(d.baseline, unit)}; beyond noise` }, [`${text} regressed`]);
-  const cls = d.direction === "better" ? "status pass" : "muted";
-  const word = d.direction === "worse" ? " (noise)" : "";
-  return h("span", { class: cls, title: `was ${fmt(d.baseline, unit)}` }, [text + word]);
-}
+const canvas = /** @type {HTMLCanvasElement} */ (h("canvas", { id: "timeline-canvas", role: "img", tabindex: "0" }));
+const overview = /** @type {HTMLCanvasElement} */ (h("canvas", { id: "overview", "aria-label": "Whole call: click or drag to move the view" }));
+const tip = h("div", { class: "tip", role: "tooltip" });
+const callEl = h("section", { class: "panel call", id: "call", "aria-live": "polite" });
 
-// ---------- call list and call view ----------
-
-/** @param {Call} c */
-function callMark(c) {
-  if (c.error) return h("span", { class: "status fail", "aria-label": "error" }, ["!"]);
-  return c.passed ? h("span", { class: "status pass", "aria-label": "passed" }, ["✓"]) : h("span", { class: "status fail", "aria-label": "failed" }, ["✕"]);
-}
-
-function renderCallList() {
-  const list = h("nav", { class: "calllist", "aria-label": "Calls" });
+function renderTabs() {
+  const tabs = h("nav", { class: "tabs", "aria-label": "Calls" });
   for (const s of DATA.scenarios) {
-    list.append(h("div", { class: "group" }, [s.scenario_id]));
+    if (DATA.scenarios.length > 1) tabs.append(h("span", { class: "group" }, [s.scenario_id]));
     for (const c of s.calls) {
-      const fails = c.findings.filter((f) => f.severity === "fail").length;
-      list.append(h("button", {
-        class: "callbtn", "data-call": c.call_id, onclick: () => selectCall(c, true),
-      }, [callMark(c), `Trial ${c.trial}`, h("span", { class: "count" }, [fails ? `${fails} pin${fails === 1 ? "" : "s"}` : ""])]));
+      tabs.append(h("button", { class: "tab", "data-call": c.call_id, onclick: () => selectCall(c, true) }, [statusMark(c), `Trial ${c.trial}`]));
     }
   }
-  return list;
+  return tabs;
 }
 
-const canvas = /** @type {HTMLCanvasElement} */ (h("canvas", { role: "img", tabindex: "0" }));
-const overview = /** @type {HTMLCanvasElement} */ (h("canvas", { class: "overview", "aria-label": "Whole call: click to move the timeline window" }));
-const tip = h("div", { class: "tip", role: "tooltip" });
-const viewEl = h("section", { class: "view", "aria-live": "polite" });
+/** A window of FOCUS_SPAN_S around t, a third of the way in. @param {number} t @param {number} total */
+function around(t, total) {
+  if (total <= FOCUS_SPAN_S * 1.5) return { t0: 0, t1: total };
+  const t0 = Math.min(Math.max(0, t - FOCUS_SPAN_S / 3), total - FOCUS_SPAN_S);
+  return { t0, t1: t0 + FOCUS_SPAN_S };
+}
 
 /** @param {Call} c @param {boolean} [focus] */
 function selectCall(c, focus = false) {
   audio.pause();
   state.call = c;
-  const firstFail = primaryFinding(c);
-  state.finding = firstFail;
+  state.finding = primaryFinding(c);
   const total = c.audio_s || c.duration_s || 1;
-  state.view = firstFail >= 0 ? around(c.findings[firstFail].t_s, total) : { t0: 0, t1: total };
+  state.view = state.finding >= 0 ? around(c.findings[state.finding].t_s, total) : { t0: 0, t1: total };
   if (c.audio) audio.src = c.audio; else audio.removeAttribute("src");
-  if (firstFail >= 0) audio.currentTime = Math.max(0, c.findings[firstFail].t_s - PRE_ROLL_S);
-  for (const b of document.querySelectorAll(".callbtn")) b.setAttribute("aria-current", String(b.getAttribute("data-call") === c.call_id));
+  if (state.finding >= 0) audio.currentTime = Math.max(0, c.findings[state.finding].t_s - PRE_ROLL_S);
+  for (const b of document.querySelectorAll(".tab")) b.setAttribute("aria-current", String(b.getAttribute("data-call") === c.call_id));
   try { history.replaceState(null, "", `#${encodeURIComponent(c.call_id)}`); } catch { /* file: URLs may refuse */ }
-  renderView();
+  renderCall();
   if (focus) canvas.focus();
 }
 
-function renderView() {
+const LAYOUT = { axis: 20, events: 44, lane: 62, gap: 6, gap2: 14, strip: 58, pad: 12 };
+
+/** The row names beside the canvas, as real text; heights match LAYOUT. */
+function rowLabels() {
+  const L = LAYOUT;
+  const limit = state.call ? state.call.latency_limit : null;
+  /** @param {number} hgt @param {(Node|string|null)[]} kids */
+  const row = (hgt, kids) => h("div", { class: "label", style: `height:${hgt}px` }, kids);
+  return h("div", { class: "labels" }, [
+    row(L.axis, []),
+    row(L.events, [h("b", {}, ["Events", info("events")]), h("span", { class: "sub" }, ["◆ chaos · ▼ problem"])]),
+    row(L.lane, [h("b", {}, [h("span", { class: "dot", style: `background:${css("--caller")}` }), "Caller", info("caller")]), h("span", { class: "sub" }, ["left channel"])]),
+    row(L.gap, []),
+    row(L.lane, [h("b", {}, [h("span", { class: "dot", style: `background:${css("--agent")}` }), "Agent", info("agent")]), h("span", { class: "sub" }, ["right channel"])]),
+    row(L.gap2, []),
+    row(L.strip, [h("b", {}, ["Wait before reply", info("wait")]), h("span", { class: "sub" }, [limit ? `dashed line: ${limit} s limit` : "one bar per reply"])]),
+    row(L.pad, []),
+    row(30, [h("b", {}, ["Whole call"]), h("span", { class: "sub" }, ["drag to move"])]),
+  ]);
+}
+
+function renderCall() {
   const c = state.call;
   if (!c) return;
-  const playBtn = h("button", { class: "play", id: "play", onclick: togglePlay, "aria-label": "Play", title: "Play / pause (Space)" }, ["▶"]);
-  const legend = h("div", { class: "legend" }, [
-    h("span", { class: "key" }, [h("span", { class: "swatch", style: `background:${css("--caller")}` }), "Caller (left channel)"]),
-    h("span", { class: "key" }, [h("span", { class: "swatch", style: `background:${css("--agent")}` }), "Agent (right channel)"]),
-    h("span", { class: "key" }, [h("span", { class: "pin fail" }, ["▼"]), "Failure"]),
-    h("span", { class: "key" }, [h("span", { style: `color:${css("--chaos")}` }, ["◆"]), "Chaos"]),
-  ]);
-  const findings = h("ul", { class: "findings", "aria-label": "Failures in this call" },
-    c.findings.map((f, i) => h("li", {}, [h("button", {
-      "aria-current": String(i === state.finding), onclick: () => jumpTo(i, true),
-    }, [
-      h("span", { class: "when num" }, [`▶ ${clock(f.t_s)}`]),
-      h("span", { class: `pin ${f.severity}` }, [f.severity === "fail" ? "✕" : "▲"]),
-      h("span", { class: "muted" }, [FINDING_LABELS[f.metric] || f.metric]),
-      h("span", {}, [f.message]),
-    ])])));
-  const meta = [
-    `trial ${c.trial}`, c.call_id,
-    c.duration_s !== undefined ? `${c.duration_s.toFixed(1)} s` : null,
+  const facts = [
+    c.duration_s !== undefined ? `${c.duration_s.toFixed(0)} s call` : null,
     c.end_reason ? `ended: ${c.end_reason.replace(/_/g, " ")}` : null,
     `seed ${c.seed}`,
   ].filter(Boolean).join(" · ");
-  viewEl.replaceChildren(...[
-    h("h3", {}, [callMark(c), " ", c.scenario_id]),
-    h("div", { class: "muted num" }, [meta]),
+  const sides = /** @type {const} */ (["both", "caller", "agent"]);
+  const hearSeg = c.audio
+    ? h("div", { class: "seg", role: "group", "aria-label": "Hear" }, sides.map((side, k) => h("button", {
+      "data-side": side, "aria-pressed": String(hear === side), title: `Key ${k + 1}`, onclick: () => setHear(side),
+    }, [side === "both" ? "Both sides" : side === "caller" ? "Caller only" : "Agent only"])))
+    : h("span", { class: "muted" }, ["(audio not embedded)"]);
+  callEl.replaceChildren(...[
+    h("div", { class: "callhead" }, [statusMark(c), h("b", {}, [`${c.scenario_id} · trial ${c.trial}`]), h("span", { class: "muted num" }, [facts])]),
     c.error ? h("div", { class: "error-box" }, [c.error]) : null,
     c.peaks ? h("div", { class: "transport" }, [
-      playBtn,
+      h("button", { class: "play", id: "play", onclick: togglePlay, "aria-label": "Play", title: "Play / pause (Space)" }, ["▶"]),
       h("span", { class: "num", id: "time" }, [`${clock(audio.currentTime || 0)} / ${clock(c.audio_s || 0)}`]),
-      c.audio ? h("div", { class: "hear", role: "group", "aria-label": "Hear" }, [
-        h("span", { class: "muted" }, ["Hear"]),
-        ...(/** @type {const} */ (["both", "caller", "agent"])).map((side, k) => h("button", {
-          "data-side": side, "aria-pressed": String(hear === side), title: `${k + 1}`,
-          onclick: () => setHear(side),
-        }, [side === "both" ? "Both" : side === "caller" ? "Caller" : "Agent"])),
-      ]) : h("span", { class: "muted" }, ["(audio not embedded)"]),
-      legend,
+      hearSeg,
+      h("span", { class: "hint" }, ["Click anywhere on the timeline to listen from there"]),
     ]) : null,
-    c.peaks ? h("div", { class: "canvaswrap" }, [overview, canvas, tip]) : h("p", { class: "muted" }, ["No recording for this call."]),
-    c.findings.length ? findings : h("p", { class: "muted" }, [c.passed ? "No failures in this call." : ""]),
-    !c.findings.length && c.failure_reasons.length ? h("ul", { class: "reasons" }, c.failure_reasons.map((r) => h("li", {}, [humanize(r)]))) : null,
+    c.peaks ? h("div", { class: "timeline" }, [rowLabels(), h("div", { style: "position:relative;min-width:0" }, [canvas, overview, tip])])
+      : h("p", { class: "muted" }, ["No recording for this call."]),
+    renderProblems(c),
     c.remeasured ? h("p", { class: "note" }, ["Speech timings for this older run were re-measured from the recording with the same scorer."]) : null,
-    renderTurnsTable(c),
   ].filter((n) => n !== null));
-  canvas.setAttribute("aria-label", `Timeline of ${c.call_id}: ${c.findings.length} findings. Use N and P to move between failures, Space to play.`);
+  canvas.setAttribute("aria-label", `Timeline of ${c.call_id} with ${c.findings.length} problems. N and P move between problems, Space plays.`);
   requestAnimationFrame(draw);
 }
 
-/** @param {Call} c */
-function renderTurnsTable(c) {
-  if (!c.speech || !c.speech.length) return null;
-  const rows = c.speech.map((t) => h("tr", {}, [
-    h("td", { class: "num" }, [clock(t.start)]),
-    h("td", { class: "num muted" }, [`${(t.end - t.start).toFixed(2)} s`]),
-    h("td", {}, [t.who === "caller" ? "Caller" : "Agent"]),
-    h("td", {}, [t.text || h("span", { class: "muted" }, ["(not transcribed)"])]),
-  ]));
-  return h("details", {}, [
-    h("summary", {}, ["Speech and timings as a table"]),
-    h("table", { class: "turns" }, [h("thead", {}, [h("tr", {}, [h("th", {}, ["Start"]), h("th", {}, ["Length"]), h("th", {}, ["Who"]), h("th", {}, ["Said"])])]), h("tbody", {}, rows)]),
-  ]);
+/** Problems in this call, with repeats grouped. @param {Call} c */
+function renderProblems(c) {
+  if (!c.findings.length) {
+    const why = c.failure_reasons.length ? c.failure_reasons.join(" ") : "No problems in this call.";
+    return h("p", { class: c.passed ? "muted" : "sev fail", style: "margin-top:14px" }, [why]);
+  }
+  const list = h("ul", { class: "problems", "aria-label": "Problems in this call" });
+  for (const g of groupFindings(c)) {
+    const first = c.findings[g.items[0]];
+    const mark = h("span", { class: `sev ${g.severity}` }, [g.severity === "fail" ? "✕" : "▲"]);
+    if (g.items.length === 1) {
+      const i = g.items[0];
+      list.append(h("li", {}, [h("button", { class: "prob", "data-i": String(i), onclick: () => jumpTo(i, true) }, [
+        h("span", { class: "when" }, [`▶ ${clock(first.t_s)}`]), mark, h("span", { class: "kind" }, [g.label]), h("span", {}, [first.message]),
+      ])]));
+      continue;
+    }
+    list.append(h("li", {}, [
+      h("button", { class: "prob", "data-group": g.key, onclick: () => jumpTo(g.items[0], true) }, [
+        h("span", { class: "when" }, [`▶ ${clock(first.t_s)}`]), mark,
+        h("span", { class: "kind" }, [g.label, " ", h("span", { class: "count" }, [`×${g.items.length}`])]),
+        h("span", { class: "muted" }, [groupRange(c, g) || first.message]),
+      ]),
+      h("div", { class: "times", role: "group", "aria-label": `${g.label}: each time` }, g.items.map((i) => h("button", {
+        class: "chip", "data-i": String(i), onclick: () => jumpTo(i, true), title: c.findings[i].message,
+      }, [clock(c.findings[i].t_s)]))),
+    ]));
+  }
+  queueMicrotask(markCurrent);
+  return list;
+}
+
+/** Highlight the current problem: its row, or its group row and its time chip. */
+function markCurrent() {
+  for (const b of document.querySelectorAll(".prob, .chip")) {
+    const i = b.getAttribute("data-i");
+    let current = i !== null && Number(i) === state.finding;
+    if (!current && b.hasAttribute("data-group")) {
+      const chips = b.parentElement ? b.parentElement.querySelectorAll(".chip") : [];
+      current = [...chips].some((ch) => Number(ch.getAttribute("data-i")) === state.finding);
+    }
+    b.setAttribute("aria-current", String(current));
+  }
 }
 
 // ---------- the timeline canvas ----------
 
-const LAYOUT = { axis: 22, chaos: 18, pins: 30, lane: 64, gap: 6, strip: 56, pad: 10 };
 /** @type {{x0: number, x1: number}} */
 let geom = { x0: 0, x1: 0 };
 /** @type {{x: number, y: number, r: number, text: string, t: number, pin?: number}[]} */
 let hits = [];
 
-/**
- * Size a canvas for the device pixel ratio and return its 2D context.
- * @param {HTMLCanvasElement} cv @param {number} height
- */
+/** Size a canvas for the device pixel ratio and return its 2D context. @param {HTMLCanvasElement} cv @param {number} height */
 function prepare(cv, height) {
   const dpr = window.devicePixelRatio || 1;
   const width = cv.clientWidth || 800;
@@ -605,141 +635,130 @@ function prepare(cv, height) {
   return { g, width };
 }
 
+const FONT = "system-ui, -apple-system, Segoe UI, sans-serif";
+
 function draw() {
   const c = state.call;
   if (!c || !c.peaks || !canvas.isConnected) return;
-  drawOverview(c);
   const L = LAYOUT;
-  const { g, width } = prepare(canvas, L.axis + L.chaos + L.pins + 2 * L.lane + L.gap + 16 + L.strip + L.pad);
+  const { g, width } = prepare(canvas, L.axis + L.events + 2 * L.lane + L.gap + L.gap2 + L.strip + L.pad);
   hits = [];
-
-  const x0 = 64, x1 = width - 12;
+  const x0 = 4, x1 = width - 8;
   const { t0, t1 } = state.view;
   /** @param {number} t */
   const X = (t) => x0 + ((t - t0) / (t1 - t0)) * (x1 - x0);
-  const yChaos = L.axis;
-  const yPins = yChaos + L.chaos;
-  const yCaller = yPins + L.pins;
+  const yEvents = L.axis;
+  const yCaller = yEvents + L.events;
   const yAgent = yCaller + L.lane + L.gap;
-  const yStrip = yAgent + L.lane + 16;
+  const yStrip = yAgent + L.lane + L.gap2;
+  const yEnd = yStrip + L.strip;
   geom = { x0, x1 };
-
-  // time axis
   const span = t1 - t0;
-  const step = [0.5, 1, 2, 5, 10, 15, 30, 60].find((s) => span / s <= 12) || 120;
-  g.fillStyle = css("--muted");
+
+  // time axis and gridlines
+  const step = [0.5, 1, 2, 5, 10, 15, 30, 60].find((s) => span / s <= 10) || 120;
   g.strokeStyle = css("--hairline");
-  g.lineWidth = 1;
+  g.fillStyle = css("--muted");
+  g.textAlign = "center";
   for (let t = Math.ceil(t0 / step) * step; t <= t1; t += step) {
     const x = Math.round(X(t)) + 0.5;
-    g.beginPath(); g.moveTo(x, L.axis - 4); g.lineTo(x, yStrip + L.strip); g.stroke();
-    g.textAlign = "center";
-    g.fillText(clock(t).replace(/\.0$/, ""), x, 9);
+    g.beginPath(); g.moveTo(x, L.axis - 2); g.lineTo(x, yEnd); g.stroke();
+    if (x > x0 + 16 && x < x1 - 16) g.fillText(clock(t).replace(/\.0$/, ""), x, 9);
   }
 
-  // lane labels (direct labels: identity is never colour alone)
-  g.textAlign = "left";
-  g.fillStyle = css("--ink-2");
-  g.fillText("Caller", 8, yCaller + L.lane / 2);
-  g.fillText("Agent", 8, yAgent + L.lane / 2);
-  g.fillStyle = css("--muted");
-  g.fillText("Chaos", 8, yChaos + L.chaos / 2);
-  g.fillText("Failures", 8, yPins + L.pins / 2);
-  g.fillText("Latency", 8, yStrip + L.strip - 7);
-
-  // the selected failure's span, behind everything
+  // the selected problem's span, behind everything
   const sel = state.finding >= 0 ? c.findings[state.finding] : null;
   if (sel && sel.end_s !== null && sel.end_s > sel.t_s) {
-    g.fillStyle = css("--pin-span");
     const a = Math.max(x0, X(sel.t_s)), b = Math.min(x1, X(sel.end_s));
-    if (b > a) g.fillRect(a, yCaller, Math.max(2, b - a), yAgent + L.lane - yCaller);
+    if (b > a) { g.fillStyle = css("--pin-span"); g.fillRect(a, yCaller, b - a, yAgent + L.lane - yCaller); }
   }
 
-  // turn blocks behind the waveforms
+  // speech blocks and waveforms
   for (const t of c.speech || []) {
     if (t.end < t0 || t.start > t1) continue;
     const y = t.who === "caller" ? yCaller : yAgent;
-    g.fillStyle = css(t.who === "caller" ? "--caller-block" : "--agent-block");
     const a = Math.max(x0, X(t.start)), b = Math.min(x1, X(t.end));
-    roundRect(g, a, y, Math.max(2, b - a), L.lane, 4);
+    g.fillStyle = css(t.who === "caller" ? "--caller-block" : "--agent-block");
+    roundRect(g, a, y, Math.max(2, b - a), L.lane, 5);
     g.fill();
     const who = t.who === "caller" ? "Caller" : "Agent";
-    const label = t.text ? `${who}: “${t.text}”` : `${who} speaking`;
-    hits.push({ x: (a + b) / 2, y: y + L.lane / 2, r: Math.max(6, (b - a) / 2), text: `${label} (${clock(t.start)}–${clock(t.end)})`, t: t.start });
+    hits.push({ x: (a + b) / 2, y: y + L.lane / 2, r: Math.max(6, (b - a) / 2), text: `${t.text ? `${who}: “${t.text}”` : `${who} speaking`} (${clock(t.start)}–${clock(t.end)})`, t: t.start });
   }
-
-  // waveforms, mirrored around each lane's centre
   drawWave(g, c.peaks.caller, c.audio_s || 1, yCaller, L.lane, css("--caller"), X, x0, x1);
   drawWave(g, c.peaks.agent, c.audio_s || 1, yAgent, L.lane, css("--agent"), X, x0, x1);
 
-  // chaos markers
-  g.fillStyle = css("--chaos");
-  g.strokeStyle = css("--chaos");
+  // events row: chaos flags and problem pins, labelled where there is room
+  /** @type {{x: number, t: number, kind: "chaos"|"pin", label: string, text: string, i?: number, sev?: string}[]} */
+  const marks = [];
   for (const m of c.chaos || []) {
     if (m.t < t0 || m.t > t1) continue;
-    const x = X(m.t);
-    g.setLineDash([3, 3]);
-    g.beginPath(); g.moveTo(x, yChaos + L.chaos - 2); g.lineTo(x, yAgent + L.lane); g.stroke();
-    g.setLineDash([]);
-    diamond(g, x, yChaos + L.chaos / 2, 5);
-    const detail = m.text ? `: “${m.text}”` : m.phase ? ` (${m.phase})` : "";
-    hits.push({ x, y: yChaos + L.chaos / 2, r: 9, text: `Chaos · ${m.type.replace(/_/g, " ")}${detail} at ${clock(m.t)}`, t: m.t });
+    const name = m.type.replace(/_/g, "-");
+    const label = name.charAt(0).toUpperCase() + name.slice(1) + (m.phase ? ` ${m.phase}` : "");
+    marks.push({ x: X(m.t), t: m.t, kind: "chaos", label, text: `Chaos · ${label}${m.text ? `: “${m.text}”` : ""} at ${clock(m.t)}` });
   }
+  c.findings.forEach((f, i) => {
+    if (f.t_s < t0 || f.t_s > t1) return;
+    marks.push({ x: X(f.t_s), t: f.t_s, kind: "pin", label: findingLabel(f), text: f.message, i, sev: f.severity });
+  });
+  // the selected problem claims its label slot first; the rest fill in left to right
+  marks.sort((a, b) => (a.i === state.finding ? -1 : b.i === state.finding ? 1 : a.x - b.x));
+  /** @type {[number, number][][]} label spans already taken, per level */
+  const levels = [[], []];
+  for (const m of marks) {
+    const active = m.kind === "pin" && m.i === state.finding;
+    g.font = `${active ? 700 : 600} 11.5px ${FONT}`;
+    const end = m.x + 9 + g.measureText(m.label).width;
+    const level = span <= 40 ? levels.findIndex((taken) => taken.every(([a, b]) => end + 6 < a || m.x - 8 > b)) : -1;
+    if (level >= 0) levels[level].push([m.x - 8, end]);
+    // no room for a label: keep the marker only where it doesn't sit on someone's label
+    const bare = level < 0 ? levels.findIndex((taken) => taken.every(([a, b]) => m.x < a - 7 || m.x > b + 7)) : level;
+    const y = bare === 1 ? yEvents + 31 : yEvents + 12;
+    const col = m.kind === "chaos" ? css("--chaos") : css(m.sev === "fail" ? "--critical" : "--warn");
+    g.strokeStyle = col;
+    g.globalAlpha = m.kind === "chaos" ? 0.9 : active ? 1 : 0.5;
+    g.lineWidth = active ? 2 : 1;
+    if (m.kind === "chaos") g.setLineDash([3, 3]);
+    g.beginPath(); g.moveTo(m.x, bare >= 0 ? y + 6 : yCaller); g.lineTo(m.x, yAgent + L.lane); g.stroke();
+    g.setLineDash([]); g.globalAlpha = 1; g.lineWidth = 1;
+    if (bare >= 0) {
+      if (m.kind === "chaos") { g.fillStyle = col; diamond(g, m.x, y, 5); } else pin(g, m.x, y + 5, col, active);
+    }
+    if (level >= 0) {
+      g.fillStyle = m.kind === "chaos" ? css("--ink-2") : css(m.sev === "fail" ? "--critical-ink" : "--warn-ink");
+      g.textAlign = "left";
+      g.fillText(m.label, m.x + 9, y);
+    }
+    hits.push({ x: m.x, y, r: 10, text: m.text, t: m.t, pin: m.i });
+  }
+  g.font = `12px ${FONT}`;
 
-  // latency strip: one bar per answered caller turn, against the limit
+  // wait before reply: one bar per answered caller turn, against the limit
   const pts = c.latency || [];
   const limit = c.latency_limit || null;
-  const vmax = Math.max(limit ? limit * 1.4 : 0, ...pts.map((p) => p.v), 0.5);
-  const barW = Math.max(6, Math.min(12, (x1 - x0) / (span * 2)));
+  const vmax = Math.max(limit ? limit * 1.5 : 0, ...pts.map((p) => p.v), 0.5);
+  const barW = Math.max(6, Math.min(14, (x1 - x0) / (span * 2)));
   g.strokeStyle = css("--axis");
-  g.beginPath(); g.moveTo(x0, yStrip + L.strip + 0.5); g.lineTo(x1, yStrip + L.strip + 0.5); g.stroke();
+  g.beginPath(); g.moveTo(x0, yEnd + 0.5); g.lineTo(x1, yEnd + 0.5); g.stroke();
   for (const p of pts) {
     if (p.t < t0 || p.t > t1) continue;
-    const hgt = (p.v / vmax) * (L.strip - 4);
+    const hgt = (p.v / vmax) * (L.strip - 6);
     const over = limit !== null && p.v > limit;
     g.fillStyle = over ? css("--critical") : css("--agent");
-    roundTop(g, X(p.t) - barW / 2, yStrip + L.strip - hgt, barW, hgt, 3);
+    roundTop(g, X(p.t) - barW / 2, yEnd - hgt, barW, hgt, 3);
     g.fill();
-    if (span <= 30) {
-      g.fillStyle = css("--ink-2");
+    if (span <= 40) {
+      g.fillStyle = over ? css("--critical-ink") : css("--ink-2");
       g.textAlign = "left";
-      g.fillText(`${p.v.toFixed(2)} s`, X(p.t) + barW / 2 + 4, yStrip + L.strip - hgt + 6);
+      g.fillText(`${p.v.toFixed(2)} s`, X(p.t) + barW / 2 + 4, yEnd - hgt + 7);
     }
-    hits.push({ x: X(p.t), y: yStrip + L.strip - hgt / 2, r: Math.max(8, hgt / 2), text: `Answered after ${p.v.toFixed(2)} s${over ? ` (limit ${limit} s)` : ""} at ${clock(p.t)}`, t: p.t });
+    hits.push({ x: X(p.t), y: yEnd - hgt / 2, r: Math.max(8, hgt / 2), text: `The caller waited ${p.v.toFixed(2)} s for a reply${over ? ` (limit ${limit} s)` : ""}, at ${clock(p.t)}`, t: p.t });
   }
   if (limit !== null) {
-    const y = Math.round(yStrip + L.strip - (limit / vmax) * (L.strip - 4)) + 0.5;
+    const y = Math.round(yEnd - (limit / vmax) * (L.strip - 6)) + 0.5;
     g.strokeStyle = css("--critical");
     g.setLineDash([4, 3]);
     g.beginPath(); g.moveTo(x0, y); g.lineTo(x1, y); g.stroke();
     g.setLineDash([]);
-    g.fillStyle = css("--critical-ink");
-    g.textAlign = "right";
-    g.fillText(`≤ ${limit} s`, x0 - 6, y);
-  }
-
-  // failure pins in their own row, stacked when they would touch
-  /** @type {number[][]} x positions already used per stack level */
-  const levels = [[], [], []];
-  const order = c.findings.map((f, i) => i).filter((i) => c.findings[i].t_s >= t0 && c.findings[i].t_s <= t1)
-    .sort((a, b) => (a === state.finding ? -1 : b === state.finding ? 1 : c.findings[a].t_s - c.findings[b].t_s));
-  for (const i of order) {
-    const f = c.findings[i];
-    const x = X(f.t_s);
-    const active = i === state.finding;
-    let level = levels.findIndex((xs) => xs.every((u) => Math.abs(u - x) >= 15));
-    if (level < 0) level = levels.length - 1;
-    levels[level].push(x);
-    const col = css(f.severity === "fail" ? "--critical" : "--warn");
-    const tip = yPins + L.pins - 1 - level * 9;
-    g.strokeStyle = col;
-    g.globalAlpha = active ? 1 : 0.55;
-    g.lineWidth = active ? 2 : 1;
-    g.beginPath(); g.moveTo(x, tip); g.lineTo(x, yAgent + L.lane); g.stroke();
-    g.globalAlpha = 1;
-    g.lineWidth = 1;
-    pin(g, x, tip, col, active);
-    hits.push({ x, y: tip - 6, r: 10, text: f.message, t: f.t_s, pin: i });
   }
 
   // playhead
@@ -748,36 +767,30 @@ function draw() {
     const x = Math.round(X(now)) + 0.5;
     g.strokeStyle = css("--playhead");
     g.lineWidth = 1.5;
-    g.beginPath(); g.moveTo(x, L.axis - 6); g.lineTo(x, yStrip + L.strip); g.stroke();
+    g.beginPath(); g.moveTo(x, L.axis - 4); g.lineTo(x, yEnd); g.stroke();
     g.lineWidth = 1;
   }
   const timeEl = document.getElementById("time");
   if (timeEl) timeEl.textContent = `${clock(now)} / ${clock(c.audio_s || 0)}`;
+  drawOverview(c);
 }
 
-/**
- * The whole call in one thin strip: speech, failures, chaos, and the window the
- * timeline shows. Click or drag it to move the window.
- * @param {Call} c
- */
+/** The whole call in one strip: speech, problems, chaos, and the visible window. @param {Call} c */
 function drawOverview(c) {
   const total = c.audio_s || c.duration_s || 1;
   const { g, width } = prepare(overview, 30);
-  const x0 = 64, x1 = width - 12;
+  const x0 = 4, x1 = width - 8;
   /** @param {number} t */
   const X = (t) => x0 + (t / total) * (x1 - x0);
-  g.fillStyle = css("--muted");
-  g.textAlign = "left";
-  g.fillText("Call", 8, 15);
   for (const t of c.speech || []) {
     g.fillStyle = css(t.who === "caller" ? "--caller" : "--agent");
-    g.fillRect(X(t.start), t.who === "caller" ? 9 : 17, Math.max(1, X(t.end) - X(t.start)), 5);
+    g.fillRect(X(t.start), t.who === "caller" ? 9 : 16, Math.max(1, X(t.end) - X(t.start)), 5);
   }
   g.fillStyle = css("--chaos");
   for (const m of c.chaos || []) diamond(g, X(m.t), 4, 3);
   c.findings.forEach((f, i) => {
     g.fillStyle = css(f.severity === "fail" ? "--critical" : "--warn");
-    g.fillRect(X(f.t_s) - (i === state.finding ? 1.5 : 1), 24, i === state.finding ? 3 : 2, 6);
+    g.fillRect(X(f.t_s) - (i === state.finding ? 1.5 : 1), 23, i === state.finding ? 3 : 2, 6);
   });
   const { t0, t1 } = state.view;
   if (t0 > 0 || t1 < total) {
@@ -787,9 +800,8 @@ function drawOverview(c) {
     g.stroke();
     g.lineWidth = 1;
   }
-  const now = audio.currentTime || 0;
   g.fillStyle = css("--playhead");
-  g.fillRect(X(now) - 0.75, 0, 1.5, 30);
+  g.fillRect(X(audio.currentTime || 0) - 0.75, 0, 1.5, 30);
 }
 
 /**
@@ -800,44 +812,31 @@ function drawOverview(c) {
 function drawWave(g, peaks, total, y, hgt, color, X, x0, x1) {
   const mid = y + hgt / 2;
   const per = total / peaks.length;
-  g.fillStyle = color;
   const { t0, t1 } = state.view;
   const i0 = Math.max(0, Math.floor(t0 / per));
   const i1 = Math.min(peaks.length - 1, Math.ceil(t1 / per));
   const pxPer = (x1 - x0) / ((t1 - t0) / per);
   const stride = Math.max(1, Math.floor(1.5 / pxPer));
+  g.fillStyle = color;
   for (let i = i0; i <= i1; i += stride) {
     let p = 0;
     for (let k = i; k < i + stride && k < peaks.length; k++) p = Math.max(p, peaks[k]);
-    const a = (p / 100) * (hgt / 2 - 2);
-    const x = X(i * per);
-    g.fillRect(x, mid - Math.max(0.5, a), Math.max(1, pxPer * stride - 0.5), Math.max(1, 2 * a));
+    const a = (p / 100) * (hgt / 2 - 3);
+    g.fillRect(X(i * per), mid - Math.max(0.5, a), Math.max(1, pxPer * stride - 0.5), Math.max(1, 2 * a));
   }
 }
-
 /** @param {CanvasRenderingContext2D} g @param {number} x @param {number} y @param {number} w @param {number} hh @param {number} r */
-function roundRect(g, x, y, w, hh, r) {
-  g.beginPath();
-  g.roundRect(x, y, w, hh, Math.min(r, w / 2));
-}
+function roundRect(g, x, y, w, hh, r) { g.beginPath(); g.roundRect(x, y, w, hh, Math.min(r, w / 2)); }
 /** @param {CanvasRenderingContext2D} g @param {number} x @param {number} y @param {number} w @param {number} hh @param {number} r */
-function roundTop(g, x, y, w, hh, r) {
-  g.beginPath();
-  g.roundRect(x, y, w, Math.max(1, hh), [Math.min(r, hh), Math.min(r, hh), 0, 0]);
-}
+function roundTop(g, x, y, w, hh, r) { g.beginPath(); g.roundRect(x, y, w, Math.max(1, hh), [Math.min(r, hh), Math.min(r, hh), 0, 0]); }
 /** @param {CanvasRenderingContext2D} g @param {number} x @param {number} y @param {number} r */
-function diamond(g, x, y, r) {
-  g.beginPath(); g.moveTo(x, y - r); g.lineTo(x + r, y); g.lineTo(x, y + r); g.lineTo(x - r, y); g.closePath(); g.fill();
-}
+function diamond(g, x, y, r) { g.beginPath(); g.moveTo(x, y - r); g.lineTo(x + r, y); g.lineTo(x, y + r); g.lineTo(x - r, y); g.closePath(); g.fill(); }
 /** @param {CanvasRenderingContext2D} g @param {number} x @param {number} y @param {string} col @param {boolean} active */
 function pin(g, x, y, col, active) {
   const r = active ? 7 : 5.5;
   g.fillStyle = col;
   g.beginPath(); g.moveTo(x, y); g.lineTo(x - r, y - r * 1.6); g.lineTo(x + r, y - r * 1.6); g.closePath(); g.fill();
-  g.strokeStyle = css("--surface");
-  g.lineWidth = 1.5;
-  g.stroke();
-  g.lineWidth = 1;
+  g.strokeStyle = css("--surface"); g.lineWidth = 1.5; g.stroke(); g.lineWidth = 1;
 }
 
 // ---------- interaction ----------
@@ -845,21 +844,28 @@ function pin(g, x, y, col, active) {
 /** @param {MouseEvent} e */
 function timeAt(e) {
   const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const f = (x - geom.x0) / (geom.x1 - geom.x0);
+  const f = (e.clientX - rect.left - geom.x0) / (geom.x1 - geom.x0);
   return state.view.t0 + Math.min(1, Math.max(0, f)) * (state.view.t1 - state.view.t0);
 }
-
+/** @param {number} x @param {number} y */
+function nearestHit(x, y) {
+  let best = null, bestD = Infinity;
+  for (const hit of hits) {
+    const d = Math.hypot(hit.x - x, (hit.y - y) * 1.6);
+    const small = hit.r <= 10;
+    if (d <= (small ? 14 : hit.r) && (small ? d : d + 20) < bestD) { best = hit; bestD = small ? d : d + 20; }
+  }
+  return best;
+}
 canvas.addEventListener("click", (e) => {
   if (!state.call || !state.call.audio) return;
   const rect = canvas.getBoundingClientRect();
   const hit = nearestHit(e.clientX - rect.left, e.clientY - rect.top);
   if (hit && hit.pin !== undefined) { jumpTo(hit.pin, true); return; }
-  const t = hit && hit.r <= 10 ? hit.t : timeAt(e);
-  audio.currentTime = Math.max(0, t - (hit && hit.r <= 10 ? PRE_ROLL_S : 0));
+  const small = hit !== null && hit.r <= 10;
+  audio.currentTime = Math.max(0, (small && hit ? hit.t - PRE_ROLL_S : timeAt(e)));
   audio.play();
 });
-
 canvas.addEventListener("mousemove", (e) => {
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left, y = e.clientY - rect.top;
@@ -867,11 +873,16 @@ canvas.addEventListener("mousemove", (e) => {
   if (!hit) { tip.style.display = "none"; return; }
   tip.textContent = hit.text;
   tip.style.display = "block";
-  const left = Math.min(rect.width - tip.offsetWidth - 4, Math.max(4, x + 12));
-  tip.style.left = `${left}px`;
+  tip.style.left = `${Math.min(rect.width - tip.offsetWidth - 4, Math.max(4, x + 12))}px`;
   tip.style.top = `${Math.max(0, y - tip.offsetHeight - 10)}px`;
 });
 canvas.addEventListener("mouseleave", () => { tip.style.display = "none"; });
+canvas.addEventListener("wheel", (e) => {
+  if (!e.ctrlKey && !e.metaKey && Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+  e.preventDefault();
+  if (e.ctrlKey || e.metaKey) zoom(e.deltaY > 0 ? 1.25 : 0.8, timeAt(e));
+  else pan((e.deltaX / canvas.clientWidth) * (state.view.t1 - state.view.t0));
+}, { passive: false });
 
 /** @param {MouseEvent} e */
 function moveWindow(e) {
@@ -879,11 +890,11 @@ function moveWindow(e) {
   if (!c) return;
   const total = c.audio_s || c.duration_s || 1;
   const rect = overview.getBoundingClientRect();
-  const f = Math.min(1, Math.max(0, (e.clientX - rect.left - 64) / (rect.width - 76)));
-  const span = state.view.t1 - state.view.t0;
-  if (span >= total) state.view = around(f * total, total);
-  const t0 = Math.min(Math.max(0, f * total - span / 2), total - (state.view.t1 - state.view.t0));
-  state.view = { t0, t1: t0 + (state.view.t1 - state.view.t0) };
+  const t = Math.min(1, Math.max(0, (e.clientX - rect.left - 4) / (rect.width - 12))) * total;
+  let span = state.view.t1 - state.view.t0;
+  if (span >= total) span = Math.min(total, FOCUS_SPAN_S);
+  const t0 = Math.min(Math.max(0, t - span / 2), total - span);
+  state.view = { t0, t1: t0 + span };
   draw();
 }
 overview.addEventListener("mousedown", (e) => {
@@ -895,32 +906,6 @@ overview.addEventListener("mousedown", (e) => {
   window.addEventListener("mouseup", up);
 });
 
-canvas.addEventListener("wheel", (e) => {
-  if (!e.ctrlKey && !e.metaKey && Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
-  e.preventDefault();
-  if (e.ctrlKey || e.metaKey) zoom(e.deltaY > 0 ? 1.25 : 0.8, timeAt(e));
-  else pan(e.deltaX / canvas.clientWidth * (state.view.t1 - state.view.t0));
-}, { passive: false });
-
-/** @param {number} x @param {number} y */
-function nearestHit(x, y) {
-  let best = null, bestD = Infinity;
-  for (const hit of hits) {
-    const d = Math.hypot(hit.x - x, (hit.y - y) * 1.6);
-    const reach = hit.r <= 10 ? 14 : hit.r;
-    if (d <= reach && (hit.r <= 10 ? d : d + 20) < bestD) { best = hit; bestD = hit.r <= 10 ? d : d + 20; }
-  }
-  return best;
-}
-
-const FOCUS_SPAN_S = 14;
-/** A window of FOCUS_SPAN_S around t, a third of the way in. @param {number} t @param {number} total */
-function around(t, total) {
-  if (total <= FOCUS_SPAN_S * 1.5) return { t0: 0, t1: total };
-  const t0 = Math.min(Math.max(0, t - FOCUS_SPAN_S / 3), total - FOCUS_SPAN_S);
-  return { t0, t1: t0 + FOCUS_SPAN_S };
-}
-
 /** @param {number} factor @param {number} [centreAt] */
 function zoom(factor, centreAt) {
   const c = state.call;
@@ -929,12 +914,10 @@ function zoom(factor, centreAt) {
   const { t0, t1 } = state.view;
   const centre = centreAt ?? (audio.currentTime || (t0 + t1) / 2);
   const span = Math.min(total, Math.max(2, (t1 - t0) * factor));
-  let a = centre - (centre - t0) * (span / (t1 - t0));
-  a = Math.min(Math.max(0, a), total - span);
+  const a = Math.min(Math.max(0, centre - (centre - t0) * (span / (t1 - t0))), total - span);
   state.view = { t0: a, t1: a + span };
   draw();
 }
-
 /** @param {number} dt */
 function pan(dt) {
   const c = state.call;
@@ -946,17 +929,13 @@ function pan(dt) {
   draw();
 }
 
-// ---------- hear one side ----------
+// ---------- listening ----------
 
 /** @type {"both"|"caller"|"agent"} */
 let hear = "both";
 /** @type {{ctx: AudioContext, gains: GainNode[]}|null} */
 let graph = null;
-
-/**
- * Route the stereo recording: both sides as recorded, or one side in both ears.
- * Built on first use, because browsers only start audio after a user gesture.
- */
+/** Route the stereo recording: as recorded, or one side in both ears (built on first use). */
 function route() {
   if (!graph) {
     const Ctx = window.AudioContext || /** @type {any} */ (window).webkitAudioContext;
@@ -980,19 +959,16 @@ function route() {
   graph.gains.forEach((gain, k) => { gain.gain.value = levels[k]; });
   if (graph.ctx.state === "suspended") graph.ctx.resume();
 }
-
 /** @param {"both"|"caller"|"agent"} side */
 function setHear(side) {
   hear = side;
-  for (const b of document.querySelectorAll(".hear button")) b.setAttribute("aria-pressed", String(b.getAttribute("data-side") === side));
+  for (const b of document.querySelectorAll(".seg button")) b.setAttribute("aria-pressed", String(b.getAttribute("data-side") === side));
   if (graph || side !== "both") route();
 }
-
 function togglePlay() {
   if (!state.call || !state.call.audio) return;
   if (audio.paused) audio.play(); else audio.pause();
 }
-
 /** @param {number} i @param {boolean} play */
 function jumpTo(i, play) {
   const c = state.call;
@@ -1001,35 +977,29 @@ function jumpTo(i, play) {
   const f = c.findings[i];
   audio.currentTime = Math.max(0, f.t_s - PRE_ROLL_S);
   state.view = around(f.t_s, c.audio_s || c.duration_s || 1);
-  for (const [k, b] of document.querySelectorAll(".findings button").entries()) b.setAttribute("aria-current", String(k === i));
+  markCurrent();
   if (play && c.audio) audio.play();
   draw();
 }
-
 /** @param {number} dir */
-function nextFailure(dir) {
+function nextProblem(dir) {
   const c = state.call;
   if (!c || !c.findings.length) return;
   const n = c.findings.length;
   jumpTo(state.finding < 0 ? (dir > 0 ? 0 : n - 1) : (state.finding + dir + n) % n, true);
 }
-
 /** @param {number} dir */
 function nextCall(dir) {
+  if (!CALLS.length) return;
   const i = CALLS.indexOf(/** @type {Call} */ (state.call));
-  const next = CALLS[(i + dir + CALLS.length) % CALLS.length];
-  if (next) selectCall(next);
-  const btn = document.querySelector(`.callbtn[data-call="${CSS.escape(next.call_id)}"]`);
-  if (btn) btn.scrollIntoView({ block: "nearest" });
+  selectCall(CALLS[(i + dir + CALLS.length) % CALLS.length]);
 }
-
 function tick() {
   draw();
   const c = state.call;
   if (c && !audio.paused) {
     const { t0, t1 } = state.view;
-    const now = audio.currentTime;
-    if (now > t1 - (t1 - t0) * 0.05) pan(now - t0 - (t1 - t0) * 0.1);
+    if (audio.currentTime > t1 - (t1 - t0) * 0.05) pan(audio.currentTime - t0 - (t1 - t0) * 0.1);
     state.raf = requestAnimationFrame(tick);
   } else state.raf = null;
 }
@@ -1051,9 +1021,9 @@ document.addEventListener("keydown", (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey || ["INPUT", "TEXTAREA"].includes(target.tagName)) return;
   if (help.open && e.key !== "?") return;
   const k = e.key;
-  if (k === " " && target.tagName !== "BUTTON") { e.preventDefault(); togglePlay(); }
-  else if (k === "n" || k === "N") nextFailure(1);
-  else if (k === "p" || k === "P") nextFailure(-1);
+  if (k === " " && target.tagName !== "BUTTON" && target.tagName !== "SUMMARY") { e.preventDefault(); togglePlay(); }
+  else if (k === "n" || k === "N") nextProblem(1);
+  else if (k === "p" || k === "P") nextProblem(-1);
   else if (k === "j" || k === "J") nextCall(1);
   else if (k === "k" || k === "K") nextCall(-1);
   else if (k === "ArrowRight" || k === "ArrowLeft") {
@@ -1064,12 +1034,68 @@ document.addEventListener("keydown", (e) => {
   else if (k === "+" || k === "=") zoom(0.66);
   else if (k === "-" || k === "_") zoom(1.5);
   else if (k === "0") { const c = state.call; if (c) { state.view = { t0: 0, t1: c.audio_s || c.duration_s || 1 }; draw(); } }
-  else if (k === "t" || k === "T") toggleTheme();
   else if (k === "1") setHear("both");
   else if (k === "2") setHear("caller");
   else if (k === "3") setHear("agent");
+  else if (k === "t" || k === "T") toggleTheme();
   else if (k === "?") { if (help.open) help.close(); else help.showModal(); }
 });
+
+// ---------- 4: details ----------
+
+/** @param {Scenario} s */
+function renderScenario(s) {
+  const regressed = s.baseline.some((d) => d.regressed);
+  const ok = s.passed && !regressed;
+  const diffs = new Map(s.baseline.map((d) => [d.metric, d]));
+  const rows = s.aggregates.map((a) => {
+    const d = diffs.get(a.name);
+    const term = METRIC_TERMS[a.name];
+    return h("tr", {}, [
+      h("td", {}, [METRIC_LABELS[a.name] || a.name, term ? " " : "", term ? info(term) : null]),
+      h("td", { class: "num" }, [h("b", {}, [fmt(a.value, a.unit)])]),
+      h("td", { class: "num muted" }, [a.ci_low !== null && a.ci_high !== null ? `${fmt(a.ci_low, a.unit)} – ${fmt(a.ci_high, a.unit)}` : ""]),
+      h("td", { class: "num muted" }, [a.threshold !== null ? `${a.comparator === "<=" ? "≤" : "≥"} ${fmt(a.threshold, a.unit)}` : ""]),
+      h("td", {}, [a.passed === null ? h("span", { class: "muted" }, ["–"]) : a.passed ? h("span", { class: "status pass" }, ["✓"]) : h("span", { class: "status fail" }, ["✕"])]),
+      DATA.run.baseline_name ? h("td", { class: "num" }, [d ? renderDiff(d, a.unit) : ""]) : null,
+    ]);
+  });
+  return h("article", { class: "panel scen" }, [
+    h("header", {}, [
+      h("span", { class: `status ${ok ? "pass" : "fail"}` }, [ok ? "✓" : "✕"]),
+      h("b", {}, [s.scenario_id]),
+      h("span", { class: "muted" }, [`${s.agent} · ${s.calls.length} call${s.calls.length === 1 ? "" : "s"}`]),
+    ]),
+    h("p", {}, [s.sentence]),
+    rows.length ? h("table", { class: "aggs" }, [
+      h("thead", {}, [h("tr", {}, [
+        h("th", {}, ["Across all calls"]), h("th", {}, ["Value"]), h("th", {}, ["95% range ", info("range")]),
+        h("th", {}, ["Limit ", info("limit")]), h("th", {}, [""]), DATA.run.baseline_name ? h("th", {}, [`vs ${DATA.run.baseline_name}`]) : null,
+      ])]),
+      h("tbody", {}, rows),
+    ]) : h("p", { class: "muted" }, ["No across-call numbers: this run was made by an older Callback."]),
+  ]);
+}
+/** @param {Diff} d @param {string} unit */
+function renderDiff(d, unit) {
+  if (d.delta === null) return h("span", { class: "muted" }, [d.direction]);
+  const arrow = d.direction === "same" ? "=" : d.delta > 0 ? "▲" : "▼";
+  const text = `${arrow} ${d.delta > 0 ? "+" : d.delta < 0 ? "−" : "±"}${fmt(Math.abs(d.delta), unit)}`;
+  if (d.regressed) return h("span", { class: "status fail", title: `was ${fmt(d.baseline, unit)}; beyond noise` }, [`${text} worse`]);
+  return h("span", { class: d.direction === "better" ? "status pass" : "muted", title: `was ${fmt(d.baseline, unit)}` }, [text + (d.direction === "worse" ? " (noise)" : "")]);
+}
+function renderDetails() {
+  const terms = ["p95", "p50", "range", "limit", "wait", "yield", "talkover", "falseyield", "silence", "passed", "events"];
+  return h("details", { class: "more" }, [
+    h("summary", {}, ["Details: every number across calls, and what the terms mean"]),
+    ...DATA.scenarios.map(renderScenario),
+    h("article", { class: "panel scen" }, [
+      h("b", {}, ["How to read this"]),
+      h("dl", { class: "glossary" }, terms.flatMap((k) => [h("dt", {}, [GLOSSARY[k][0]]), h("dd", {}, [GLOSSARY[k][1]])])),
+      h("p", { class: "note" }, ["Everything is measured from the recording, not from the agent's logs. Only hard checks with a limit can fail a run; AI-judged scores are informational."]),
+    ]),
+  ]);
+}
 
 // ---------- theme ----------
 
@@ -1078,24 +1104,24 @@ function toggleTheme() {
   const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
   root.dataset.theme = dark ? "light" : "dark";
   try { localStorage.setItem("callback-report-theme", root.dataset.theme); } catch { /* storage may be blocked */ }
-  renderView();
+  renderCall();
 }
 try {
   const saved = localStorage.getItem("callback-report-theme");
   if (saved === "light" || saved === "dark") document.documentElement.dataset.theme = saved;
 } catch { /* storage may be blocked */ }
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => renderView());
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => renderCall());
 window.addEventListener("resize", () => draw());
 
 // ---------- start ----------
 
 document.title = `${DATA.run.exit_code === 0 ? "PASS" : DATA.run.exit_code === 1 ? "FAIL" : "ERROR"} · Callback run ${DATA.run.run_id}`;
 app.append(
-  renderHeader(),
-  h("h2", {}, ["Scenarios"]),
-  h("div", { class: "cards" }, DATA.scenarios.map(renderCard)),
-  h("h2", {}, ["Calls ", h("span", { class: "muted", style: "font-weight:400" }, ["· the first failing call is open; press N to hear its next failure, ? for keys"])]),
-  h("div", { class: "calls" }, [renderCallList(), viewEl]),
+  renderTop(),
+  h("h2", {}, [CALLS.length > 1 ? "Listen to a call" : "The call"]),
+  CALLS.length > 1 ? renderTabs() : "",
+  callEl,
+  renderDetails(),
 );
 const linked = CALLS.find((c) => `#${c.call_id}` === decodeURIComponent(location.hash));
 const first = linked || CALLS.find((c) => c.error || !c.passed) || CALLS[0];

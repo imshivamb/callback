@@ -3,6 +3,7 @@ from typing import Any
 
 from callback_voice.core.models.run_result import RunResult
 from callback_voice.report.call_view import call_view
+from callback_voice.report.summarize import summarize_run, summarize_scenario
 
 
 def build_report(result: RunResult, run_dir: Path, *, audio: bool = True) -> dict[str, Any]:
@@ -23,9 +24,11 @@ def build_report(result: RunResult, run_dir: Path, *, audio: bool = True) -> dic
             "vad": result.vad,
             "judge": result.judge,
         },
+        "summary": summarize_run(result),
         "scenarios": [
             {
                 "scenario_id": s.scenario_id,
+                "sentence": summarize_scenario(s, result),
                 "agent": s.agent,
                 "passed": s.passed,
                 "failure_reasons": s.failure_reasons,

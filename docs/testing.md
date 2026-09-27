@@ -89,15 +89,27 @@ under `calls/` with:
 
 `report.html` is a single file: the data and every call's audio (as MP3, about 270 KB
 a minute) are inside it, so it opens offline and can be attached to a pull request.
-It opens on the first failing call, zoomed to the failure that matters most (one a
-chaos event caused, if any). What to try:
+From the top:
+
+1. **The verdict and one sentence** saying what went wrong, e.g. "The agent keeps
+   talking when the caller interrupts (1.16 s vs 0.6 s) and replies too slowly (2.24 s
+   vs a 1.5 s limit)." It is written from the numbers, the same way every time.
+2. **Up to three problem tiles**, most serious first, each with **▶ Hear it**, which
+   opens the call at that moment and plays it.
+3. **The call**: caller and agent waveforms on one time axis, an Events row (amber ◆
+   for disturbances Callback caused, red ▼ for problems), a "Wait before reply" bar per
+   answer against the dashed limit, and a whole-call strip to move around. Below it,
+   the problems in that call; repeats are grouped ("Slow reply ×6") with a chip per
+   occurrence.
+4. **Details** (folded): every number across calls with its 95% range and limit, and
+   what the terms mean. The ⓘ next to a term explains it on hover or keyboard focus.
 
 | Do | See |
 |---|---|
-| Click a failure in the list, or press `N` / `P` | Plays from just before it; the playhead moves over both waveforms |
-| Hover a pin, a turn block, a chaos diamond or a latency bar | One sentence on what happened there |
+| Click a problem or a time chip, or press `N` / `P` | Plays from just before it; the playhead moves over both waveforms |
+| Hover a pin, a speech block, a chaos diamond or a bar | One sentence on what happened there |
 | `1` / `2` / `3` | Hear both sides, only the caller, or only the agent |
-| `+` / `-` / `0`, or drag the thin whole-call strip | Zoom and move along the call |
+| `+` / `-` / `0`, or drag the whole-call strip | Zoom and move along the call |
 | `J` / `K` | Next / previous call |
 | `T`, `?` | Light or dark; all shortcuts |
 
@@ -290,7 +302,7 @@ uv run pytest -x -v                            # stop at first failure, verbose
 | `test_task_bugs.py` | Each buggy task bug is caught by the end state on a real call; the good agent passes four facts; the leak rule fires |
 | `test_fact_checks.py` | A noise-masked letter goes to review; a spoken wrong letter fails; counts, times and phones are matched |
 | `test_disagreement_fixture.py` | The saved judge-vs-facts call still fails the hard check |
-| `test_report.py` | The report is one self-contained file; its timings match a fixture call's known latencies; 63-bit seeds survive; `--no-audio` and a missing run |
+| `test_report.py` | The report is one self-contained file; its timings match a fixture call's known latencies; 63-bit seeds survive; the summary sentence and tiles for a failing, a passing and an older run; `--no-audio` and a missing run |
 | `test_baseline_gate.py` | Three calls saved as a baseline; the same agent again exits 0; the agent with 0.4 s added exits 1 on the baseline alone, with the regression in `junit.xml` |
 
 Tests that need local models skip themselves when `[local]` isn't installed; the
