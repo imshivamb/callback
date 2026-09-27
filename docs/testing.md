@@ -3,7 +3,7 @@
 Everything below runs locally. The only thing that may call the internet is the
 simulated caller's LLM (Gemini free tier) and one-time model downloads.
 
-Last updated for milestone **M6** (end state, entities, policy, judge).
+Last updated for milestone **M6.1** (task bugs, typed facts, review list).
 
 ## 1. One-time setup
 
@@ -165,6 +165,27 @@ with "hour is 19, expected 20".
 The judge is configured in `callback.yaml` (`providers.judge`, Gemini free tier).
 Remove that line to run without it.
 
+### Task bugs, more facts, and the review list (M6.1)
+
+`scenarios/restaurant/move-and-resize.yaml` moves the booking, changes the party size,
+and checks the booking code, party size, time and phone number the agent reads back,
+plus a rule against revealing other guests' bookings. `callback.yaml` has one target
+per buggy task bug:
+
+```bash
+uv run callback run scenarios/restaurant/move-and-resize.yaml                                              # PASS
+uv run callback run scenarios/restaurant/move-and-resize.yaml --agent restaurant-buggy-wrong-hour           # hour is 20, expected 19
+uv run callback run scenarios/restaurant/move-and-resize.yaml --agent restaurant-buggy-ignores-party-change # party_size is 4, expected 5
+uv run callback run scenarios/restaurant/move-and-resize.yaml --agent restaurant-buggy-confirms-without-saving
+```
+
+With plain `restaurant-buggy`, one task bug is picked per call from the call id (the
+agent log says which: `task bug: wrong_hour`).
+
+When Callback can't tell whether the agent said a fact wrong or the line swallowed a
+sound, the fact goes under `review` in `results.json` and prints as
+"▲ 1 check(s) need a person to listen", without failing the run.
+
 ## 6. Recorded mode (zero LLM cost)
 
 The first run of an LLM scenario records the caller's lines to
@@ -201,6 +222,9 @@ uv run pytest -x -v                            # stop at first failure, verbose
 | `test_cli_run.py` | `callback run` end to end: results files, error exit 2, the Gemini caller reaches its goal, replay works with no API key |
 | `test_chaos.py` | The good agent passes every chaos scenario; the buggy agent is caught by barge-in, backchannel and silence; `callback replay` reproduces a call |
 | `test_verifiers.py` | End state via the webhook (pass, and a wrong expectation that fails with the exact difference), the buggy agent's garbled code is named, an unreachable webhook exits 2, judge scores are informational |
+| `test_task_bugs.py` | Each buggy task bug is caught by the end state on a real call; the good agent passes four facts; the leak rule fires |
+| `test_fact_checks.py` | A noise-masked letter goes to review; a spoken wrong letter fails; counts, times and phones are matched |
+| `test_disagreement_fixture.py` | The saved judge-vs-facts call still fails the hard check |
 
 Tests that need local models skip themselves when `[local]` isn't installed; the
 Gemini test skips when `GEMINI_API_KEY` isn't set.
