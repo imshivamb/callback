@@ -41,14 +41,14 @@ AGENT_LOGS = REPO / ".callback" / "e2e-agent-logs"
 def _serve(*flags: str) -> Iterator[RunningAgent]:
     """Start a reference agent with the real `callback agent serve` command.
 
-    Its verbose conversation log (what it heard, said, and why it yielded) goes to
-    ``.callback/e2e-agent-logs/`` so a failing test can be diagnosed afterwards.
+    The agent writes its own timestamped conversation log (what it heard, said, and
+    why it yielded) to ``.callback/e2e-agent-logs/``, one new file per start. Start-up
+    errors go to a separate ``*.stderr`` file next to it.
     """
     port = _free_port()
     AGENT_LOGS.mkdir(parents=True, exist_ok=True)
-    name = "buggy" if "--buggy" in flags else "good"
-    log_path = AGENT_LOGS / f"{time.strftime('%Y%m%d-%H%M%S')}-{name}-{port}.log"
-    log_file = log_path.open("w")
+    stderr_path = AGENT_LOGS / f"{time.strftime('%Y%m%d-%H%M%S')}-{port}.stderr"
+    stderr_file = stderr_path.open("x")
     process = subprocess.Popen(
         [
             sys.executable,
@@ -58,17 +58,18 @@ def _serve(*flags: str) -> Iterator[RunningAgent]:
             "serve",
             "--port",
             str(port),
-            "-v",
+            "--log-dir",
+            str(AGENT_LOGS),
             *flags,
         ],
-        stdout=log_file,
-        stderr=subprocess.STDOUT,
+        stdout=subprocess.DEVNULL,
+        stderr=stderr_file,
         env=os.environ.copy(),
     )
     deadline = time.monotonic() + 600
     while time.monotonic() < deadline:
         if process.poll() is not None:
-            raise RuntimeError(f"agent exited during start-up; see {log_path}")
+            raise RuntimeError(f"agent exited during start-up; see {stderr_path}")
         try:
             urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=1)
             break
@@ -77,7 +78,9 @@ def _serve(*flags: str) -> Iterator[RunningAgent]:
     yield RunningAgent(port)
     process.terminate()
     process.wait(timeout=10)
-    log_file.close()
+    stderr_file.close()
+    if stderr_path.stat().st_size == 0:
+        stderr_path.unlink()
 
 
 @pytest.fixture(scope="session")

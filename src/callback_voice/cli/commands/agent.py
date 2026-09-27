@@ -1,5 +1,5 @@
 import asyncio
-import logging
+from pathlib import Path
 
 import typer
 
@@ -18,19 +18,19 @@ def serve(
     buggy: bool = typer.Option(False, "--buggy", help="Run the deliberately buggy copy."),
     host: str = typer.Option("127.0.0.1", help="Interface to bind."),
     port: int = typer.Option(8765, help="Port for WebSocket audio and HTTP."),
-    verbose: bool = typer.Option(False, "--verbose", "-v", help="Log the conversation."),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Also print the conversation log."),
+    log_dir: Path = typer.Option(
+        Path(".callback/agent-logs"), "--log-dir", help="Where each run's log file is written."
+    ),
 ) -> None:
+    from callback_voice.reference_agents.restaurant.server.configure_agent_logging import (
+        configure_agent_logging,
+    )
     from callback_voice.reference_agents.restaurant.server.serve_agent import serve_agent
     from callback_voice.reference_agents.restaurant.voice.behavior import BUGGY, GOOD
 
-    logging.basicConfig(
-        level=logging.INFO if verbose else logging.WARNING,
-        format="%(asctime)s %(message)s",
-        datefmt="%H:%M:%S",
-    )
-    for noisy in ("httpx", "httpcore", "faster_whisper", "websockets"):
-        logging.getLogger(noisy).setLevel(logging.WARNING)
     behavior = BUGGY if buggy else GOOD
+    log_path = configure_agent_logging(log_dir, behavior.name, port, verbose=verbose)
     ready = asyncio.Event()
 
     async def main() -> None:
@@ -46,6 +46,7 @@ def serve(
             f"Olive & Ember ({label}) · ws://{host}:{port} · talk in a browser at "
             f"[brand]http://{host}:{port}[/] · Ctrl+C to stop"
         )
+        console.print(f"[muted]log  {log_path}[/]")
         await task
 
     try:
