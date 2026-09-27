@@ -1,4 +1,4 @@
-"""M5 gate: chaos against real agents. The good agent survives it, the buggy one is caught,
+"""Chaos against real agents. The good agent survives it, the buggy one is caught,
 and a replayed call reproduces the original exactly."""
 
 import json

@@ -1,0 +1,14 @@
+Callback
+Copyright 2026 Shivam
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+It includes third-party material:
+
+Silero VAD (src/callback_voice/scoring/vad/assets/silero_vad.onnx)
+  Copyright (c) 2020-present Silero Team
+  Licensed under the MIT License: https://github.com/snakers4/silero-vad/blob/master/LICENSE
+
+Optional dependencies installed separately (for example with the "local" extra) keep
+their own licenses. Notably, Kokoro TTS phonemises text with espeak-ng (GPL-3.0) and
+piper-tts is GPL-3.0; neither is bundled with Callback.

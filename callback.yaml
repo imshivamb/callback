@@ -28,9 +28,9 @@ providers:
   tts: {name: kokoro, voice: af_heart}
   # The simulated caller's brain. Gemini free tier; set GEMINI_API_KEY.
   llm: {name: gemini, model: gemini-flash-lite-latest}
-  # The optional LLM judge for plain-text must_not rules and conversation quality.
-  # Its scores are informational: only deterministic metrics fail a run.
-  judge: {name: gemini, model: gemini-flash-lite-latest}
+  # Optional LLM judge for plain-English must_not rules and conversation quality.
+  # Its scores are advisory: only the hard checks can fail a run. Needs GEMINI_API_KEY.
+  # judge: {name: gemini, model: gemini-flash-lite-latest}
   # A larger model transcribes the agent after the call (entity and policy checks).
   scoring_stt: {name: faster-whisper, model: small}
 

@@ -1,4 +1,4 @@
-"""M6.1: each of the buggy agent's task bugs is caught by the end-state check on a real call,
+"""Each of the buggy agent's task bugs is caught by the end-state check on a real call,
 the extra spoken facts are checked, and the privacy-leak pattern rule fires."""
 
 import json

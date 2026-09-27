@@ -1,4 +1,4 @@
-"""M6: real end state, spoken entities, policy rules and the optional judge, end to end."""
+"""Real end state, spoken entities, policy rules and the optional judge, end to end."""
 
 import json
 import os

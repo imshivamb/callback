@@ -3,7 +3,6 @@
 Everything below runs locally. The only thing that may call the internet is the
 simulated caller's LLM (Gemini free tier) and one-time model downloads.
 
-Last updated for milestone **M6.1** (task bugs, typed facts, review list).
 
 ## 1. One-time setup
 
@@ -162,10 +161,10 @@ transcribing the agent after the call.
 To see a task failure: copy the scenario and set `match: {hour: 20}`; the run fails
 with "hour is 19, expected 20".
 
-The judge is configured in `callback.yaml` (`providers.judge`, Gemini free tier).
-Remove that line to run without it.
+The judge is optional. To turn it on, uncomment `judge:` under `providers:` in
+`callback.yaml` (Gemini free tier, needs `GEMINI_API_KEY`). Its scores never fail a run.
 
-### Task bugs, more facts, and the review list (M6.1)
+### Task bugs, more facts, and the review list
 
 `scenarios/restaurant/move-and-resize.yaml` moves the booking, changes the party size,
 and checks the booking code, party size, time and phone number the agent reads back,
@@ -216,7 +215,7 @@ uv run pytest -x -v                            # stop at first failure, verbose
 
 | Test file | What it proves |
 |---|---|
-| `test_cli.py` | Commands, error messages and exit codes; the spec's example scenario validates |
+| `test_cli.py` | Commands, error messages and exit codes; a full example scenario with every chaos type validates |
 | `test_scoring_accuracy.py` | Synthetic calls with known timings score within ±50 ms |
 | `test_reference_agent_calls.py` | A scripted call completes, the booking really moves, good agent passes latency, buggy agent fails it |
 | `test_cli_run.py` | `callback run` end to end: results files, error exit 2, the Gemini caller reaches its goal, replay works with no API key |

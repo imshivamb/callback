@@ -11,5 +11,5 @@ def build_transport(target: TargetConfig) -> Transport:
         return WebSocketTransport(target)
     raise TransportError(
         f"the {target.transport} transport is not implemented yet",
-        hint="use a websocket target; LiveKit and Twilio adapters land in milestone M9",
+        hint="use a websocket target; LiveKit and Twilio support are planned",
     )

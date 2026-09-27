@@ -1,4 +1,4 @@
-"""M3 gate: synthetic calls with known timings must score within ±50 ms."""
+"""Scoring accuracy: synthetic calls with known timings must score within ±50 ms."""
 
 import json
 from pathlib import Path

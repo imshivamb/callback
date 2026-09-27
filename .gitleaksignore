@@ -1,0 +1,3 @@
+# False positive: the model name "llama-3.3-70b-versatile" next to the env var name
+# GROQ_API_KEY in the provider table. No key value is stored in the code.
+7f0069a87750bda4c4a14a90efdab7b8f0e54057:src/callback_voice/providers/llm/build_llm.py:generic-api-key:14

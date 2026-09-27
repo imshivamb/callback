@@ -23,3 +23,22 @@ web/**/.astro/
 .idea/
 .vscode/
 .env
+# Private working notes. Never commit these.
+CLAUDE.md
+docs/devlog/
+docs/learn/
+docs/*[Ss]pec*.md
+docs/*[Pp]lan*.md
+docs/*[Rr]oadmap*.md
+docs/internal/
+
+# Secrets and local data
+.env
+.env.*
+*.pem
+
+# Downloaded models (the bundled Silero VAD model is the one exception)
+*.onnx
+!src/callback_voice/scoring/vad/assets/silero_vad.onnx
+*.bin
+models/

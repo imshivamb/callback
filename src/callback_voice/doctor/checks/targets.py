@@ -33,7 +33,7 @@ async def _check_one(name: str, target: object) -> CheckResult:
             name,
             "warn",
             f"{transport} {url} is not accepting connections",
-            "Start the agent, or run `callback demo` to use the bundled one",
+            "Start the agent (the bundled examples: `callback agent serve`)",
         )
     writer.close()
     await writer.wait_closed()

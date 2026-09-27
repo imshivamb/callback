@@ -1,6 +1,6 @@
 # Fixture: judge vs facts, wrong booking code
 
-A real call (run `20260927-103325`, `move-booking-persona--t1`, M6) between the Gemini
+A real call (run `20260927-103325`, `move-booking-persona--t1`) between the Gemini
 persona caller and the **buggy** reference agent, whose code read-back garbles "D" as
 "B".
 

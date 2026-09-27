@@ -4,7 +4,7 @@ from callback_voice.core.models.strict_model import StrictModel
 
 
 class Thresholds(StrictModel):
-    """Pass/fail limits for deterministic metrics. Defaults follow the spec."""
+    """Pass/fail limits for deterministic metrics, with conservative defaults for phone calls."""
 
     response_latency_p95_s: float = Field(default=1.5, gt=0)
     time_to_yield_p95_s: float = Field(default=0.6, gt=0)

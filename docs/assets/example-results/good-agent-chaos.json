@@ -1,0 +1,1673 @@
+{
+  "schema_version": 1,
+  "run_id": "20260927-114920",
+  "created_at": "2026-09-27T11:54:28.693386Z",
+  "callback_version": "0.1.0",
+  "git_sha": "abe07401d989",
+  "agent_config_hash": "e39f2b76f525",
+  "mode": "auto",
+  "providers": {
+    "stt": "faster-whisper",
+    "scoring_stt": "faster-whisper",
+    "tts": "kokoro",
+    "llm": "gemini",
+    "vad": "silero"
+  },
+  "judge": null,
+  "vad": {
+    "provider": "silero"
+  },
+  "scenarios": [
+    {
+      "scenario_id": "backchannel",
+      "agent": "restaurant-good",
+      "source": "scenarios/chaos/backchannel.yaml",
+      "passed": true,
+      "trials": [
+        {
+          "call_id": "backchannel--t1",
+          "scenario_id": "backchannel",
+          "trial": 1,
+          "seed": 3720112982885614846,
+          "passed": true,
+          "metrics": [
+            {
+              "name": "response_latency_p50_s",
+              "value": 0.9,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": [
+                0.95,
+                0.85,
+                0.91,
+                0.86,
+                0.89,
+                0.92
+              ]
+            },
+            {
+              "name": "response_latency_p95_s",
+              "value": 0.943,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": 1.5,
+              "comparator": "<=",
+              "passed": true,
+              "detail": null,
+              "samples": [
+                0.95,
+                0.85,
+                0.91,
+                0.86,
+                0.89,
+                0.92
+              ]
+            },
+            {
+              "name": "time_to_yield_p95_s",
+              "value": null,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": 0.6,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "talk_over_ratio",
+              "value": 0.0,
+              "unit": "ratio",
+              "method": "deterministic",
+              "threshold": 0.05,
+              "comparator": "<=",
+              "passed": true,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "false_yields",
+              "value": 0.0,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": 0.0,
+              "comparator": "<=",
+              "passed": true,
+              "detail": "7 backchannel(s) said while the agent was talking",
+              "samples": []
+            },
+            {
+              "name": "silence_reprompt_s",
+              "value": null,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": 8.0,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "chaos_drift_max_s",
+              "value": 0.016,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": "Callback self-check; informational",
+              "samples": []
+            },
+            {
+              "name": "call_duration_s",
+              "value": 74.96,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "caller_turns",
+              "value": 6.0,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "agent_turns",
+              "value": 7.0,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            }
+          ],
+          "verifier_results": [],
+          "findings": [],
+          "failure_reasons": [],
+          "review": [],
+          "error": null,
+          "call": {
+            "call_id": "backchannel--t1",
+            "scenario_id": "backchannel",
+            "trial": 1,
+            "seed": 3720112982885614846,
+            "transport": "websocket",
+            "started_at": "2026-09-27T11:49:22.712998Z",
+            "duration_s": 74.96,
+            "end_reason": "caller_hangup",
+            "wav_path": "calls/backchannel--t1/call.wav",
+            "events": [
+              {
+                "t_s": 0.0,
+                "kind": "call_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "transport": "websocket"
+                }
+              },
+              {
+                "t_s": 0.064,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 1
+                }
+              },
+              {
+                "t_s": 2.08,
+                "kind": "caller_utterance",
+                "chaos_id": "backchannel-1",
+                "chaos_type": "backchannel",
+                "intended_s": 2.064,
+                "end_s": 2.79,
+                "text": "mm-hmm",
+                "data": {
+                  "tag": "backchannel"
+                }
+              },
+              {
+                "t_s": 6.78,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 9.28,
+                "text": "Hi, I need to move my booking to Saturday.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.559
+                  }
+                }
+              },
+              {
+                "t_s": 10.304,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 2
+                }
+              },
+              {
+                "t_s": 12.32,
+                "kind": "caller_utterance",
+                "chaos_id": "backchannel-1",
+                "chaos_type": "backchannel",
+                "intended_s": 12.304,
+                "end_s": 13.0,
+                "text": "okay",
+                "data": {
+                  "tag": "backchannel"
+                }
+              },
+              {
+                "t_s": 17.22,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 18.95,
+                "text": "It's D X 7 Q 2.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.443
+                  }
+                }
+              },
+              {
+                "t_s": 19.776,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 3
+                }
+              },
+              {
+                "t_s": 21.78,
+                "kind": "caller_utterance",
+                "chaos_id": "backchannel-1",
+                "chaos_type": "backchannel",
+                "intended_s": 21.776,
+                "end_s": 22.46,
+                "text": "okay",
+                "data": {
+                  "tag": "backchannel"
+                }
+              },
+              {
+                "t_s": 33.48,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 35.83,
+                "text": "Anytime between seven and nine is fine.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.557
+                  }
+                }
+              },
+              {
+                "t_s": 36.736,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 4
+                }
+              },
+              {
+                "t_s": 38.74,
+                "kind": "caller_utterance",
+                "chaos_id": "backchannel-1",
+                "chaos_type": "backchannel",
+                "intended_s": 38.736000000000004,
+                "end_s": 39.42,
+                "text": "okay",
+                "data": {
+                  "tag": "backchannel"
+                }
+              },
+              {
+                "t_s": 43.74,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 45.12,
+                "text": "Seven thirty works.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.383
+                  }
+                }
+              },
+              {
+                "t_s": 46.016,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 5
+                }
+              },
+              {
+                "t_s": 48.02,
+                "kind": "caller_utterance",
+                "chaos_id": "backchannel-1",
+                "chaos_type": "backchannel",
+                "intended_s": 48.016,
+                "end_s": 48.7,
+                "text": "okay",
+                "data": {
+                  "tag": "backchannel"
+                }
+              },
+              {
+                "t_s": 51.72,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 52.67,
+                "text": "Yes please.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.297
+                  }
+                }
+              },
+              {
+                "t_s": 53.568,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 6
+                }
+              },
+              {
+                "t_s": 55.58,
+                "kind": "caller_utterance",
+                "chaos_id": "backchannel-1",
+                "chaos_type": "backchannel",
+                "intended_s": 55.568,
+                "end_s": 56.29,
+                "text": "mm-hmm",
+                "data": {
+                  "tag": "backchannel"
+                }
+              },
+              {
+                "t_s": 69.22,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 70.95,
+                "text": "No, that's all. Thanks, bye.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.45
+                  }
+                }
+              },
+              {
+                "t_s": 71.84,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 7
+                }
+              },
+              {
+                "t_s": 73.84,
+                "kind": "caller_utterance",
+                "chaos_id": "backchannel-1",
+                "chaos_type": "backchannel",
+                "intended_s": 73.84,
+                "end_s": 74.55,
+                "text": "mm-hmm",
+                "data": {
+                  "tag": "backchannel"
+                }
+              },
+              {
+                "t_s": 74.96,
+                "kind": "call_end",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": "caller_hangup",
+                "data": {}
+              }
+            ],
+            "transcript": []
+          }
+        }
+      ],
+      "aggregates": [],
+      "failure_reasons": []
+    },
+    {
+      "scenario_id": "barge-in",
+      "agent": "restaurant-good",
+      "source": "scenarios/chaos/barge-in.yaml",
+      "passed": true,
+      "trials": [
+        {
+          "call_id": "barge-in--t1",
+          "scenario_id": "barge-in",
+          "trial": 1,
+          "seed": 8995698031481687592,
+          "passed": true,
+          "metrics": [
+            {
+              "name": "response_latency_p50_s",
+              "value": 0.9,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": [
+                0.97,
+                0.9,
+                0.89,
+                0.89,
+                0.92,
+                0.97,
+                0.88
+              ]
+            },
+            {
+              "name": "response_latency_p95_s",
+              "value": 0.97,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": 1.5,
+              "comparator": "<=",
+              "passed": true,
+              "detail": null,
+              "samples": [
+                0.97,
+                0.9,
+                0.89,
+                0.89,
+                0.92,
+                0.97,
+                0.88
+              ]
+            },
+            {
+              "name": "time_to_yield_p95_s",
+              "value": 0.53,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": 0.6,
+              "comparator": "<=",
+              "passed": true,
+              "detail": null,
+              "samples": [
+                0.53
+              ]
+            },
+            {
+              "name": "talk_over_ratio",
+              "value": 0.0,
+              "unit": "ratio",
+              "method": "deterministic",
+              "threshold": 0.05,
+              "comparator": "<=",
+              "passed": true,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "false_yields",
+              "value": null,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": 0.0,
+              "comparator": "<=",
+              "passed": null,
+              "detail": "0 backchannel(s) said while the agent was talking",
+              "samples": []
+            },
+            {
+              "name": "silence_reprompt_s",
+              "value": null,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": 8.0,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "chaos_drift_max_s",
+              "value": 0.0,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": "Callback self-check; informational",
+              "samples": []
+            },
+            {
+              "name": "call_duration_s",
+              "value": 74.16,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "caller_turns",
+              "value": 7.0,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "agent_turns",
+              "value": 8.0,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            }
+          ],
+          "verifier_results": [],
+          "findings": [],
+          "failure_reasons": [],
+          "review": [],
+          "error": null,
+          "call": {
+            "call_id": "barge-in--t1",
+            "scenario_id": "barge-in",
+            "trial": 1,
+            "seed": 8995698031481687592,
+            "transport": "websocket",
+            "started_at": "2026-09-27T11:50:38.652961Z",
+            "duration_s": 74.16,
+            "end_reason": "caller_hangup",
+            "wav_path": "calls/barge-in--t1/call.wav",
+            "events": [
+              {
+                "t_s": 0.0,
+                "kind": "call_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "transport": "websocket"
+                }
+              },
+              {
+                "t_s": 0.064,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 1
+                }
+              },
+              {
+                "t_s": 6.22,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 8.72,
+                "text": "Hi, I need to move my booking to Saturday.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.003
+                  }
+                }
+              },
+              {
+                "t_s": 9.76,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 2
+                }
+              },
+              {
+                "t_s": 10.06,
+                "kind": "caller_utterance",
+                "chaos_id": "barge_in-1",
+                "chaos_type": "barge_in",
+                "intended_s": 10.06,
+                "end_s": 11.99,
+                "text": "Sorry, it's for Saturday evening.",
+                "data": {
+                  "tag": "barge_in"
+                }
+              },
+              {
+                "t_s": 12.928,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 3
+                }
+              },
+              {
+                "t_s": 17.86,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 19.59,
+                "text": "It's D X 7 Q 2.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.003
+                  }
+                }
+              },
+              {
+                "t_s": 20.48,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 4
+                }
+              },
+              {
+                "t_s": 33.6,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 35.95,
+                "text": "Anytime between seven and nine is fine.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.003
+                  }
+                }
+              },
+              {
+                "t_s": 36.832,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 5
+                }
+              },
+              {
+                "t_s": 43.5,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 44.88,
+                "text": "Seven thirty works.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.003
+                  }
+                }
+              },
+              {
+                "t_s": 45.856,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 6
+                }
+              },
+              {
+                "t_s": 51.28,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 52.23,
+                "text": "Yes please.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.002
+                  }
+                }
+              },
+              {
+                "t_s": 53.216,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 7
+                }
+              },
+              {
+                "t_s": 68.42,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 70.15,
+                "text": "No, that's all. Thanks, bye.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.002
+                  }
+                }
+              },
+              {
+                "t_s": 70.976,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 8
+                }
+              },
+              {
+                "t_s": 74.16,
+                "kind": "call_end",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": "caller_hangup",
+                "data": {}
+              }
+            ],
+            "transcript": []
+          }
+        }
+      ],
+      "aggregates": [],
+      "failure_reasons": []
+    },
+    {
+      "scenario_id": "rough-line",
+      "agent": "restaurant-good",
+      "source": "scenarios/chaos/rough-line.yaml",
+      "passed": true,
+      "trials": [
+        {
+          "call_id": "rough-line--t1",
+          "scenario_id": "rough-line",
+          "trial": 1,
+          "seed": 3224696670279674735,
+          "passed": true,
+          "metrics": [
+            {
+              "name": "response_latency_p50_s",
+              "value": 0.92,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": [
+                0.91,
+                0.77,
+                0.99,
+                0.92,
+                0.95,
+                0.92
+              ]
+            },
+            {
+              "name": "response_latency_p95_s",
+              "value": 0.98,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": 1.5,
+              "comparator": "<=",
+              "passed": true,
+              "detail": null,
+              "samples": [
+                0.91,
+                0.77,
+                0.99,
+                0.92,
+                0.95,
+                0.92
+              ]
+            },
+            {
+              "name": "time_to_yield_p95_s",
+              "value": null,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": 0.6,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "talk_over_ratio",
+              "value": 0.0,
+              "unit": "ratio",
+              "method": "deterministic",
+              "threshold": 0.05,
+              "comparator": "<=",
+              "passed": true,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "false_yields",
+              "value": null,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": 0.0,
+              "comparator": "<=",
+              "passed": null,
+              "detail": "0 backchannel(s) said while the agent was talking",
+              "samples": []
+            },
+            {
+              "name": "silence_reprompt_s",
+              "value": null,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": 8.0,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "chaos_drift_max_s",
+              "value": null,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": "Callback self-check; informational",
+              "samples": []
+            },
+            {
+              "name": "call_duration_s",
+              "value": 72.34,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "caller_turns",
+              "value": 6.0,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "agent_turns",
+              "value": 7.0,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            }
+          ],
+          "verifier_results": [],
+          "findings": [],
+          "failure_reasons": [],
+          "review": [],
+          "error": null,
+          "call": {
+            "call_id": "rough-line--t1",
+            "scenario_id": "rough-line",
+            "trial": 1,
+            "seed": 3224696670279674735,
+            "transport": "websocket",
+            "started_at": "2026-09-27T11:51:53.269313Z",
+            "duration_s": 72.34,
+            "end_reason": "caller_hangup",
+            "wav_path": "calls/rough-line--t1/call.wav",
+            "events": [
+              {
+                "t_s": 0.0,
+                "kind": "call_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "transport": "websocket"
+                }
+              },
+              {
+                "t_s": 0.0,
+                "kind": "chaos",
+                "chaos_id": "noise",
+                "chaos_type": "noise",
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "bed": "street",
+                  "snr_db": 15.0
+                }
+              },
+              {
+                "t_s": 0.064,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 1
+                }
+              },
+              {
+                "t_s": 6.22,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 8.72,
+                "text": "Hi, I need to move my booking to Saturday.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.002
+                  }
+                }
+              },
+              {
+                "t_s": 9.696,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 2
+                }
+              },
+              {
+                "t_s": 10.0,
+                "kind": "chaos",
+                "chaos_id": "packet_loss-1",
+                "chaos_type": "packet_loss",
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "pct": 3.0,
+                  "phase": "start"
+                }
+              },
+              {
+                "t_s": 16.16,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 17.89,
+                "text": "It's D X 7 Q 2.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.002
+                  }
+                }
+              },
+              {
+                "t_s": 18.656,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 3
+                }
+              },
+              {
+                "t_s": 30.0,
+                "kind": "chaos",
+                "chaos_id": "packet_loss-1",
+                "chaos_type": "packet_loss",
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "phase": "end",
+                  "frames_dropped": 35
+                }
+              },
+              {
+                "t_s": 30.0,
+                "kind": "chaos",
+                "chaos_id": "jitter-2",
+                "chaos_type": "jitter",
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "ms": 60.0
+                }
+              },
+              {
+                "t_s": 31.78,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 34.13,
+                "text": "Anytime between seven and nine is fine.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.002
+                  }
+                }
+              },
+              {
+                "t_s": 35.136,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 4
+                }
+              },
+              {
+                "t_s": 41.76,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 43.14,
+                "text": "Seven thirty works.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.002
+                  }
+                }
+              },
+              {
+                "t_s": 44.096,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 5
+                }
+              },
+              {
+                "t_s": 49.52,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 50.47,
+                "text": "Yes please.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.002
+                  }
+                }
+              },
+              {
+                "t_s": 51.424,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 6
+                }
+              },
+              {
+                "t_s": 66.6,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 68.33,
+                "text": "No, that's all. Thanks, bye.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.002
+                  }
+                }
+              },
+              {
+                "t_s": 69.216,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 7
+                }
+              },
+              {
+                "t_s": 72.34,
+                "kind": "call_end",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": "caller_hangup",
+                "data": {}
+              }
+            ],
+            "transcript": []
+          }
+        }
+      ],
+      "aggregates": [],
+      "failure_reasons": []
+    },
+    {
+      "scenario_id": "silent-caller",
+      "agent": "restaurant-good",
+      "source": "scenarios/chaos/silent-caller.yaml",
+      "passed": true,
+      "trials": [
+        {
+          "call_id": "silent-caller--t1",
+          "scenario_id": "silent-caller",
+          "trial": 1,
+          "seed": 4892503978071401897,
+          "passed": true,
+          "metrics": [
+            {
+              "name": "response_latency_p50_s",
+              "value": 0.875,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": [
+                0.91,
+                0.85,
+                0.87,
+                0.88,
+                0.87,
+                0.88
+              ]
+            },
+            {
+              "name": "response_latency_p95_s",
+              "value": 0.903,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": 1.5,
+              "comparator": "<=",
+              "passed": true,
+              "detail": null,
+              "samples": [
+                0.91,
+                0.85,
+                0.87,
+                0.88,
+                0.87,
+                0.88
+              ]
+            },
+            {
+              "name": "time_to_yield_p95_s",
+              "value": null,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": 0.6,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "talk_over_ratio",
+              "value": 0.0,
+              "unit": "ratio",
+              "method": "deterministic",
+              "threshold": 0.05,
+              "comparator": "<=",
+              "passed": true,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "false_yields",
+              "value": null,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": 0.0,
+              "comparator": "<=",
+              "passed": null,
+              "detail": "0 backchannel(s) said while the agent was talking",
+              "samples": []
+            },
+            {
+              "name": "silence_reprompt_s",
+              "value": 5.25,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": 8.0,
+              "comparator": "<=",
+              "passed": true,
+              "detail": null,
+              "samples": [
+                5.25
+              ]
+            },
+            {
+              "name": "chaos_drift_max_s",
+              "value": null,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": "Callback self-check; informational",
+              "samples": []
+            },
+            {
+              "name": "call_duration_s",
+              "value": 82.16,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "caller_turns",
+              "value": 6.0,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            },
+            {
+              "name": "agent_turns",
+              "value": 8.0,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": []
+            }
+          ],
+          "verifier_results": [],
+          "findings": [],
+          "failure_reasons": [],
+          "review": [],
+          "error": null,
+          "call": {
+            "call_id": "silent-caller--t1",
+            "scenario_id": "silent-caller",
+            "trial": 1,
+            "seed": 4892503978071401897,
+            "transport": "websocket",
+            "started_at": "2026-09-27T11:53:06.041307Z",
+            "duration_s": 82.16,
+            "end_reason": "caller_hangup",
+            "wav_path": "calls/silent-caller--t1/call.wav",
+            "events": [
+              {
+                "t_s": 0.0,
+                "kind": "call_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "transport": "websocket"
+                }
+              },
+              {
+                "t_s": 0.064,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 1
+                }
+              },
+              {
+                "t_s": 6.22,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 8.72,
+                "text": "Hi, I need to move my booking to Saturday.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.004
+                  }
+                }
+              },
+              {
+                "t_s": 9.696,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 2
+                }
+              },
+              {
+                "t_s": 16.2,
+                "kind": "chaos",
+                "chaos_id": "silence-1",
+                "chaos_type": "silence",
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "duration_s": 12.0,
+                  "caller_turn": 2
+                }
+              },
+              {
+                "t_s": 20.736,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 3
+                }
+              },
+              {
+                "t_s": 26.04,
+                "kind": "caller_utterance",
+                "chaos_id": "silence-1",
+                "chaos_type": "silence",
+                "intended_s": null,
+                "end_s": 27.77,
+                "text": "It's D X 7 Q 2.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.002
+                  }
+                }
+              },
+              {
+                "t_s": 28.608,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 4
+                }
+              },
+              {
+                "t_s": 41.76,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 44.11,
+                "text": "Anytime between seven and nine is fine.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.002
+                  }
+                }
+              },
+              {
+                "t_s": 44.992,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 5
+                }
+              },
+              {
+                "t_s": 51.62,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 53.0,
+                "text": "Seven thirty works.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.002
+                  }
+                }
+              },
+              {
+                "t_s": 53.92,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 6
+                }
+              },
+              {
+                "t_s": 59.36,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 60.31,
+                "text": "Yes please.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.002
+                  }
+                }
+              },
+              {
+                "t_s": 61.184,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 7
+                }
+              },
+              {
+                "t_s": 76.42,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 78.15,
+                "text": "No, that's all. Thanks, bye.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.001
+                  }
+                }
+              },
+              {
+                "t_s": 78.976,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 8
+                }
+              },
+              {
+                "t_s": 82.16,
+                "kind": "call_end",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": "caller_hangup",
+                "data": {}
+              }
+            ],
+            "transcript": []
+          }
+        }
+      ],
+      "aggregates": [],
+      "failure_reasons": []
+    }
+  ],
+  "baseline_name": null,
+  "baseline_diff": [],
+  "passed": true,
+  "exit_code": 0,
+  "duration_s": 308.09
+}
