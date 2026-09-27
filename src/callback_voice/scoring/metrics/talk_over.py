@@ -12,13 +12,15 @@ def talk_over(timeline: CallTimeline, threshold_ratio: float, yield_grace_s: flo
     """Share of the caller's speech that the agent talked over.
 
     Deliberate overlaps are excused: backchannels (meant to overlap), and the first
-    ``yield_grace_s`` of a barge-in (the agent is allowed that long to stop).
+    ``yield_grace_s`` whenever the caller cuts in (the agent may take that long to stop).
     """
     excused = [u.speech for u in timeline.utterances if u.tag in {"backchannel", "dtmf"}]
+    # Whenever the caller starts talking over the agent (a barge-in or not), the agent
+    # gets the yield budget to stop before the overlap counts against it.
     excused += [
         Segment(u.speech.start_s, u.speech.start_s + yield_grace_s)
         for u in timeline.utterances
-        if u.tag == "barge_in"
+        if timeline.agent_speaking_at(u.speech.start_s, margin_s=0.05) is not None
     ]
     caller = subtract(timeline.caller_speech, excused)
     overlaps = intersect(caller, timeline.agent_speech)

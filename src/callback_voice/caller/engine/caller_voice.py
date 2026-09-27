@@ -40,6 +40,13 @@ class CallerVoice:
     def current(self) -> Utterance | None:
         return self._current
 
+    def withdraw_if_waiting(self) -> Utterance | None:
+        """Take back the current utterance if it is still in its lead-in silence."""
+        if self._current is None or self._pos >= self._lead or self._lead == 0:
+            return None
+        waiting, self._current = self._current, None
+        return waiting
+
     def say(self, utterance: Utterance, *, interrupt: bool = False) -> None:
         if interrupt:
             self._preempt = utterance

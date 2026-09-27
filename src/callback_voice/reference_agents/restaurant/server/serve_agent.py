@@ -2,6 +2,7 @@ import asyncio
 import logging
 import uuid
 
+import numpy as np
 from websockets.asyncio.server import ServerConnection, serve
 
 from callback_voice.core.paths import model_cache_dir
@@ -33,8 +34,10 @@ async def serve_agent(
 ) -> None:
     """Run the restaurant agent until cancelled. Loads and warms models before accepting calls."""
     stt = FasterWhisperStt(stt_model)
+    judge_stt = FasterWhisperStt("tiny.en")
     tts = CachedTts(KokoroTts(behavior.voice), model_cache_dir() / "agent-tts")
     await _warm_up(stt, tts, behavior)
+    await judge_stt.transcribe(np.zeros(8000, dtype=np.float32), language="en")
     registry = CallRegistry()
 
     async def handle(ws: ServerConnection) -> None:
@@ -43,7 +46,7 @@ async def serve_agent(
         store = registry.open(call_id)
         log.info("call %s connected (%s agent)", call_id, behavior.name)
         brain = ReservationBrain(store, misread=behavior.misread)
-        await AgentSession(ws, behavior, AgentModels(stt, tts, SileroVad()), brain).run()
+        await AgentSession(ws, behavior, AgentModels(stt, judge_stt, tts, SileroVad()), brain).run()
         log.info("call %s ended", call_id)
 
     async with serve(

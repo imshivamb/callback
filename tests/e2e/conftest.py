@@ -35,12 +35,11 @@ class RunningAgent:
             return json.loads(r.read())
 
 
-@pytest.fixture(scope="session")
-def good_agent() -> Iterator[RunningAgent]:
-    """The good reference agent, started with the real `callback agent serve` command."""
+def _serve(*flags: str) -> Iterator[RunningAgent]:
+    """Start a reference agent with the real `callback agent serve` command."""
     port = _free_port()
     process = subprocess.Popen(
-        [sys.executable, "-m", "callback_voice.cli", "agent", "serve", "--port", str(port)],
+        [sys.executable, "-m", "callback_voice.cli", "agent", "serve", "--port", str(port), *flags],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.PIPE,
         env=os.environ.copy(),
@@ -59,3 +58,13 @@ def good_agent() -> Iterator[RunningAgent]:
     yield RunningAgent(port)
     process.terminate()
     process.wait(timeout=10)
+
+
+@pytest.fixture(scope="session")
+def good_agent() -> Iterator[RunningAgent]:
+    yield from _serve()
+
+
+@pytest.fixture(scope="session")
+def buggy_agent() -> Iterator[RunningAgent]:
+    yield from _serve("--buggy")

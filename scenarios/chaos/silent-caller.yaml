@@ -1,0 +1,18 @@
+# The caller goes quiet instead of giving the booking reference.
+id: silent-caller
+agent: restaurant-good
+max_duration_s: 150
+caller:
+  persona: "Arjun, distracted by something on his desk"
+  goal: "Move booking DX7Q2 to Saturday evening"
+  voice: male_us_1
+  script:
+    - "Hi, I need to move my booking to Saturday."
+    - "It's D X 7 Q 2."
+    - "Anytime between seven and nine is fine."
+    - "Seven thirty works."
+    - "Yes please."
+    - "No, that's all. Thanks, bye."
+chaos:
+  events:
+    - silence: {on: caller_turn, turn: 2, duration_s: 12}

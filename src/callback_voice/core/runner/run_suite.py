@@ -23,6 +23,7 @@ async def run_suite(
     *,
     base_seed: int = 0,
     on_trial: OnTrial | None = None,
+    seeds: dict[tuple[str, int], int] | None = None,
 ) -> tuple[RunResult, Path]:
     """Run every (scenario, trial) in order and write ``results.json``.
 
@@ -39,7 +40,7 @@ async def run_suite(
     by_scenario: dict[str, list[TrialResult]] = {}
     scenarios = {s.id: s for s, _ in plan}
     for scenario, trial in plan:
-        seed = derive_seed(base_seed, scenario.id, trial)
+        seed = (seeds or {}).get((scenario.id, trial), derive_seed(base_seed, scenario.id, trial))
         trial_result = await run_trial(scenario, trial, seed, runtime, run_dir)
         by_scenario.setdefault(scenario.id, []).append(trial_result)
         if on_trial is not None:

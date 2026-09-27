@@ -87,6 +87,14 @@ class CallSession:
         return self._clock.t_s
 
     @property
+    def tick(self) -> int:
+        return self._clock.tick
+
+    @property
+    def agent_turn_start_s(self) -> float:
+        return self._listener.turn_start_s
+
+    @property
     def agent_turn(self) -> int:
         return self._listener.turn
 
@@ -204,6 +212,6 @@ class CallSession:
         )
         if utterance.takes_floor:
             self._listener.caller_took_floor()
-        if utterance.tag != "line" and utterance.text:
+        if utterance.tag not in {"line", "backchannel", "dtmf"} and utterance.text:
             self._s.brain.note_interjection(utterance.text)
         self._conversation.on_utterance_done(utterance, end_s)

@@ -60,6 +60,10 @@ class CassetteBrain:
         if self._live is not None:
             self._live.note_interjection(text)
 
+    def revise_last_line(self, text: str) -> None:
+        if self._live is not None:
+            self._live.revise_last_line(text)
+
     def apply_updates(self, updates: dict[str, Any]) -> None:
         if self._live is not None:
             self._live.apply_updates(updates)

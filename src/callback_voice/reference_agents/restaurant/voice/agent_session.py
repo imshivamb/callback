@@ -24,6 +24,9 @@ from callback_voice.reference_agents.restaurant.voice.interruption_policy import
 )
 from callback_voice.reference_agents.restaurant.voice.is_backchannel import is_backchannel
 from callback_voice.reference_agents.restaurant.voice.paced_speaker import PacedSpeaker
+from callback_voice.reference_agents.restaurant.voice.sounds_like_interruption import (
+    sounds_like_interruption,
+)
 from callback_voice.reference_agents.restaurant.voice.split_sentences import split_sentences
 
 log = logging.getLogger("callback.reference_agent")
@@ -35,6 +38,8 @@ _CONFIRM_STAGES = frozenset({"confirm_move", "confirm_cancel", "confirm_new", "c
 @dataclass(slots=True)
 class AgentModels:
     stt: SpeechToText
+    judge_stt: SpeechToText
+    """A small, fast model for deciding mid-sentence whether the caller is only backchanneling."""
     tts: TextToSpeech
     vad: VoiceActivityModel
 
@@ -62,6 +67,7 @@ class AgentSession:
         self._judged_backchannel = False
         self._last_activity = time.monotonic()
         self._hanging_up = False
+        self._timing: dict[str, float] = {}
 
     async def run(self) -> None:
         speaker = asyncio.create_task(self._speaker.run())
@@ -91,7 +97,7 @@ class AgentSession:
                 self._judged_backchannel = False
         if self._detector.speaking:
             self._last_activity = time.monotonic()
-            if self._speaker.busy:
+            if self._holding_floor:
                 self._consider_yield()
             elif self._turns.run_kind != "turn" and self._detector.speech_duration_s >= _LONG_RUN_S:
                 self._turns.promote_run()  # kept talking after we finished: a real turn
@@ -101,7 +107,7 @@ class AgentSession:
             self._start_reply(self._answer(clip))
 
     def _on_caller_start(self, t_s: float) -> None:
-        if self._speaker.busy:
+        if self._holding_floor:
             deaf = (
                 self._behavior.barge_in == "deaf_first_sentence"
                 and self._speaker.sentence_index <= 0
@@ -120,6 +126,7 @@ class AgentSession:
             judged_backchannel=self._judged_backchannel,
         )
         if decision == "yield":
+            log.info("yield: caller spoke for %.2f s", self._detector.speech_duration_s)
             self._yield()
         elif decision == "judge" and self._judge_task is None:
             clip = self._tape.slice(self._turns.run_start - _PRE_ROLL_S, self._detector.now_s)
@@ -127,26 +134,44 @@ class AgentSession:
 
     async def _judge(self, clip: Audio) -> None:
         try:
-            transcript = await self._m.stt.transcribe(clip, language="en")
-            if is_backchannel(transcript.text):
+            transcript = await self._m.judge_stt.transcribe(clip, language="en")
+            if not sounds_like_interruption(transcript.text) or is_backchannel(transcript.text):
                 self._judged_backchannel = True
+                log.info(
+                    "judged %r a backchannel after %.2f s",
+                    transcript.text,
+                    self._detector.speech_duration_s,
+                )
                 log.info("ignored backchannel %r", transcript.text)
-            elif self._speaker.busy:
+            elif self._holding_floor:
+                log.info("not a backchannel: %r", transcript.text)
                 self._yield()
         finally:
             self._judge_task = None
 
+    @property
+    def _holding_floor(self) -> bool:
+        """Speaking, or mid-reply between sentences while the next one is synthesised.
+
+        Without the second half, a "mm-hmm" in a synthesis gap would look like a new
+        caller turn and cancel the rest of the reply.
+        """
+        replying = self._reply_task is not None and not self._reply_task.done()
+        return self._speaker.busy or (replying and self._speaker.sentence_index >= 0)
+
     def _yield(self) -> None:
         if self._hanging_up:
             return
-        log.info("caller barged in; yielding")
+        log.info("caller barged in; yielding (sentence %d)", self._speaker.sentence_index)
         self._speaker.stop()
         if self._reply_task and not self._reply_task.done():
             self._reply_task.cancel()
         self._turns.promote_run()
 
     async def _answer(self, clip: Audio) -> None:
+        began = time.monotonic()
         transcript = await self._m.stt.transcribe(clip, language="en")
+        self._timing = {"stt": time.monotonic() - began}
         text = transcript.text.strip()
         log.info("caller: %s", text)
         # "okay" answers a yes/no question; anywhere else a lone backchannel needs no reply.
@@ -159,8 +184,13 @@ class AgentSession:
     async def _speak(self, reply: Reply) -> None:
         log.info("agent: %s", reply.text)
         self._speaker.begin_reply()
-        for sentence in split_sentences(reply.text):
+        for i, sentence in enumerate(split_sentences(reply.text)):
+            began = time.monotonic()
             audio = await self._m.tts.synthesize(sentence, voice=self._behavior.voice)
+            if i == 0 and self._timing:
+                self._timing["tts_first"] = time.monotonic() - began
+                log.info("timing: %s", " ".join(f"{k}={v:.2f}s" for k, v in self._timing.items()))
+                self._timing = {}
             self._speaker.enqueue(audio)
         if reply.end_call:
             self._hanging_up = True

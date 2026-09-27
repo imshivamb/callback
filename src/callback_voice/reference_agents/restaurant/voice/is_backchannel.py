@@ -12,6 +12,8 @@ def is_backchannel(transcript: str) -> bool:
 
     Empty transcripts count: Whisper often returns nothing for a bare "hmm".
     """
+    if any(c.isdigit() for c in transcript):
+        return False
     words = re.sub(r"[^a-z\s-]", "", transcript.lower()).strip()
     if not words:
         return True

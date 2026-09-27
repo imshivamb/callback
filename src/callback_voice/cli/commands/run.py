@@ -38,6 +38,9 @@ def run(
     ),
     local: bool = typer.Option(False, "--local", help="Use a local Ollama model for the caller."),
     yes: bool = typer.Option(False, "--yes", "-y", help="Don't ask before exceeding the cost cap."),
+    agent: str | None = typer.Option(
+        None, "--agent", "-a", help="Run every scenario against this target instead."
+    ),
     config: Path | None = typer.Option(None, "--config", "-c", help="Path to callback.yaml."),
 ) -> None:
     from callback_voice.core.runner.run_suite import run_suite
@@ -47,6 +50,8 @@ def run(
         raise ConfigError("--record and --replay cannot be used together")
     project = load_project_config(config, start=path if path.is_dir() else path.parent)
     scenarios = load_suite(path)
+    if agent is not None:
+        scenarios = [s.model_copy(update={"agent": agent}) for s in scenarios]
     check_targets_exist(scenarios, project)
     mode: RecordedMode = "record" if record else "replay" if replay else project.recorded
     llm_choice = LOCAL_LLM if local else project.providers.llm
@@ -68,10 +73,6 @@ def run(
         typer.confirm(
             f"Estimated ${estimate.usd:.2f} exceeds your ${project.cost_cap_usd:.2f} cap. Continue?",
             abort=True,
-        )
-    if any(s.chaos.events or s.chaos.noise for s in scenarios):
-        console.print(
-            "[warn]▲[/] [muted]chaos events are not applied yet (milestone M5); calls run clean[/]"
         )
     console.print()
 

@@ -8,7 +8,10 @@ from callback_voice.providers.vad.base import VoiceActivityModel
 from callback_voice.recording.event_log import EventLog
 from callback_voice.scoring.load_call_audio import load_call_audio
 from callback_voice.scoring.metrics.call_shape import call_shape
+from callback_voice.scoring.metrics.chaos_timing import chaos_timing
+from callback_voice.scoring.metrics.false_yield import false_yield
 from callback_voice.scoring.metrics.response_latency import response_latency
+from callback_voice.scoring.metrics.silence_handling import silence_handling
 from callback_voice.scoring.metrics.talk_over import talk_over
 from callback_voice.scoring.metrics.time_to_yield import time_to_yield
 from callback_voice.scoring.timeline.build_timeline import build_timeline
@@ -45,6 +48,9 @@ def score_call(call_dir: Path, thresholds: Thresholds, vad: VoiceActivityModel) 
         talk_over(
             timeline, thresholds.talk_over_ratio, yield_grace_s=thresholds.time_to_yield_p95_s
         ),
+        false_yield(timeline, thresholds.false_yields),
+        silence_handling(timeline, thresholds.silence_reprompt_s),
+        chaos_timing(timeline),
         call_shape(timeline),
     ]
     findings = sorted((f for r in results for f in r.findings), key=lambda f: f.t_s)

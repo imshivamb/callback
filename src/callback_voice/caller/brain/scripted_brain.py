@@ -28,5 +28,8 @@ class ScriptedBrain:
     def note_interjection(self, text: str) -> None:
         """Scripted callers do not adapt to interjections."""
 
+    def revise_last_line(self, text: str) -> None:
+        """Scripted callers keep their script."""
+
     def apply_updates(self, updates: dict[str, Any]) -> None:
         """Scripted callers do not adapt to changed facts."""

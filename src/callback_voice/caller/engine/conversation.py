@@ -71,6 +71,10 @@ class Conversation:
         # is done; a line the brain already decided is held and said then instead.
         if self._task is not None and not self._task.done() and not self._committed:
             self._task.cancel()
+        waiting = self._voice.withdraw_if_waiting()
+        if waiting is not None:  # the agent reprompted during a deliberate silence
+            waiting.lead_silence_s = 0.0
+            self._held = waiting
 
     def on_agent_turn_ended(self, ended: AgentTurnEnded) -> None:
         if self._final is not None or self.hang_up_at is not None:
@@ -145,6 +149,8 @@ class Conversation:
         plan = LinePlan(line.text, hang_up=line.hang_up)
         for processor in self._processors:
             plan = processor.before_caller_turn(self._ctx, self.caller_turn, plan)
+        if plan.text != line.text:
+            self._brain.revise_last_line(plan.text)
         if plan.updates:
             self._brain.apply_updates(plan.updates)
         await self._say(plan)

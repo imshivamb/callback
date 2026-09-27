@@ -25,6 +25,10 @@ class CallerBrain(Protocol):
         """The caller also said ``text`` (a chaos barge-in, a changed mind)."""
         ...
 
+    def revise_last_line(self, text: str) -> None:
+        """Chaos replaced the line the brain chose; remember what was really said."""
+        ...
+
     def apply_updates(self, updates: dict[str, Any]) -> None:
         """Merge new facts into what the caller knows (``change_mind``)."""
         ...

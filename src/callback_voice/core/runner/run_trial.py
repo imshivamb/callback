@@ -4,6 +4,7 @@ from pathlib import Path
 from callback_voice.caller.brain.build_brain import build_brain
 from callback_voice.caller.engine.call_session import CallSession, CallSetup
 from callback_voice.caller.speech.caller_speech import CallerSpeech
+from callback_voice.chaos.build_processors import build_processors
 from callback_voice.core.models.call_record import CallRecord
 from callback_voice.core.models.scenario import Scenario
 from callback_voice.core.models.trial_result import TrialResult
@@ -42,6 +43,11 @@ async def run_trial(
             speech=CallerSpeech(runtime.tts, scenario.caller),
             make_vad=runtime.make_vad,
             stt=runtime.stt if brain.needs_agent_text else None,
+            processors=tuple(
+                build_processors(
+                    scenario.chaos, seed, scenario.source.parent if scenario.source else Path()
+                )
+            ),
         )
         outcome = await CallSession(setup).run()
         paths = outcome.recorder.save(call_dir)
@@ -54,7 +60,7 @@ async def run_trial(
     except Exception as exc:  # a bug must still surface as an error, not a pass
         return _errored(scenario, trial, seed, call_id, f"{exc!r}\n{traceback.format_exc(limit=6)}")
 
-    passed, reasons = trial_verdict(score.metrics, outcome.end_reason)
+    passed, reasons = trial_verdict(score.metrics, score.findings, outcome.end_reason)
     record = CallRecord(
         call_id=call_id,
         scenario_id=scenario.id,

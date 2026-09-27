@@ -68,6 +68,11 @@ class PersonaBrain:
     def note_interjection(self, text: str) -> None:
         self._notes.append(f'[You also said: "{text}"]')
 
+    def revise_last_line(self, text: str) -> None:
+        if self._messages and self._messages[-1].role == "assistant":
+            said = json.loads(self._messages[-1].content)
+            self._messages[-1] = ChatMessage("assistant", json.dumps({**said, "say": text}))
+
     def apply_updates(self, updates: dict[str, Any]) -> None:
         changes = ", ".join(f"{k} is now {v}" for k, v in updates.items())
         self._notes.append(f"[Your plans changed: {changes}.]")
