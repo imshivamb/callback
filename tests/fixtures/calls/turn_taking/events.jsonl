@@ -1,0 +1,3 @@
+{"t_s": 4.37, "kind": "caller_utterance", "end_s": 6.18, "text": "Hi, I need to move my booking.", "data": {"tag": "line"}}
+{"t_s": 10.05, "kind": "caller_utterance", "end_s": 11.77, "text": "It's D X 7 Q 2.", "data": {"tag": "line"}}
+{"t_s": 20.23, "kind": "caller_utterance", "end_s": 21.87, "text": "Saturday at seven, please.", "data": {"tag": "line"}}

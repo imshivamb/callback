@@ -1,0 +1,9 @@
+{
+  "response_latencies_s": [
+    0.8
+  ],
+  "time_to_yield_s": [
+    0.35
+  ],
+  "talk_over_ratio": 0.0
+}
