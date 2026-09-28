@@ -54,5 +54,6 @@ jobs:
             e2e-tmp/**/events.jsonl
             e2e-tmp/**/report.html
             .callback/e2e-agent-logs/
+          include-hidden-files: true  # real-call runs live under .callback/
           if-no-files-found: ignore
           retention-days: 14
