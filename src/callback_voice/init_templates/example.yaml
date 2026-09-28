@@ -1,0 +1,23 @@
+# One scripted call (no LLM, no cost): the caller moves a booking and cuts in once
+# while the agent is talking. Run it with:  callback run scenarios
+id: example
+agent: my-agent
+trials: 1
+max_duration_s: 120
+caller:
+  persona: "Arjun, calling on his lunch break"
+  goal: "Move booking DX7Q2 to Saturday evening"
+  voice: male_us_1
+  script:
+    - "Hi, I need to move my booking to Saturday."
+    - "It's D X 7 Q 2."
+    - "Anytime between seven and nine is fine."
+    - "Seven thirty works."
+    - "Yes please."
+    - "No, that's all. Thanks, bye."
+chaos:
+  events:
+    # Cut in 0.8 s into the agent's 2nd turn. A good agent stops within 0.6 s.
+    - barge_in: {on: agent_turn, turn: 2, after_s: 0.8, say: "Sorry, it's for Saturday evening."}
+expect:
+  thresholds: {response_latency_p95_s: 1.5, time_to_yield_p95_s: 0.6}

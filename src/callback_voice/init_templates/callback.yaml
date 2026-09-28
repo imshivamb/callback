@@ -1,0 +1,25 @@
+# Callback project config. Secrets never go here: only the names of env vars.
+# A .env file next to this one is loaded automatically (shell exports win).
+
+targets:
+  # The agent under test. This one is the bundled reference agent:
+  #   callback agent serve          (good)   |   callback agent serve --buggy
+  # Point it at your own agent's WebSocket (16 kHz PCM16 mono) instead.
+  my-agent:
+    transport: websocket
+    url: ws://127.0.0.1:8765
+
+providers:
+  # Speech runs locally for free (pip install "callback-voice[local]").
+  stt: {name: faster-whisper, model: base}
+  tts: {name: kokoro, voice: af_heart}
+  # The AI caller's brain, only for scenarios without a script. Gemini's free tier;
+  # set GEMINI_API_KEY in .env. Or use `callback run --local` with Ollama.
+  llm: {name: gemini, model: gemini-flash-lite-latest}
+  # Optional LLM judge for plain-English rules; advisory, never fails a run.
+  # judge: {name: gemini, model: gemini-flash-lite-latest}
+
+concurrency: 1
+cost_cap_usd: 1.0
+# auto: replay a recorded AI caller when one exists, record otherwise.
+recorded: auto

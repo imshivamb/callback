@@ -53,6 +53,25 @@ Agents started by the E2E tests log to `.callback/e2e-agent-logs/`.
 After a browser call you can check what the agent actually did to the booking:
 `curl http://127.0.0.1:8765/verify?call_id=<id>` (the id is printed in the log).
 
+## 2b. The demo and a new project
+
+```bash
+uv run callback demo            # buggy agent, two chaos calls, report opens; exit 1
+uv run callback demo --good     # the good agent; exit 0
+uv run callback demo --no-open  # don't open the browser (CI)
+```
+
+The demo starts the reference agent in its own process on a free port, runs the
+bundled barge-in and backchannel scenarios (scripted callers, no LLM, no keys),
+writes the usual run folder under `.callback/runs/` in the current folder, and stops
+the agent. Without the local speech extra or espeak-ng it exits 2 and prints the
+install command.
+
+`uv run callback init` in an empty folder writes `callback.yaml` (a `my-agent`
+target on port 8765) and `scenarios/example.yaml` (one scripted call with a barge-in).
+With `callback agent serve` running, `callback run scenarios` passes. It refuses to
+overwrite existing files unless you pass `--force`.
+
 ## 3. Run scenarios the way a user would
 
 Terminal 1, the agent under test:
@@ -325,6 +344,7 @@ uv run pytest -x -v                            # stop at first failure, verbose
 | `test_fact_checks.py` | A noise-masked letter goes to review; a spoken wrong letter fails; counts, times and phones are matched |
 | `test_disagreement_fixture.py` | The saved judge-vs-facts call still fails the hard check |
 | `test_report.py` | The report is one self-contained file; its timings match a fixture call's known latencies; 63-bit seeds survive; the summary sentence and tiles for a failing, a passing and an older run; `--no-audio` and a missing run |
+| `test_demo.py` | `callback demo` exits 1 with the buggy agent's barge-in and backchannel failures and writes a report; without the local extra it prints the install command |
 | `test_baseline_gate.py` | Three calls saved as a baseline; the same agent again exits 0; the agent with 0.4 s added exits 1 on the baseline alone, with the regression in `junit.xml` |
 
 Tests that need local models skip themselves when `[local]` isn't installed; the

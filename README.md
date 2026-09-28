@@ -63,7 +63,26 @@ uv run callback doctor
 download on first use (a few hundred MB, into `~/.cache`). The AI caller needs a free
 Gemini key in a `.env` file (`GEMINI_API_KEY=...`); the steps below don't.
 
-Start the two example agents, each in its own terminal:
+The fastest way to see it work, with no keys and no setup:
+
+```bash
+uv run callback demo
+```
+
+It starts the bundled buggy agent, calls it twice with chaos (the caller interrupts it,
+then says "mm-hmm" while it talks), fails with exit code 1 after about two and a half
+minutes, and opens the report on the moment it talked over the caller. `--good` calls
+the good agent instead, which passes.
+
+To test your own agent, start a project in an empty folder:
+
+```bash
+uv run callback init     # callback.yaml and scenarios/example.yaml
+```
+
+Then point the `my-agent` target in `callback.yaml` at your agent's WebSocket.
+
+Or try the bundled agents yourself. Start the two example agents, each in its own terminal:
 
 ```bash
 uv run callback agent serve                        # the good agent, port 8765

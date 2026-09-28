@@ -10,7 +10,17 @@ from pathlib import Path
 import typer
 
 from callback_voice import __version__
-from callback_voice.cli.commands import agent, baseline, doctor, replay, report, run, validate
+from callback_voice.cli.commands import (
+    agent,
+    baseline,
+    demo,
+    doctor,
+    init,
+    replay,
+    report,
+    run,
+    validate,
+)
 from callback_voice.cli.console import console, err_console
 from callback_voice.cli.render.error_panel import error_panel
 from callback_voice.core.config.load_dotenv import load_dotenv
@@ -29,7 +39,7 @@ app = typer.Typer(
     pretty_exceptions_enable=False,
 )
 
-for command in (run, replay, baseline, report, validate, doctor, agent):
+for command in (demo, init, run, replay, baseline, report, validate, doctor, agent):
     command.register(app)
 
 

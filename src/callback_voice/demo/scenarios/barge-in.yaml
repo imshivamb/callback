@@ -1,0 +1,18 @@
+# The caller cuts in while the agent is asking for the booking reference.
+id: barge-in
+agent: demo-agent
+max_duration_s: 150
+caller:
+  persona: "Arjun, in a hurry"
+  goal: "Move booking DX7Q2 to Saturday evening"
+  voice: male_us_1
+  script:
+    - "Hi, I need to move my booking to Saturday."
+    - "It's D X 7 Q 2."
+    - "Anytime between seven and nine is fine."
+    - "Seven thirty works."
+    - "Yes please."
+    - "No, that's all. Thanks, bye."
+chaos:
+  events:
+    - barge_in: {on: agent_turn, turn: 2, after_s: 0.3, say: "Sorry, it's for Saturday evening."}

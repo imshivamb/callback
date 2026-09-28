@@ -133,3 +133,16 @@ def test_misspelt_min_effect_is_an_error(run_cli, write) -> None:
 def test_baseline_save_without_runs_is_an_error(run_cli) -> None:
     done = run_cli("baseline", "save", "main")
     assert done.returncode == 2 and "no runs" in done.stderr
+
+
+def test_init_creates_a_project_that_validates(run_cli, tmp_path) -> None:
+    done = run_cli("init")
+    assert done.returncode == 0, done.stderr
+    assert (tmp_path / "callback.yaml").is_file() and (
+        tmp_path / "scenarios/example.yaml"
+    ).is_file()
+    assert run_cli("validate", "scenarios").returncode == 0
+
+    again = run_cli("init")
+    assert again.returncode == 2 and "already exists" in again.stderr
+    assert run_cli("init", "--force").returncode == 0
