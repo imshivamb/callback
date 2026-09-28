@@ -185,8 +185,13 @@ scenario, a test case per call, per limit and per baseline comparison. A call th
 failed inside a scenario that still passes is reported in its `system-out`, not as a
 failure.
 
-`concurrency:` in `callback.yaml` (default 1) runs that many calls at once. Calls on
-the same machine compete for CPU, so latency numbers are most comparable at 1.
+`concurrency:` in `callback.yaml` (default 1) runs that many calls at once. Results
+stay in plan order with the same seeds, but calls on one machine compete for CPU and
+latency goes up: three scripted calls to the good agent measured a reply-delay p95 of
+0.91 s one at a time and 1.23 s three at a time (per call 0.90, 1.12, 1.31 s), in 100 s
+instead of 249 s. Each run records its concurrency, and `--baseline` warns when the
+baseline was made at a different one. Keep baseline runs at the same concurrency,
+ideally 1.
 
 ## 4. Chaos: break the call on purpose
 
@@ -345,6 +350,7 @@ uv run pytest -x -v                            # stop at first failure, verbose
 | `test_disagreement_fixture.py` | The saved judge-vs-facts call still fails the hard check |
 | `test_report.py` | The report is one self-contained file; its timings match a fixture call's known latencies; 63-bit seeds survive; the summary sentence and tiles for a failing, a passing and an older run; `--no-audio` and a missing run |
 | `test_demo.py` | `callback demo` exits 1 with the buggy agent's barge-in and backchannel failures and writes a report; without the local extra it prints the install command |
+| `test_concurrency.py` | Three calls at once keep plan order and seeds and record the concurrency; a baseline made at another concurrency is flagged |
 | `test_baseline_gate.py` | Three calls saved as a baseline; the same agent again exits 0; the agent with 0.4 s added exits 1 on the baseline alone, with the regression in `junit.xml` |
 
 Tests that need local models skip themselves when `[local]` isn't installed; the

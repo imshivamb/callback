@@ -18,6 +18,9 @@ class RunResult(RecordModel):
     git_sha: str | None = None
     agent_config_hash: str
     mode: str
+    concurrency: int = 1
+    """Calls placed at once. Parallel calls on one machine compete for CPU and inflate
+    latency, so runs are only comparable at the same concurrency."""
     providers: dict[str, str] = Field(default_factory=dict)
     judge: dict[str, Any] | None = None
     vad: dict[str, Any] = Field(default_factory=dict)

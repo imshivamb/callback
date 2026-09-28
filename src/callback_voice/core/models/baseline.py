@@ -15,4 +15,5 @@ class Baseline(RecordModel):
     run_id: str
     git_sha: str | None = None
     agent_config_hash: str
+    concurrency: int = 1
     scenarios: dict[str, list[Aggregate]] = Field(default_factory=dict)

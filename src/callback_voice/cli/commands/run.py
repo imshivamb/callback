@@ -59,6 +59,12 @@ def run(
     # Before any call is placed: a missing baseline or a bad min_effect is exit 2 now.
     reference = load_baseline(project.resolve(project.baseline_dir), baseline) if baseline else None
     effects = min_effect(project.min_effect)
+    if reference is not None and reference.concurrency != project.concurrency:
+        console.print(
+            f"[warn]▲ baseline {reference.name} was run with concurrency "
+            f"{reference.concurrency}, this run uses {project.concurrency}: parallel calls on "
+            "one machine inflate latency, so latency changes may not be real.[/]\n"
+        )
     mode: RecordedMode = "record" if record else "replay" if replay else project.recorded
     llm_choice = LOCAL_CALLER_LLM if local else project.providers.llm
     plan = [(s, t) for s in scenarios for t in range(1, (trials or s.trials) + 1)]

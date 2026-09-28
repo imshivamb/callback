@@ -81,6 +81,7 @@ async def run_suite(
         git_sha=git_sha(project.root),
         agent_config_hash=agent_config_hash(project),
         mode=runtime.recorded,
+        concurrency=project.concurrency,
         providers={k: v.name for k, v in project.providers if v is not None}
         | {"llm": runtime.llm_choice.name},
         vad={"provider": project.providers.vad.name},

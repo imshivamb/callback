@@ -35,6 +35,7 @@ def save_baseline(runs_dir: Path, baseline_dir: Path, name: str, run_id: str | N
         run_id=run.run_id,
         git_sha=run.git_sha,
         agent_config_hash=run.agent_config_hash,
+        concurrency=run.concurrency,
         scenarios={s.scenario_id: s.aggregates for s in run.scenarios},
     )
     baseline_dir.mkdir(parents=True, exist_ok=True)
