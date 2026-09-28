@@ -39,6 +39,9 @@ class AgentBehavior:
     ``must_not`` pattern rule."""
     reprompt_after_s: float | None = 5.0
     """Reprompt a silent caller. None never reprompts. Caught by silence handling."""
+    synthesis_delay_s: float = 0.0
+    """Extra wait before synthesising each part of a reply: simulates a slow machine,
+    whose pauses mid-reply a caller can mistake for the end of the agent's turn."""
     voice: str = "af_heart"
 
 

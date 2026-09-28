@@ -208,6 +208,11 @@ class AgentSession:
         await asyncio.sleep(self._behavior.think_delay_s)
         await self._speak(reply)
 
+    async def _synthesize(self, text: str) -> Audio:
+        if self._behavior.synthesis_delay_s:
+            await asyncio.sleep(self._behavior.synthesis_delay_s)
+        return await self._m.tts.synthesize(text, voice=self._behavior.voice)
+
     def _log_timing(self, tts_first: float) -> None:
         if self._timing:
             self._timing["tts_first"] = tts_first
@@ -222,14 +227,14 @@ class AgentSession:
             # Talks straight through, with no pauses for synthesis that could look like
             # it stopped to listen: render the whole reply before the first word.
             began = time.monotonic()
-            audios = [await self._m.tts.synthesize(c, voice=self._behavior.voice) for c in chunks]
+            audios = [await self._synthesize(c) for c in chunks]
             self._log_timing(time.monotonic() - began)
             for audio in audios:
                 self._speaker.enqueue(audio)
         else:
             for i, chunk in enumerate(chunks):
                 began = time.monotonic()
-                audio = await self._m.tts.synthesize(chunk, voice=self._behavior.voice)
+                audio = await self._synthesize(chunk)
                 if i == 0:
                     self._log_timing(time.monotonic() - began)
                 self._speaker.enqueue(audio)

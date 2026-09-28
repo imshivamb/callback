@@ -87,13 +87,15 @@ class Conversation:
             self._held = waiting
 
     def on_agent_turn_ended(self, ended: AgentTurnEnded) -> None:
-        if self._final is not None or self.hang_up_at is not None:
-            if self._final is None:  # our goodbye is done; the agent answered it
-                self.hang_up_at = min(self.hang_up_at or 1e9, self._ctx.t_s + _AFTER_GOODBYE_S)
-            return
+        # A line decided while the agent was still talking goes first, even the goodbye:
+        # returning early for a pending goodbye here left it unsaid and the call stuck.
         if self._held is not None:
             held, self._held = self._held, None
             self._voice.say(held)
+            return
+        if self._final is not None or self.hang_up_at is not None:
+            if self._final is None:  # our goodbye is done; the agent answered it
+                self.hang_up_at = min(self.hang_up_at or 1e9, self._ctx.t_s + _AFTER_GOODBYE_S)
             return
         current = self._voice.current
         if current is not None and current.tag == "barge_in":

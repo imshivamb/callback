@@ -29,6 +29,12 @@ def serve(
         min=0.0,
         help="Wait this many extra seconds before every reply (simulate a slower agent).",
     ),
+    synthesis_delay: float = typer.Option(
+        0.0,
+        "--synthesis-delay",
+        min=0.0,
+        help="Wait this long before synthesising each sentence (simulate a slow machine).",
+    ),
 ) -> None:
     from callback_voice.reference_agents.restaurant.server.configure_agent_logging import (
         configure_agent_logging,
@@ -42,6 +48,12 @@ def serve(
             behavior,
             name=f"{behavior.name}+{add_latency:g}s",
             think_delay_s=behavior.think_delay_s + add_latency,
+        )
+    if synthesis_delay:
+        behavior = replace(
+            behavior,
+            name=f"{behavior.name}+slow-tts",
+            synthesis_delay_s=synthesis_delay,
         )
     log_path = configure_agent_logging(log_dir, behavior.name, port, verbose=verbose)
     ready = asyncio.Event()
