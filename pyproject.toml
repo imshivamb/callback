@@ -2,9 +2,9 @@
 name = "callback-voice"
 version = "0.1.0"
 description = "Chaos testing for voice agents. Real calls, real audio, one exit code."
-readme = "README.md"
+dynamic = ["readme"]
 license = "Apache-2.0"
-license-files = ["LICENSE"]
+license-files = ["LICENSE", "NOTICE"]
 requires-python = ">=3.12"
 authors = [{ name = "Shivam" }]
 keywords = ["voice-agents", "testing", "chaos-engineering", "evals", "speech", "ci"]
@@ -12,6 +12,8 @@ classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: Console",
   "Intended Audience :: Developers",
+  "Operating System :: MacOS",
+  "Operating System :: POSIX :: Linux",
   "Programming Language :: Python :: 3.12",
   "Topic :: Multimedia :: Sound/Audio :: Speech",
   "Topic :: Software Development :: Testing",
@@ -41,8 +43,10 @@ twilio = ["twilio>=9.0"]
 callback = "callback_voice.cli.app:main"
 
 [project.urls]
-Homepage = "https://github.com/callback-voice/callback"
-Documentation = "https://github.com/callback-voice/callback/tree/main/docs"
+Homepage = "https://github.com/imshivamb/callback"
+Documentation = "https://github.com/imshivamb/callback/blob/main/docs/testing.md"
+Source = "https://github.com/imshivamb/callback"
+Issues = "https://github.com/imshivamb/callback/issues"
 
 [dependency-groups]
 dev = [
@@ -54,14 +58,31 @@ dev = [
 ]
 
 [build-system]
-requires = ["hatchling>=1.26"]
+requires = ["hatchling>=1.26", "hatch-fancy-pypi-readme>=24.1"]
 build-backend = "hatchling.build"
+
+# PyPI shows the README without the repository around it, so relative links are
+# rewritten at build time: images to raw files, everything else to GitHub pages.
+[tool.hatch.metadata.hooks.fancy-pypi-readme]
+content-type = "text/markdown"
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
+path = "README.md"
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '(!\[[^\]]*\]\()(?!https?://)([^)]+)\)'
+replacement = '\1https://raw.githubusercontent.com/imshivamb/callback/main/\2)'
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '(\]\()(?!https?://|#)([^)]+)\)'
+replacement = '\1https://github.com/imshivamb/callback/blob/main/\2)'
+
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/callback_voice"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src/callback_voice", "README.md", "LICENSE"]
+include = ["src/callback_voice", "README.md", "LICENSE", "NOTICE"]
 
 [tool.ruff]
 line-length = 100
