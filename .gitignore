@@ -46,3 +46,4 @@ docs/internal/
 
 # Local Claude Code settings
 .claude/
+e2e-tmp/

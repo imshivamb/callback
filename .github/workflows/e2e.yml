@@ -43,4 +43,16 @@ jobs:
       - run: uv run ruff format --check src tests
       - run: uv run mypy
       - name: End-to-end tests (real CLI, real calls, local models)
-        run: uv run pytest
+        run: uv run pytest -rs --basetemp=e2e-tmp
+      - name: Keep the evidence (results, event logs, reports, agent logs)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-evidence-${{ matrix.os }}
+          path: |
+            e2e-tmp/**/results.json
+            e2e-tmp/**/events.jsonl
+            e2e-tmp/**/report.html
+            .callback/e2e-agent-logs/
+          if-no-files-found: ignore
+          retention-days: 14
