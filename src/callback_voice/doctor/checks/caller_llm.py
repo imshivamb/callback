@@ -85,3 +85,25 @@ def _check_ollama(choice: ProviderChoice) -> CheckResult:
             _GROUP, "ollama", "warn", f"{choice.model} is not pulled", f"ollama pull {choice.model}"
         )
     return CheckResult(_GROUP, "ollama", "ok", f"{choice.model} ready at {base_url}")
+
+
+def check_local_caller() -> CheckResult:
+    """``callback run --local``: optional, so a missing Ollama is only a note."""
+    from callback_voice.core.config.provider_config import LOCAL_CALLER_LLM
+
+    result = _check_ollama(LOCAL_CALLER_LLM)
+    return CheckResult(
+        _GROUP,
+        "ollama (--local)",
+        "ok" if result.status == "ok" else "skip",
+        result.detail if result.status == "ok" else f"optional; {result.detail}",
+        None if result.status == "ok" else _local_fix(result),
+    )
+
+
+def _local_fix(result: CheckResult) -> str:
+    from callback_voice.core.config.provider_config import LOCAL_CALLER_LLM
+
+    if "not pulled" in result.detail:
+        return f"ollama pull {LOCAL_CALLER_LLM.model}"
+    return f"install from https://ollama.com, then: ollama pull {LOCAL_CALLER_LLM.model}"

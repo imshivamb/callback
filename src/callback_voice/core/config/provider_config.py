@@ -35,3 +35,7 @@ class ProvidersConfig(StrictModel):
 
 
 LOCAL_PROVIDERS = ProvidersConfig()
+
+
+LOCAL_CALLER_LLM = ProviderChoice(name="ollama", model="qwen3:4b")
+"""The caller brain for ``callback run --local``: a small instruct model on Ollama."""

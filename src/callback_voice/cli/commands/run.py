@@ -9,15 +9,13 @@ from callback_voice.cli.render.run_summary import run_summary
 from callback_voice.cli.render.trial_line import trial_line
 from callback_voice.core.config.load_project_config import load_project_config
 from callback_voice.core.config.project_config import RecordedMode
-from callback_voice.core.config.provider_config import ProviderChoice
+from callback_voice.core.config.provider_config import LOCAL_CALLER_LLM
 from callback_voice.core.models.scenario import Scenario
 from callback_voice.core.models.trial_result import TrialResult
 from callback_voice.core.runner.estimate_cost import estimate_cost
 from callback_voice.core.scenarios.check_targets_exist import check_targets_exist
 from callback_voice.core.scenarios.load_suite import load_suite
 from callback_voice.errors import ConfigError
-
-LOCAL_LLM = ProviderChoice(name="ollama", model="qwen3:4b")
 
 
 def register(app: typer.Typer) -> None:
@@ -62,7 +60,7 @@ def run(
     reference = load_baseline(project.resolve(project.baseline_dir), baseline) if baseline else None
     effects = min_effect(project.min_effect)
     mode: RecordedMode = "record" if record else "replay" if replay else project.recorded
-    llm_choice = LOCAL_LLM if local else project.providers.llm
+    llm_choice = LOCAL_CALLER_LLM if local else project.providers.llm
     plan = [(s, t) for s in scenarios for t in range(1, (trials or s.trials) + 1)]
 
     runtime = Runtime(project, mode, llm_choice)
