@@ -31,19 +31,30 @@ jobs:
         run: |
           if [ "$RUNNER_OS" = "Linux" ]; then sudo apt-get update && sudo apt-get install -y espeak-ng
           else brew install espeak-ng; fi
-      - name: Cache speech models
-        uses: actions/cache@v4
+      # Downloaded models only. The reference agent's phrase cache (models/agent-tts)
+      # is left out on purpose, so every run measures the agent as a fresh machine does.
+      - name: Restore speech models
+        id: models
+        uses: actions/cache/restore@v4
         with:
           path: |
-            ~/.cache/callback
+            ~/.cache/callback/models/kokoro
             ~/.cache/huggingface
-          key: speech-models-v1
+          key: speech-models-v2
       - run: uv sync --python 3.12 --locked --extra local
       - run: uv run ruff check src tests
       - run: uv run ruff format --check src tests
       - run: uv run mypy
       - name: End-to-end tests (real CLI, real calls, local models)
         run: uv run pytest -rs --basetemp=e2e-tmp
+      - name: Save speech models (also when tests fail)
+        if: always() && steps.models.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.cache/callback/models/kokoro
+            ~/.cache/huggingface
+          key: speech-models-v2
       - name: Keep the evidence (results, event logs, reports, agent logs)
         if: always()
         uses: actions/upload-artifact@v4

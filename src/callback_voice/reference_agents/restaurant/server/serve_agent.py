@@ -23,7 +23,10 @@ from callback_voice.reference_agents.restaurant.server.http_routes import make_h
 from callback_voice.reference_agents.restaurant.voice.agent_session import AgentModels, AgentSession
 from callback_voice.reference_agents.restaurant.voice.behavior import AgentBehavior
 from callback_voice.reference_agents.restaurant.voice.pick_task_bug import pick_task_bug
-from callback_voice.reference_agents.restaurant.voice.split_sentences import split_sentences
+from callback_voice.reference_agents.restaurant.voice.speech_chunks import (
+    LEAD_PHRASES,
+    speech_chunks,
+)
 
 log = logging.getLogger("callback.reference_agent")
 CALL_ID_HEADER = "X-Callback-Call-Id"
@@ -88,9 +91,10 @@ async def _warm_up(stt: FasterWhisperStt, tts: CachedTts, behavior: AgentBehavio
     """Load and exercise every model before the first call.
 
     The TTS engine is run directly: the cached greeting would be a cache hit and leave
-    the model cold, so the first new phrase in a call would take over a second.
+    the model cold, so the first new phrase in a call would take over a second. The
+    common reply openings are synthesised into the cache so they play at once.
     """
     await stt.transcribe(np.zeros(8000, dtype=np.float32), language="en")
     await tts.inner.synthesize("Warming up.", voice=behavior.voice)
-    for sentence in [*split_sentences(GREETING), *split_sentences(REPROMPT)]:
-        await tts.synthesize(sentence, voice=behavior.voice)
+    for chunk in [*speech_chunks(GREETING), *speech_chunks(REPROMPT), *LEAD_PHRASES]:
+        await tts.synthesize(chunk, voice=behavior.voice)

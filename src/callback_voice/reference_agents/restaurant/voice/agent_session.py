@@ -11,7 +11,7 @@ from websockets.exceptions import ConnectionClosed
 from callback_voice.audio.format import Audio
 from callback_voice.audio.pcm import from_pcm16
 from callback_voice.audio.tape import AudioTape
-from callback_voice.providers.stt.base import SpeechToText
+from callback_voice.providers.stt.base import SpeechToText, Transcript
 from callback_voice.providers.tts.base import TextToSpeech
 from callback_voice.providers.vad.base import VoiceActivityModel
 from callback_voice.providers.vad.speech_detector import SpeechDetector
@@ -27,7 +27,7 @@ from callback_voice.reference_agents.restaurant.voice.paced_speaker import Paced
 from callback_voice.reference_agents.restaurant.voice.sounds_like_interruption import (
     sounds_like_interruption,
 )
-from callback_voice.reference_agents.restaurant.voice.split_sentences import split_sentences
+from callback_voice.reference_agents.restaurant.voice.speech_chunks import speech_chunks
 
 log = logging.getLogger("callback.reference_agent")
 _PRE_ROLL_S = 0.15
@@ -68,6 +68,8 @@ class AgentSession:
         self._last_activity = time.monotonic()
         self._hanging_up = False
         self._timing: dict[str, float] = {}
+        # Transcription started as soon as the caller went quiet, keyed by the turn span.
+        self._early: tuple[tuple[float, float], asyncio.Task[Transcript]] | None = None
 
     async def run(self) -> None:
         speaker = asyncio.create_task(self._speaker.run())
@@ -95,6 +97,7 @@ class AgentSession:
             else:
                 self._turns.on_speech_end(edge.t_s)
                 self._judged_backchannel = False
+                self._transcribe_early()
         if self._detector.speaking:
             self._last_activity = time.monotonic()
             if self._holding_floor:
@@ -108,7 +111,9 @@ class AgentSession:
         span = self._turns.turn_complete(self._detector.now_s, self._detector.speaking)
         if span is not None:
             clip = self._tape.slice(span[0] - _PRE_ROLL_S, span[1] + 0.1)
-            self._start_reply(self._answer(clip))
+            early = self._early[1] if self._early is not None and self._early[0] == span else None
+            self._early = None
+            self._start_reply(self._answer(clip, early))
 
     def _on_caller_start(self, t_s: float) -> None:
         if self._holding_floor:
@@ -172,10 +177,28 @@ class AgentSession:
             self._reply_task.cancel()
         self._turns.promote_run()
 
-    async def _answer(self, clip: Audio) -> None:
+    def _transcribe_early(self) -> None:
+        """Start transcribing the moment the caller goes quiet, during the end-of-turn
+        wait, so the words are ready when the turn is confirmed. If the caller speaks
+        again, the turn's span changes and this result is simply not used."""
+        start, end = self._turns.turn_start, self._turns.pending_end
+        if start is None or end is None:
+            return
+        if self._early is not None:
+            self._early[1].cancel()
+        clip = self._tape.slice(start - _PRE_ROLL_S, end + 0.1)
+        self._early = (
+            (start, end),
+            asyncio.create_task(self._m.stt.transcribe(clip, language="en")),
+        )
+
+    async def _answer(self, clip: Audio, early: "asyncio.Task[Transcript] | None" = None) -> None:
         began = time.monotonic()
-        transcript = await self._m.stt.transcribe(clip, language="en")
-        self._timing = {"stt": time.monotonic() - began}
+        if early is not None and not early.cancelled():
+            transcript = await early  # usually already done: the wait hid the transcription
+        else:
+            transcript = await self._m.stt.transcribe(clip, language="en")
+        self._timing = {"stt": time.monotonic() - began, "early": 1.0 if early else 0.0}
         text = transcript.text.strip()
         log.info("caller: %s", text)
         # "okay" answers a yes/no question; anywhere else a lone backchannel needs no reply.
@@ -185,17 +208,31 @@ class AgentSession:
         await asyncio.sleep(self._behavior.think_delay_s)
         await self._speak(reply)
 
+    def _log_timing(self, tts_first: float) -> None:
+        if self._timing:
+            self._timing["tts_first"] = tts_first
+            log.info("timing: %s", " ".join(f"{k}={v:.2f}s" for k, v in self._timing.items()))
+            self._timing = {}
+
     async def _speak(self, reply: Reply) -> None:
         log.info("agent: %s", reply.text)
         self._speaker.begin_reply()
-        for i, sentence in enumerate(split_sentences(reply.text)):
+        chunks = speech_chunks(reply.text)
+        if self._behavior.barge_in == "ignore":
+            # Talks straight through, with no pauses for synthesis that could look like
+            # it stopped to listen: render the whole reply before the first word.
             began = time.monotonic()
-            audio = await self._m.tts.synthesize(sentence, voice=self._behavior.voice)
-            if i == 0 and self._timing:
-                self._timing["tts_first"] = time.monotonic() - began
-                log.info("timing: %s", " ".join(f"{k}={v:.2f}s" for k, v in self._timing.items()))
-                self._timing = {}
-            self._speaker.enqueue(audio)
+            audios = [await self._m.tts.synthesize(c, voice=self._behavior.voice) for c in chunks]
+            self._log_timing(time.monotonic() - began)
+            for audio in audios:
+                self._speaker.enqueue(audio)
+        else:
+            for i, chunk in enumerate(chunks):
+                began = time.monotonic()
+                audio = await self._m.tts.synthesize(chunk, voice=self._behavior.voice)
+                if i == 0:
+                    self._log_timing(time.monotonic() - began)
+                self._speaker.enqueue(audio)
         if reply.end_call:
             self._hanging_up = True
             await self._speaker.idle.wait()

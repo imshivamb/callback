@@ -45,5 +45,7 @@ def _confirm(ctx: TurnContext) -> Reply:
     if s.intent == "move":
         booking = ctx.store.find(s.ref or "")
         party = s.party_size or (booking.party_size if booking else 2)
-        return Reply(f"{when} is available. Shall I move your table for {party} to then?")
-    return Reply(f"{when} is available. Shall I book a table for {s.party_size} under {s.name}?")
+        return Reply(f"Great, {when} is available. Shall I move your table for {party} to then?")
+    return Reply(
+        f"Great, {when} is available. Shall I book a table for {s.party_size} under {s.name}?"
+    )

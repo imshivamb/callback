@@ -47,3 +47,6 @@ docs/internal/
 # Local Claude Code settings
 .claude/
 e2e-tmp/
+
+# Private write-up notes
+notes/
