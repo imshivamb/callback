@@ -1,0 +1,19 @@
+# The caller says "mm-hmm" while the agent talks; a good agent keeps going.
+id: backchannel--buggy
+trials: 5
+agent: restaurant-buggy
+max_duration_s: 150
+caller:
+  persona: "Arjun, an attentive listener"
+  goal: "Move booking DX7Q2 to Saturday evening"
+  voice: male_us_1
+  script:
+    - "Hi, I need to move my booking to Saturday."
+    - "It's D X 7 Q 2."
+    - "Anytime between seven and nine is fine."
+    - "Seven thirty works."
+    - "Yes please."
+    - "No, that's all. Thanks, bye."
+chaos:
+  events:
+    - backchannel: {on: agent_turn, every: 1, after_s: 2.0, say: ["mm-hmm", "okay"]}

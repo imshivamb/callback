@@ -1,0 +1,19 @@
+# An LLM-driven caller: it pursues the goal in its own words.
+id: move-booking-persona--good
+trials: 10
+agent: restaurant-good
+max_duration_s: 180
+caller:
+  persona: "Priya Sharma, 34, friendly but busy, calling from her office"
+  goal: >-
+    Move your Friday 8pm table for 4 to Saturday, any time between 7 and 9pm.
+    Accept an offered time in that window and confirm it.
+  knows: {name: Priya Sharma, booking_ref: DX7Q2, party_size: 4, current_booking: "Friday 8pm"}
+  voice: female_in_1
+  patience: medium
+expect:
+  state:
+    webhook: /verify
+    match: {status: moved, day: saturday, hour_between: [19, 21]}
+  entities_spoken: ["DX7Q2"]
+  thresholds: {response_latency_p95_s: 1.5}

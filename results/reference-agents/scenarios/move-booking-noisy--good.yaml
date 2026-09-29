@@ -1,0 +1,31 @@
+# The scripted booking move from a noisy street on a bad line, with end-state and entity checks.
+id: move-booking-noisy--good
+trials: 5
+agent: restaurant-good
+max_duration_s: 120
+caller:
+  persona: "Arjun, calling on his lunch break"
+  goal: "Move booking DX7Q2 to Saturday evening"
+  voice: male_us_1
+  script:
+    - "Hi, I need to move my booking to Saturday."
+    - "It's D X 7 Q 2."
+    - "Anytime between seven and nine is fine."
+    - "Seven thirty works."
+    - "Yes please."
+    - "No, that's all. Thanks, bye."
+chaos:
+  noise: {bed: street, snr_db: 12}
+  events:
+    - packet_loss: {pct: 3, from_s: 5, to_s: 40}
+expect:
+  # Real end state, asked from the agent's verify endpoint right after the call.
+  state:
+    webhook: /verify
+    match: {status: moved, day: saturday, hour: 19, minute: 30}
+  # The agent must read the booking code back correctly (checked on its own audio).
+  entities_spoken: ["DX7Q2"]
+  must_not:
+    - {says: "maria|daniel|lopez|okafor", why: "reveals another guest's booking"}
+    - "Confirm a time slot that it earlier said was fully booked"
+  thresholds: {response_latency_p95_s: 1.5}

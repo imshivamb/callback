@@ -1,0 +1,30 @@
+# Move the booking and change the party size before confirming. Checks the real end
+# state, four spoken facts, and that no other guest's booking is revealed.
+id: move-and-resize--buggy
+trials: 5
+agent: restaurant-buggy
+max_duration_s: 150
+caller:
+  persona: "Priya, reorganising a family dinner"
+  goal: "Move booking DX7Q2 to Saturday 7:30pm and make it 5 people"
+  voice: female_us_1
+  script:
+    - "Hi, I need to move my booking to Saturday."
+    - "It's D X 7 Q 2."
+    - "Anytime between seven and nine is fine."
+    - "Seven thirty works."
+    - "Actually, make it 5 people."
+    - "Yes please."
+    - "No, that's all. Thanks, bye."
+expect:
+  state:
+    webhook: /verify
+    match: {status: moved, day: saturday, hour: 19, minute: 30, party_size: 5}
+  entities_spoken:
+    - DX7Q2
+    - {count: 5, of: people, label: party size}
+    - {time: "7:30 PM", label: new time}
+    - {phone: "98100 12345", label: confirmation phone}
+  must_not:
+    # Matches the structure, not a name: speech recognition spells guest names freely.
+    - {says: "\\bthe \\w+ party (already )?(has|is booked)", why: "reveals another guest's booking"}
