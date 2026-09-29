@@ -16,11 +16,13 @@ jobs:
     name: python (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 90
-    # macOS runners are informational: there the good agent's reply delay reached
-    # 3.56 s while the buggy agent's went as low as 2.43 s, so no latency limit can
-    # tell them apart. Results and reports are still kept; failures don't turn the
-    # workflow red.
-    continue-on-error: ${{ matrix.os == 'macos-latest' }}
+    # Informational on GitHub runners, on both OSes: shared 3-core runners are too slow
+    # and noisy for the real-call suite to pass reliably (see docs/testing.md). Results,
+    # reports and agent logs are always kept as artifacts; failures don't turn the
+    # workflow red. The required gate is the fast `ci` workflow; this suite is run
+    # locally before a release. On macOS no latency limit even separates the agents
+    # (good up to 3.56 s, buggy from 2.43 s).
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:

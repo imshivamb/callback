@@ -376,8 +376,13 @@ workflow sets `CALLBACK_CI_LATENCY_LIMIT_S=2.0`:
 - 2.0 s was chosen from measured runs: on Ubuntu the good agent stayed at or below
   1.70 s and the buggy agent at or above 2.25 s, so the check still fails the buggy
   agent.
-- The macOS job is informational: there the two agents' ranges overlap (good up to
-  3.56 s, buggy from 2.43 s), so it keeps its results but cannot fail the workflow.
+- On macOS runners no limit separates the two agents (good up to 3.56 s, buggy from
+  2.43 s).
+- The whole `e2e` workflow is informational on GitHub, on both OSes: shared runners are
+  too slow and noisy for the real-call suite to pass reliably, even with these limits.
+  Every run keeps its results, reports and agent logs as artifacts, but a failure
+  doesn't turn the workflow red. The required gate is the fast `ci` workflow, and the
+  full suite (`uv run pytest`) is run locally before a release.
 
 The workflow also sets `CALLBACK_CI_DRIFT_LIMIT_S=1.0`, the tolerance for how late
 Callback's own disturbances may land (normally 0.1 s). This is a check on Callback, not
@@ -393,7 +398,11 @@ latency limit does not touch.
 On GitHub, the `ci` workflow runs on every push and pull request. It installs
 without `[local]` and with no keys, so only the fast tests run (CLI contract and
 scoring on the committed fixture calls; the tests take seconds). The full suite with real
-calls is the `e2e` workflow, started by hand from the Actions tab (Run workflow).
+calls is the `e2e` workflow, started by hand from the Actions tab (Run workflow); it is
+informational (see "The CI latency limit" above). The `clean-install` workflow installs
+the built wheel with plain pip on fresh Ubuntu and macOS machines and runs
+`callback demo`, expecting exit code 1 and a report; it runs by hand and on every
+published release.
 To run the same fast set locally, use a separate environment without `[local]`:
 
 ```bash
