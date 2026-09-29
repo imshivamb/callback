@@ -4,6 +4,7 @@ from typing import Any
 from pydantic import Field
 
 from callback_voice.core.models.baseline_diff import BaselineDiff
+from callback_voice.core.models.limit_override import LimitOverride
 from callback_voice.core.models.scenario_result import ScenarioResult
 from callback_voice.core.models.strict_model import RecordModel
 
@@ -25,6 +26,8 @@ class RunResult(RecordModel):
     judge: dict[str, Any] | None = None
     vad: dict[str, Any] = Field(default_factory=dict)
     scenarios: list[ScenarioResult] = Field(default_factory=list)
+    limit_overrides: list[LimitOverride] = Field(default_factory=list)
+    """Limits loosened for this run (a CI machine), with the real target each replaced."""
     baseline_name: str | None = None
     baseline_diff: list[BaselineDiff] = Field(default_factory=list)
     passed: bool

@@ -141,6 +141,11 @@ The audio clips are described in [docs/assets/README.md](docs/assets/README.md).
   within ±50 ms ([test](tests/e2e/test_scoring_accuracy.py)).
 - **Hard checks decide.** Only rule-based checks can fail a run: timings, the real end
   state, required facts, and pattern rules.
+- **Real targets, even on slow CI.** The reply-delay target is 1.5 s. Our own test
+  workflow runs on GitHub's shared machines, which are slower at speech synthesis, so it
+  loosens that one limit to 2.0 s (`CALLBACK_CI_LATENCY_LIMIT_S`). Any run that does so
+  says it in its results file and report; 2.0 s is not the target
+  ([details](docs/testing.md#the-ci-latency-limit)).
 - **The AI judge is advisory.** An optional LLM judge can rate conversation quality and
   plain-English rules. Its scores are recorded but never fail a run. In one saved call
   it rated the buggy agent 4–5 out of 5 while the agent read the booking code back

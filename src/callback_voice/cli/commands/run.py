@@ -4,6 +4,7 @@ from pathlib import Path
 import typer
 
 from callback_voice.cli.console import console
+from callback_voice.cli.render.limit_notice import limit_notice
 from callback_voice.cli.render.run_plan import run_plan
 from callback_voice.cli.render.run_summary import run_summary
 from callback_voice.cli.render.trial_line import trial_line
@@ -12,6 +13,7 @@ from callback_voice.core.config.project_config import RecordedMode
 from callback_voice.core.config.provider_config import LOCAL_CALLER_LLM
 from callback_voice.core.models.scenario import Scenario
 from callback_voice.core.models.trial_result import TrialResult
+from callback_voice.core.runner.ci_limits import apply_ci_limits
 from callback_voice.core.runner.estimate_cost import estimate_cost
 from callback_voice.core.scenarios.check_targets_exist import check_targets_exist
 from callback_voice.core.scenarios.load_suite import load_suite
@@ -52,7 +54,7 @@ def run(
     if record and replay:
         raise ConfigError("--record and --replay cannot be used together")
     project = load_project_config(config, start=path if path.is_dir() else path.parent)
-    scenarios = load_suite(path)
+    scenarios, overrides = apply_ci_limits(load_suite(path))
     if agent is not None:
         scenarios = [s.model_copy(update={"agent": agent}) for s in scenarios]
     check_targets_exist(scenarios, project)
@@ -89,6 +91,8 @@ def run(
             f"Estimated ${estimate.usd:.2f} exceeds your ${project.cost_cap_usd:.2f} cap. Continue?",
             abort=True,
         )
+    if (notice := limit_notice(overrides)) is not None:
+        console.print(notice)
     console.print()
 
     def on_trial(scenario: Scenario, result: TrialResult) -> None:
@@ -102,6 +106,7 @@ def run(
             on_trial=on_trial,
             baseline=reference,
             min_effect=effects,
+            limit_overrides=overrides,
         )
     )
     console.print(run_summary(result, run_dir))

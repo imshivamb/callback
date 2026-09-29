@@ -146,3 +146,16 @@ def test_init_creates_a_project_that_validates(run_cli, tmp_path) -> None:
     again = run_cli("init")
     assert again.returncode == 2 and "already exists" in again.stderr
     assert run_cli("init", "--force").returncode == 0
+
+
+def test_ci_latency_limit_is_announced_and_validated(run_cli, write, monkeypatch) -> None:
+    write("callback.yaml", "targets:\n  a: {transport: websocket, url: 'ws://127.0.0.1:9'}\n")
+    write("s.yaml", "id: s\nagent: a\ncaller: {persona: p, goal: g, script: [hi]}\n")
+    monkeypatch.setenv("CALLBACK_CI_LATENCY_LIMIT_S", "2.0")
+    done = run_cli("run", "s.yaml")
+    assert "CI limit: reply delay p95 up to 2 s" in done.stdout, done.stdout
+    assert "the real target is 1.5 s" in done.stdout
+
+    monkeypatch.setenv("CALLBACK_CI_LATENCY_LIMIT_S", "fast")
+    bad = run_cli("run", "s.yaml")
+    assert bad.returncode == 2 and "is not a number of seconds" in bad.stderr

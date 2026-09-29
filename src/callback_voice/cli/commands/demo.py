@@ -37,10 +37,12 @@ def demo(
     Everything runs locally: scripted callers (no LLM), local speech models, and the
     reference agent in its own process. Exit code is the run's: 1 for the buggy agent.
     """
+    from callback_voice.cli.render.limit_notice import limit_notice
     from callback_voice.core.config.project_config import ProjectConfig
     from callback_voice.core.config.target_config import WebSocketTarget
     from callback_voice.core.models.scenario import Scenario
     from callback_voice.core.models.trial_result import TrialResult
+    from callback_voice.core.runner.ci_limits import apply_ci_limits
     from callback_voice.core.runner.run_suite import run_suite
     from callback_voice.core.runner.runtime import Runtime
     from callback_voice.core.scenarios.load_suite import load_suite
@@ -60,14 +62,18 @@ def demo(
             targets={"demo-agent": WebSocketTarget(url=f"ws://127.0.0.1:{port}")}, root=root
         )
         with as_file(files("callback_voice.demo").joinpath("scenarios")) as folder:
-            scenarios = load_suite(Path(folder))
+            scenarios, overrides = apply_ci_limits(load_suite(Path(folder)))
+        if (notice := limit_notice(overrides)) is not None:
+            console.print(notice)
         plan = [(s, t) for s in scenarios for t in range(1, s.trials + 1)]
         runtime = Runtime(project, "off", project.providers.llm)  # scripted: no LLM calls
 
         def on_trial(scenario: Scenario, trial: TrialResult) -> None:
             console.print(trial_line(trial, scenario.trials))
 
-        result, run_dir = asyncio.run(run_suite(plan, runtime, on_trial=on_trial))
+        result, run_dir = asyncio.run(
+            run_suite(plan, runtime, on_trial=on_trial, limit_overrides=overrides)
+        )
     finally:
         agent.terminate()
         try:

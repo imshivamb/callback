@@ -30,6 +30,7 @@ def replay(
     ),
     config: Path | None = typer.Option(None, "--config", "-c", help="Path to callback.yaml."),
 ) -> None:
+    from callback_voice.core.runner.ci_limits import apply_ci_limits
     from callback_voice.core.runner.run_suite import run_suite
     from callback_voice.core.runner.runtime import Runtime
 
@@ -37,8 +38,12 @@ def replay(
     found = find_call(project.resolve(project.output_dir), call_id, run_id)
     if found.scenario.source is None or not Path(found.scenario.source).is_file():
         raise ConfigError(f"the scenario file for {call_id} is gone: {found.scenario.source}")
-    scenario = load_scenario(Path(found.scenario.source)).model_copy(
-        update={"agent": found.scenario.agent}
+    [scenario], overrides = apply_ci_limits(
+        [
+            load_scenario(Path(found.scenario.source)).model_copy(
+                update={"agent": found.scenario.agent}
+            )
+        ]
     )
     trial = found.trial
     console.print(
@@ -60,6 +65,7 @@ def replay(
             runtime,
             on_trial=on_trial,
             seeds={(scenario.id, trial.trial): trial.seed},
+            limit_overrides=overrides,
         )
     )
     console.print(run_summary(result, run_dir))

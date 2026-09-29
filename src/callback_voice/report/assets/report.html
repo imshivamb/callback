@@ -95,6 +95,11 @@ button { font: inherit; color: inherit; -webkit-appearance: none; appearance: no
 .sentence { font-size: 22px; line-height: 1.35; font-weight: 600; margin: 16px 0 6px; max-width: 60ch; letter-spacing: -0.01em; }
 .meta { color: var(--muted); font-size: 12.5px; display: flex; gap: 4px 14px; flex-wrap: wrap; }
 
+.cilimit {
+  margin: 12px 0 0; padding: 8px 12px; border-radius: 10px; max-width: 80ch;
+  border: 1px solid var(--warn); background: rgba(250, 178, 25, 0.10); color: var(--ink); font-size: 13px;
+}
+
 /* 2. Problem tiles */
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 12px; margin-top: 22px; }
 .tile { padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; border-left: 4px solid var(--critical); }
@@ -248,7 +253,8 @@ kbd { font: 12px ui-monospace, Menlo, monospace; border: 1px solid var(--border)
  * @typedef {{title: string, value: string|null, limit: string|null, detail: string, scenario_id: string,
  *   call_id: string|null, t_s: number|null, trial: number|null}} Tile
  * @typedef {{run: {run_id: string, created_at: string, callback_version: string, git_sha: string|null, mode: string,
- *   duration_s: number, exit_code: number, passed: boolean, baseline_name: string|null},
+ *   duration_s: number, exit_code: number, passed: boolean, baseline_name: string|null,
+ *   limit_overrides?: {scenario_id: string, metric: string, target: number, applied: number, source: string}[]},
  *   summary: {sentence: string, tiles: Tile[]}, scenarios: Scenario[]}} RunReport
  * @typedef {{key: string, label: string, severity: "fail"|"warn", items: number[]}} Group
  */
@@ -451,6 +457,7 @@ function renderTop() {
       ]),
     ]),
     h("p", { class: "sentence" }, [DATA.summary.sentence]),
+    ciLimitBanner(),
     h("div", { class: "meta num" }, [
       h("span", {}, [`run ${run.run_id}`]), h("span", {}, [when.toLocaleString()]),
       h("span", {}, [`exit code ${run.exit_code}`]), h("span", {}, [`${Math.round(run.duration_s)} s`]),
@@ -459,6 +466,18 @@ function renderTop() {
       h("span", {}, [`callback ${run.callback_version}`]),
     ]),
     tiles.length ? h("div", { class: "tiles" }, tiles) : null,
+  ]);
+}
+
+/** A loosened CI limit must never be mistaken for the real target: say so up top. */
+function ciLimitBanner() {
+  const overrides = DATA.run.limit_overrides || [];
+  if (!overrides.length) return null;
+  const applied = [...new Set(overrides.map((o) => o.applied))].join(", ");
+  const target = [...new Set(overrides.map((o) => o.target))].join(", ");
+  return h("p", { class: "cilimit", role: "note" }, [
+    h("b", {}, ["CI limit in use. "]),
+    `Reply delay p95 was allowed up to ${applied} s on this machine (${overrides[0].source}); the real target is ${target} s. Numbers between the two pass here but would fail the real target.`,
   ]);
 }
 

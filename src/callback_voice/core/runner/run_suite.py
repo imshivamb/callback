@@ -7,6 +7,7 @@ from pathlib import Path
 from callback_voice import __version__
 from callback_voice.core.baseline.compare_to_baseline import compare_to_baseline
 from callback_voice.core.models.baseline import Baseline
+from callback_voice.core.models.limit_override import LimitOverride
 from callback_voice.core.models.run_result import RunResult
 from callback_voice.core.models.scenario import Scenario
 from callback_voice.core.models.scenario_result import ScenarioResult
@@ -33,6 +34,7 @@ async def run_suite(
     seeds: dict[tuple[str, int], int] | None = None,
     baseline: Baseline | None = None,
     min_effect: Mapping[str, float] | None = None,
+    limit_overrides: list[LimitOverride] | None = None,
 ) -> tuple[RunResult, Path]:
     """Run every (scenario, trial), aggregate, compare, and write the result files.
 
@@ -87,6 +89,7 @@ async def run_suite(
         vad={"provider": project.providers.vad.name},
         judge=runtime.judge_info,
         scenarios=scenario_results,
+        limit_overrides=limit_overrides or [],
         baseline_name=baseline.name if baseline is not None else None,
         baseline_diff=diffs,
         passed=code == EXIT_PASS,

@@ -2,6 +2,7 @@
 caught against a saved baseline, and the same agent run again is not."""
 
 import json
+import os
 import xml.etree.ElementTree as ET
 from importlib.util import find_spec
 from pathlib import Path
@@ -67,9 +68,11 @@ def test_injected_latency_regression_fails_against_the_baseline(
     data = json.loads((latest(tmp_path) / "results.json").read_text())
     [scenario] = data["scenarios"]
     p95 = next(a for a in scenario["aggregates"] if a["name"] == "response_latency_p95_s")
-    assert p95["passed"] is True, (
-        p95
-    )  # under the absolute 1.5 s limit: only the baseline catches it
+    if not os.environ.get("CALLBACK_CI_LATENCY_LIMIT_S"):
+        # Under the absolute 1.5 s limit, so only the baseline catches it. A slow CI
+        # machine loosens that limit and puts the slowed agent near it, so there only
+        # the regression below is checked.
+        assert p95["passed"] is True, p95
     regressed = {d["metric"]: d for d in data["baseline_diff"] if d["regressed"]}
     assert "response_latency_p95_s" in regressed, data["baseline_diff"]
     assert regressed["response_latency_p95_s"]["delta"] >= 0.25

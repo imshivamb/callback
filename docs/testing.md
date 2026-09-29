@@ -356,6 +356,27 @@ uv run pytest -x -v                            # stop at first failure, verbose
 Tests that need local models skip themselves when `[local]` isn't installed; the
 Gemini test skips when `GEMINI_API_KEY` isn't set.
 
+### The CI latency limit
+
+The full suite (`e2e` workflow) runs on GitHub's shared runners, which synthesise
+speech 2–3× slower than a laptop. There the good reference agent's reply-delay p95 was
+0.95–1.70 s on Ubuntu and up to 3.56 s on macOS, against the real 1.5 s target. So the
+workflow sets `CALLBACK_CI_LATENCY_LIMIT_S=2.0`:
+
+- It only loosens the reply-delay limit (a scenario's own limit wins if it is higher),
+  and only when that variable is set. Nothing sets it by default.
+- It is not the target. Every run that uses it records it in `results.json` under
+  `limit_overrides` (with the real target next to it), prints it before the first call,
+  and shows a banner at the top of the report.
+- 2.0 s was chosen from measured runs: on Ubuntu the good agent stayed at or below
+  1.70 s and the buggy agent at or above 2.25 s, so the check still fails the buggy
+  agent.
+- The macOS job is informational: there the two agents' ranges overlap (good up to
+  3.56 s, buggy from 2.43 s), so it keeps its results but cannot fail the workflow.
+
+Every other check (interruptions, "mm-hmm", silence, end state, facts, replay) is as
+strict on CI as anywhere.
+
 On GitHub, the `ci` workflow runs on every push and pull request. It installs
 without `[local]` and with no keys, so only the fast tests run (CLI contract and
 scoring on the committed fixture calls; the tests take seconds). The full suite with real

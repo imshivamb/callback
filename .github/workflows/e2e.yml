@@ -16,12 +16,22 @@ jobs:
     name: python (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 90
+    # macOS runners are informational: there the good agent's reply delay reached
+    # 3.56 s while the buggy agent's went as low as 2.43 s, so no latency limit can
+    # tell them apart. Results and reports are still kept; failures don't turn the
+    # workflow red.
+    continue-on-error: ${{ matrix.os == 'macos-latest' }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
     env:
       CALLBACK_MODEL_DIR: ~/.cache/callback/models
+      # Shared runners synthesise speech 2-3x slower than a laptop. Measured on Ubuntu
+      # runners (run 36463568916): good agent reply-delay p95 0.95-1.70 s, buggy agent
+      # 2.25-2.73 s. 2.0 s separates them. The real target stays 1.5 s; runs record the
+      # loosened limit in results.json and show it in the report.
+      CALLBACK_CI_LATENCY_LIMIT_S: "2.0"
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6

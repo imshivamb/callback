@@ -1,5 +1,6 @@
 """Real calls: scripted caller -> WebSocket -> reference agent, scored from the recording."""
 
+import os
 from importlib.util import find_spec
 from pathlib import Path
 
@@ -11,6 +12,13 @@ from callback_voice.providers.vad.silero_vad import SileroVad
 from callback_voice.reference_agents.restaurant.voice.behavior import BUGGY, GOOD
 from callback_voice.scoring.score_call import score_call
 from tests.e2e.reference_call import MOVE_SCRIPT, call_reference_agent
+
+
+def ci_thresholds() -> Thresholds:
+    """Default limits, with the reply-delay limit a CI workflow sets on slow machines."""
+    ci = os.environ.get("CALLBACK_CI_LATENCY_LIMIT_S")
+    return Thresholds(response_latency_p95_s=float(ci)) if ci else Thresholds()
+
 
 pytestmark = pytest.mark.skipif(
     find_spec("kokoro_onnx") is None or find_spec("faster_whisper") is None,
@@ -34,7 +42,7 @@ async def test_good_agent_completes_the_booking_and_passes_latency(tmp_path: Pat
     audio, rate = sf.read(tmp_path / "call.wav")
     assert rate == 16_000 and audio.shape[1] == 2
 
-    score = score_call(tmp_path, Thresholds(), SileroVad())
+    score = score_call(tmp_path, ci_thresholds(), SileroVad())
     latency = score.metric("response_latency_p95_s")
     assert latency is not None and len(latency.samples) == len(MOVE_SCRIPT)
     assert latency.passed, latency.samples
@@ -45,7 +53,7 @@ async def test_good_agent_completes_the_booking_and_passes_latency(tmp_path: Pat
 async def test_buggy_agent_fails_response_latency(tmp_path: Path) -> None:
     call = await call_reference_agent(BUGGY, tmp_path, "e2e-buggy")
     assert call.outcome.end_reason == "caller_hangup"
-    score = score_call(tmp_path, Thresholds(), SileroVad())
+    score = score_call(tmp_path, ci_thresholds(), SileroVad())
 
     latency = score.metric("response_latency_p95_s")
     assert latency is not None and latency.passed is False, latency.samples

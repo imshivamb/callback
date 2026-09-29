@@ -20,6 +20,7 @@ def build_report(result: RunResult, run_dir: Path, *, audio: bool = True) -> dic
             "exit_code": result.exit_code,
             "passed": result.passed,
             "baseline_name": result.baseline_name,
+            "limit_overrides": [o.model_dump() for o in result.limit_overrides],
             "providers": result.providers,
             "vad": result.vad,
             "judge": result.judge,

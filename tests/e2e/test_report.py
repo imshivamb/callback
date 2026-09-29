@@ -7,6 +7,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from callback_voice.core.models.call_record import CallRecord
+from callback_voice.core.models.limit_override import LimitOverride
 from callback_voice.core.models.run_result import RunResult
 from callback_voice.core.models.scenario_result import ScenarioResult
 from callback_voice.core.models.thresholds import Thresholds
@@ -20,7 +21,9 @@ CALL = Path(__file__).parents[1] / "fixtures" / "calls" / "turn_taking"
 SEED = 8995698031481687592  # above 2**53: a JavaScript number would round it
 
 
-def make_run(run_dir: Path, *, older: bool = True, limit_s: float = 1.5) -> None:
+def make_run(
+    run_dir: Path, *, older: bool = True, limit_s: float = 1.5, ci_limit: bool = False
+) -> None:
     """A run of the ``turn_taking`` fixture call (replies after 0.45, 1.2 and 2.1 s).
 
     ``older``: as an older Callback wrote it, with no speech timeline, no latency times
@@ -76,6 +79,17 @@ def make_run(run_dir: Path, *, older: bool = True, limit_s: float = 1.5) -> None
         scenarios=[scenario],
         passed=passed,
         exit_code=0 if passed else 1,
+        limit_overrides=[
+            LimitOverride(
+                scenario_id="turn-taking",
+                metric="response_latency_p95_s",
+                target=1.5,
+                applied=limit_s,
+                source="CALLBACK_CI_LATENCY_LIMIT_S",
+            )
+        ]
+        if ci_limit
+        else [],
     )
     (run_dir / "results.json").write_text(run.model_dump_json(), encoding="utf-8")
 
@@ -143,3 +157,15 @@ def test_summary_sentence_and_tiles_say_what_went_wrong(run_cli, tmp_path) -> No
 
     old = embedded((older / "report.html").read_text())["summary"]["sentence"]
     assert "passed" not in old and "fails checks in 1 of 1 call (" in old, old
+
+
+def test_ci_limit_is_shown_so_nobody_mistakes_it_for_the_target(run_cli, tmp_path) -> None:
+    run_dir = tmp_path / "ci"
+    make_run(run_dir, older=False, limit_s=2.5, ci_limit=True)
+    assert run_cli("report", str(run_dir), "--no-audio").returncode == 0
+    page = (run_dir / "report.html").read_text()
+    [override] = embedded(page)["run"]["limit_overrides"]
+    assert override["target"] == 1.5 and override["applied"] == 2.5
+    assert "CI limit in use." in page
+    results = json.loads((run_dir / "results.json").read_text())
+    assert results["limit_overrides"][0]["source"] == "CALLBACK_CI_LATENCY_LIMIT_S"
