@@ -9,13 +9,16 @@ _ONSET_SLACK_S = 0.02
 
 
 def response_latency(
-    timeline: CallTimeline, threshold_p95_s: float, max_unanswered: int = 0
+    timeline: CallTimeline,
+    threshold_p95_s: float,
+    max_unanswered: int = 0,
+    unanswered_wait_s: float = 1.5,
 ) -> MetricResult:
     """Caller stops talking -> first agent audio, for every caller turn that expects an answer.
 
     Turns where the agent was already talking when the caller finished are left out
     (that is talk-over, measured separately). A turn the agent never answered is an
-    *unanswered turn* only if the caller then waited at least the latency limit before
+    *unanswered turn* only if the caller then waited at least ``unanswered_wait_s`` before
     speaking again: a caller who goes straight on to the next sentence gave the agent no
     opening, and that is not the agent's fault. A turn the agent talked over to the
     end is judged from when the agent stopped talking.
@@ -40,7 +43,7 @@ def response_latency(
             if (
                 i + 1 < len(floor_turns)
                 and (reply is None or reply.start_s >= next_caller)
-                and waited >= threshold_p95_s
+                and waited >= unanswered_wait_s
             ):
                 unanswered += 1
                 findings.append(
@@ -58,7 +61,7 @@ def response_latency(
         reply = timeline.next_agent_onset(end - _ONSET_SLACK_S)
         if reply is None or reply.start_s >= next_caller:
             waited = next_caller - end
-            if i + 1 < len(floor_turns) and waited >= threshold_p95_s:
+            if i + 1 < len(floor_turns) and waited >= unanswered_wait_s:
                 unanswered += 1
                 findings.append(
                     Finding(

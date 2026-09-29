@@ -50,7 +50,7 @@ def score_call(call_dir: Path, thresholds: Thresholds, vad: VoiceActivityModel) 
         ),
         false_yield(timeline, thresholds.false_yields),
         silence_handling(timeline, thresholds.silence_reprompt_s),
-        chaos_timing(timeline),
+        chaos_timing(timeline, thresholds.chaos_drift_s),
         call_shape(timeline),
     ]
     findings = sorted((f for r in results for f in r.findings), key=lambda f: f.t_s)

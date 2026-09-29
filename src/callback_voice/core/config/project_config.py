@@ -27,6 +27,9 @@ class ProjectConfig(StrictModel):
     cost_cap_usd: float = Field(default=1.0, ge=0)
     recorded: RecordedMode = "auto"
     min_effect: dict[str, float] = Field(default_factory=dict)
+    same_turn_pause_s: float = Field(default=0.5, ge=0.0, le=3.0)
+    """When the agent pauses and speaks again after the caller took the floor, a pause
+    shorter than this is the agent continuing (between sentences), not answering."""
     root: Path = Field(default=Path(), exclude=True)
 
     def resolve(self, path: Path) -> Path:

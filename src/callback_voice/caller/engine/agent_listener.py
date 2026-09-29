@@ -37,9 +37,12 @@ class AgentListener:
     later from the recording.
     """
 
-    def __init__(self, vad: VoiceActivityModel, endpoint_s: float = 0.7) -> None:
+    def __init__(
+        self, vad: VoiceActivityModel, endpoint_s: float = 0.7, same_turn_pause_s: float = 0.5
+    ) -> None:
         self._detector = SpeechDetector(vad, VadParams(min_silence_s=0.2))
         self._endpoint_s = endpoint_s
+        self._same_turn_pause_s = same_turn_pause_s
         self.turn = 0
         self.turn_start_s = 0.0
         self.in_turn = False
@@ -69,7 +72,10 @@ class AgentListener:
                     or self._floor_taken
                     or (quiet_for is not None and quiet_for >= _NEW_TURN_AFTER_SILENCE_S)
                 )
-                if self.in_turn and self._floor_taken:
+                resumed = quiet_for is not None and quiet_for < self._same_turn_pause_s
+                if self.in_turn and self._floor_taken and not resumed:
+                    # The agent spoke again after the caller took the floor: its answer.
+                    # A pause shorter than same_turn_pause_s is just between sentences.
                     events.append(self._end_turn(self._last_speech_end or edge.t_s))
                     new_turn = True
                 if new_turn:

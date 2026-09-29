@@ -48,7 +48,8 @@ def test_good_agent_survives_every_chaos_scenario(run_cli, chaos_project) -> Non
     assert metrics(results, "silent-caller")["silence_reprompt_s"]["passed"] is True
     assert metrics(results, "rough-line")["talk_over_ratio"]["passed"] is True
     assert all(
-        m["chaos_drift_max_s"]["value"] is None or m["chaos_drift_max_s"]["value"] < 0.1
+        m["chaos_drift_max_s"]["value"] is None
+        or m["chaos_drift_max_s"]["value"] <= m["chaos_drift_max_s"]["threshold"]
         for m in (metrics(results, s["scenario_id"]) for s in results["scenarios"])
     )
 
@@ -72,16 +73,21 @@ def test_buggy_agent_is_caught_by_each_chaos_scenario(run_cli, chaos_project) ->
     results = latest_results(chaos_project)
 
     assert metrics(results, "barge-in")["time_to_yield_p95_s"]["passed"] is False
-    # After cutting in, the caller waits for the agent to answer the interruption: its
-    # next line comes after the agent's next turn starts, so nothing goes unanswered.
-    assert metrics(results, "barge-in")["unanswered_turns"]["value"] == 0
     barge = next(sc for sc in results["scenarios"] if sc["scenario_id"] == "barge-in")
     events = barge["trials"][0]["call"]["events"]
     cut_in = next(e for e in events if e["data"].get("tag") == "barge_in")
     after = [e for e in events if e["t_s"] > cut_in["end_s"]]
     first_line = next(e for e in after if e["kind"] == "caller_utterance")
-    answer = next(e for e in after if e["kind"] == "agent_turn_start")
-    assert answer["t_s"] < first_line["t_s"], (answer, first_line)
+    # After cutting in, the caller waits for an answer: either the agent starts a turn
+    # before the caller's next line, or the caller gave up after its wait and said so.
+    # (A slow agent can take longer than the caller's patience; that is still measured,
+    # as an unanswered turn.)
+    answered = any(e["kind"] == "agent_turn_start" and e["t_s"] < first_line["t_s"] for e in after)
+    gave_up = any(
+        e["kind"] == "note" and "no reply to the interruption" in (e.get("text") or "")
+        for e in after
+    )
+    assert answered or gave_up, events
     assert metrics(results, "backchannel")["false_yields"]["passed"] is False
     assert metrics(results, "silent-caller")["silence_reprompt_s"]["passed"] is False
     silent = next(sc for sc in results["scenarios"] if sc["scenario_id"] == "silent-caller")

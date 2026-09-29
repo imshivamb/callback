@@ -185,6 +185,11 @@ scenario, a test case per call, per limit and per baseline comparison. A call th
 failed inside a scenario that still passes is reported in its `system-out`, not as a
 failure.
 
+`same_turn_pause_s:` in `callback.yaml` (default 0.5) decides, after the caller has
+spoken over the agent, whether the agent speaking again is an answer or just the next
+sentence: a pause shorter than this is the same turn. Raise it for agents with long
+pauses between sentences.
+
 `concurrency:` in `callback.yaml` (default 1) runs that many calls at once. Results
 stay in plan order with the same seeds, but calls on one machine compete for CPU and
 latency goes up: three scripted calls to the good agent measured a reply-delay p95 of
@@ -374,8 +379,16 @@ workflow sets `CALLBACK_CI_LATENCY_LIMIT_S=2.0`:
 - The macOS job is informational: there the two agents' ranges overlap (good up to
   3.56 s, buggy from 2.43 s), so it keeps its results but cannot fail the workflow.
 
+The workflow also sets `CALLBACK_CI_DRIFT_LIMIT_S=1.0`, the tolerance for how late
+Callback's own disturbances may land (normally 0.1 s). This is a check on Callback, not
+on the agent, and never fails a run; on busy runners the worst call drifted 0.86 s
+(Ubuntu) and 1.63 s (macOS), against 4 ms on a laptop, so chaos timing on CI is less
+precise than locally. Each call's drift is shown in its report header.
+
 Every other check (interruptions, "mm-hmm", silence, end state, facts, replay) is as
-strict on CI as anywhere.
+strict on CI as anywhere. The unanswered-turn check has its own threshold
+(`unanswered_wait_s`, 1.5 s: how long the caller must wait in silence), which the CI
+latency limit does not touch.
 
 On GitHub, the `ci` workflow runs on every push and pull request. It installs
 without `[local]` and with no keys, so only the fast tests run (CLI contract and

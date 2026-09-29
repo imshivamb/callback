@@ -30,4 +30,5 @@ class BackchannelChaos(ChaosProcessor):
                 "backchannel",
                 self._event,
                 self._gate.intended_s(ctx),
+                self._gate.scheduled_s(ctx),
             )

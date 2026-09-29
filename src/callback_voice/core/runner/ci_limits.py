@@ -5,43 +5,47 @@ from callback_voice.core.models.scenario import Scenario
 from callback_voice.errors import ConfigError
 
 CI_LATENCY_ENV = "CALLBACK_CI_LATENCY_LIMIT_S"
+CI_DRIFT_ENV = "CALLBACK_CI_DRIFT_LIMIT_S"
+# environment variable -> (threshold field, metric it applies to)
+_CI_LIMITS = {
+    CI_LATENCY_ENV: ("response_latency_p95_s", "response_latency_p95_s"),
+    CI_DRIFT_ENV: ("chaos_drift_s", "chaos_drift_max_s"),
+}
 
 
 def apply_ci_limits(scenarios: list[Scenario]) -> tuple[list[Scenario], list[LimitOverride]]:
-    """Loosen the reply-delay limit on slow shared CI machines, and say so.
+    """Loosen limits on slow shared CI machines, and say so.
 
-    ``CALLBACK_CI_LATENCY_LIMIT_S`` (set in a CI workflow, never by default) raises each
-    scenario's ``response_latency_p95_s`` limit to at least that value. It can only
-    loosen a limit, never tighten one, and every change is returned so it can be
-    recorded in results.json and shown in the report: a CI limit must never be
-    mistaken for the real target.
+    ``CALLBACK_CI_LATENCY_LIMIT_S`` raises the reply-delay limit and
+    ``CALLBACK_CI_DRIFT_LIMIT_S`` the chaos-timing tolerance to at least the given
+    seconds. Neither is set by default; each can only loosen a limit, and every change
+    is returned so it can be recorded in results.json and shown in the report: a CI
+    limit must never be mistaken for the real target.
     """
-    raw = os.environ.get(CI_LATENCY_ENV)
-    if not raw:
-        return scenarios, []
-    try:
-        ci_limit = float(raw)
-    except ValueError as exc:
-        raise ConfigError(f"{CI_LATENCY_ENV}={raw!r} is not a number of seconds") from exc
-    if ci_limit <= 0:
-        raise ConfigError(f"{CI_LATENCY_ENV} must be positive, got {raw}")
-    out: list[Scenario] = []
     overrides: list[LimitOverride] = []
-    for s in scenarios:
-        target = s.expect.thresholds.response_latency_p95_s
-        if ci_limit <= target:
-            out.append(s)
+    for env, (field, metric) in _CI_LIMITS.items():
+        raw = os.environ.get(env)
+        if not raw:
             continue
-        thresholds = s.expect.thresholds.model_copy(update={"response_latency_p95_s": ci_limit})
-        expect = s.expect.model_copy(update={"thresholds": thresholds})
-        out.append(s.model_copy(update={"expect": expect}))
-        overrides.append(
-            LimitOverride(
-                scenario_id=s.id,
-                metric="response_latency_p95_s",
-                target=target,
-                applied=ci_limit,
-                source=CI_LATENCY_ENV,
+        try:
+            ci_limit = float(raw)
+        except ValueError as exc:
+            raise ConfigError(f"{env}={raw!r} is not a number of seconds") from exc
+        if ci_limit <= 0:
+            raise ConfigError(f"{env} must be positive, got {raw}")
+        loosened: list[Scenario] = []
+        for s in scenarios:
+            target = float(getattr(s.expect.thresholds, field))
+            if ci_limit <= target:
+                loosened.append(s)
+                continue
+            thresholds = s.expect.thresholds.model_copy(update={field: ci_limit})
+            expect = s.expect.model_copy(update={"thresholds": thresholds})
+            loosened.append(s.model_copy(update={"expect": expect}))
+            overrides.append(
+                LimitOverride(
+                    scenario_id=s.id, metric=metric, target=target, applied=ci_limit, source=env
+                )
             )
-        )
-    return out, overrides
+        scenarios = loosened
+    return scenarios, overrides

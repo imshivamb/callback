@@ -156,6 +156,12 @@ def test_ci_latency_limit_is_announced_and_validated(run_cli, write, monkeypatch
     assert "CI limit: reply delay p95 up to 2 s" in done.stdout, done.stdout
     assert "the real target is 1.5 s" in done.stdout
 
+    monkeypatch.setenv("CALLBACK_CI_DRIFT_LIMIT_S", "1.0")
+    both = run_cli("run", "s.yaml")
+    assert "CI limit: chaos timing drift up to 1 s" in both.stdout, both.stdout
+    assert "the real target is 0.1 s" in both.stdout
+    monkeypatch.delenv("CALLBACK_CI_DRIFT_LIMIT_S")
+
     monkeypatch.setenv("CALLBACK_CI_LATENCY_LIMIT_S", "fast")
     bad = run_cli("run", "s.yaml")
     assert bad.returncode == 2 and "is not a number of seconds" in bad.stderr

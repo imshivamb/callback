@@ -28,5 +28,12 @@ class AgentTurnGate:
         self._done.add(turn)
         return True
 
-    def intended_s(self, ctx: ChaosContext) -> float:
+    def scheduled_s(self, ctx: ChaosContext) -> float:
+        """When the scenario asked for it: ``after_s`` into the agent's turn."""
         return ctx.agent_turn_start_s + self._event.after_s
+
+    def intended_s(self, ctx: ChaosContext) -> float:
+        """When the rule allowed it: the schedule, or later if it had to wait for the
+        agent to be speaking and the caller to be quiet. Chaos drift is measured from
+        here, so it shows the caller falling behind, not the rule waiting."""
+        return max(self.scheduled_s(ctx), ctx.t_s)

@@ -33,9 +33,17 @@ class ChaosContext(Protocol):
     def caller_speaking(self) -> bool: ...
 
     def interject(
-        self, audio: Audio, text: str, tag: UtteranceTag, event: ChaosEvent, intended_s: float
+        self,
+        audio: Audio,
+        text: str,
+        tag: UtteranceTag,
+        event: ChaosEvent,
+        intended_s: float,
+        scheduled_s: float | None = None,
     ) -> None:
-        """Put pre-rendered audio on the wire starting next tick, cutting in."""
+        """Put pre-rendered audio on the wire starting next tick, cutting in.
+
+        ``scheduled_s`` is when the scenario asked for it, if the rule made it wait."""
         ...
 
     def note(self, event: ChaosEvent, t_s: float, **data: object) -> None:

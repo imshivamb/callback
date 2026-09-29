@@ -242,6 +242,7 @@ kbd { font: 12px ui-monospace, Menlo, monospace; border: 1px solid var(--border)
  * @typedef {{t: number, v: number}} LatencyPoint
  * @typedef {{call_id: string, scenario_id: string, trial: number, seed: string, passed: boolean, error: string|null,
  *   failure_reasons: string[], findings: Finding[], review: {check: string, heard: string|null, reason: string, t_s: number|null}[],
+ *   metrics?: {name: string, value: number|null, unit: string, threshold: number|null, passed: boolean|null}[],
  *   duration_s?: number, end_reason?: string, chaos?: ChaosMark[], speech?: SpeechTurn[],
  *   latency?: LatencyPoint[], latency_limit?: number|null, remeasured?: boolean,
  *   peaks?: {caller: number[], agent: number[]}, audio_s?: number, audio?: string}} Call
@@ -473,12 +474,30 @@ function renderTop() {
 function ciLimitBanner() {
   const overrides = DATA.run.limit_overrides || [];
   if (!overrides.length) return null;
-  const applied = [...new Set(overrides.map((o) => o.applied))].join(", ");
-  const target = [...new Set(overrides.map((o) => o.target))].join(", ");
+  const what = /** @type {Object<string, string>} */ ({ response_latency_p95_s: "Reply delay p95", chaos_drift_max_s: "Chaos timing drift" });
+  const lines = [...new Set(overrides.map((o) => o.metric))].map((metric) => {
+    const these = overrides.filter((o) => o.metric === metric);
+    const applied = [...new Set(these.map((o) => o.applied))].join(", ");
+    const target = [...new Set(these.map((o) => o.target))].join(", ");
+    return `${what[metric] || metric} allowed up to ${applied} s on this machine (${these[0].source}); the real target is ${target} s.`;
+  });
   return h("p", { class: "cilimit", role: "note" }, [
     h("b", {}, ["CI limit in use. "]),
-    `Reply delay p95 was allowed up to ${applied} s on this machine (${overrides[0].source}); the real target is ${target} s. Numbers between the two pass here but would fail the real target.`,
+    lines.join(" "),
+    " Numbers between the two pass here but would fail the real target.",
   ]);
+}
+
+/** How precisely this call's chaos landed (a check on Callback itself). @param {Call} c */
+function driftFact(c) {
+  const m = (c.metrics || []).find((x) => x.name === "chaos_drift_max_s");
+  if (!m || m.value === null || m.value === undefined) return null;
+  const ms = Math.round(m.value * 1000);
+  const late = m.threshold !== null && m.value > m.threshold;
+  return h("span", {
+    class: late ? "sev warn" : "muted",
+    title: "How late the scheduled disturbances hit the line. A check on Callback itself, not the agent.",
+  }, [late ? `▲ chaos landed up to ${ms} ms late (tolerance ${Math.round((m.threshold || 0) * 1000)} ms)` : `chaos on time (within ${ms} ms)`]);
 }
 
 /** Open the call, jump to the moment and play it. @param {string} callId @param {number} t */
@@ -573,7 +592,7 @@ function renderCall() {
     }, [side === "both" ? "Both sides" : side === "caller" ? "Caller only" : "Agent only"])))
     : h("span", { class: "muted" }, ["(audio not embedded)"]);
   callEl.replaceChildren(...[
-    h("div", { class: "callhead" }, [statusMark(c), h("b", {}, [`${c.scenario_id} · trial ${c.trial}`]), h("span", { class: "muted num" }, [facts])]),
+    h("div", { class: "callhead" }, [statusMark(c), h("b", {}, [`${c.scenario_id} · trial ${c.trial}`]), h("span", { class: "muted num" }, [facts]), driftFact(c)]),
     c.error ? h("div", { class: "error-box" }, [c.error]) : null,
     c.peaks ? h("div", { class: "transport" }, [
       h("button", { class: "play", id: "play", onclick: togglePlay, "aria-label": "Play", title: "Play / pause (Space)" }, ["▶"]),

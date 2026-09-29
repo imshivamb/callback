@@ -32,6 +32,10 @@ jobs:
       # 2.25-2.73 s. 2.0 s separates them. The real target stays 1.5 s; runs record the
       # loosened limit in results.json and show it in the report.
       CALLBACK_CI_LATENCY_LIMIT_S: "2.0"
+      # The caller's own chaos timing drifts on busy runners: worst per call measured
+      # 0.86 s on Ubuntu (7 of 27 calls over 0.1 s), 1.63 s on macOS, vs 4 ms on a
+      # laptop. Informational in results; recorded like the latency limit.
+      CALLBACK_CI_DRIFT_LIMIT_S: "1.0"
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6

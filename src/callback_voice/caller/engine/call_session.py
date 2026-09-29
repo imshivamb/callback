@@ -3,7 +3,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 
-from callback_voice.audio.format import Audio
+from callback_voice.audio.format import FRAME_S, Audio
 from callback_voice.caller.brain.base import CallerBrain
 from callback_voice.caller.engine.agent_listener import (
     AgentListener,
@@ -40,6 +40,7 @@ class CallSetup:
     make_vad: Callable[[], VoiceActivityModel]
     stt: SpeechToText | None = None
     processors: tuple[ChaosProcessor, ...] = ()
+    same_turn_pause_s: float = 0.5
 
 
 @dataclass(slots=True)
@@ -65,7 +66,7 @@ class CallSession:
         self._s = setup
         self._clock = TickClock()
         self._playout = PlayoutBuffer()
-        self._listener = AgentListener(setup.make_vad())
+        self._listener = AgentListener(setup.make_vad(), same_turn_pause_s=setup.same_turn_pause_s)
         self._recorder = CallRecorder()
         self._log = EventLog()
         self._voice = CallerVoice(self._utterance_done)
@@ -115,11 +116,20 @@ class CallSession:
         return self._voice.speaking
 
     def interject(
-        self, audio: Audio, text: str, tag: UtteranceTag, event: ChaosEvent, intended_s: float
+        self,
+        audio: Audio,
+        text: str,
+        tag: UtteranceTag,
+        event: ChaosEvent,
+        intended_s: float,
+        scheduled_s: float | None = None,
     ) -> None:
-        self._voice.say(
-            Utterance(audio, text, tag, event.id, event.type, intended_s), interrupt=True
-        )
+        utterance = Utterance(audio, text, tag, event.id, event.type, intended_s)
+        if scheduled_s is not None and intended_s - scheduled_s > FRAME_S:
+            # It waited for the agent to speak (or the caller to finish): keep both times.
+            utterance.data["scheduled_s"] = round(scheduled_s, 3)
+            utterance.data["waited_s"] = round(intended_s - scheduled_s, 3)
+        self._voice.say(utterance, interrupt=True)
 
     def note(self, event: ChaosEvent, t_s: float, **data: object) -> None:
         self._log.add(t_s, "chaos", chaos_id=event.id, chaos_type=event.type, data=dict(data))

@@ -45,6 +45,7 @@ async def run_trial(
             speech=CallerSpeech(runtime.tts, scenario.caller),
             make_vad=runtime.make_vad,
             stt=runtime.stt if brain.needs_agent_text else None,
+            same_turn_pause_s=runtime.project.same_turn_pause_s,
             processors=tuple(
                 build_processors(
                     scenario.chaos, seed, scenario.source.parent if scenario.source else Path()

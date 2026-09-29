@@ -24,5 +24,10 @@ class BargeInChaos(ChaosProcessor):
     def on_tick(self, ctx: ChaosContext) -> None:
         if self._gate.due(ctx):
             ctx.interject(
-                self._audio, self._params.say, "barge_in", self._event, self._gate.intended_s(ctx)
+                self._audio,
+                self._params.say,
+                "barge_in",
+                self._event,
+                self._gate.intended_s(ctx),
+                self._gate.scheduled_s(ctx),
             )

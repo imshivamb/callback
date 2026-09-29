@@ -15,3 +15,8 @@ class Thresholds(StrictModel):
     entity_fidelity: float = Field(default=1.0, ge=0, le=1)
     policy_violations: int = Field(default=0, ge=0)
     unanswered_turns: int = Field(default=0, ge=0)
+    unanswered_wait_s: float = Field(default=1.5, gt=0)
+    """How long the caller must wait in silence before a turn counts as unanswered.
+    Its own setting, so loosening the reply-delay limit (on CI) doesn't loosen it."""
+    chaos_drift_s: float = Field(default=0.1, gt=0)
+    """How late a chaos action may land (a Callback self-check; informational)."""

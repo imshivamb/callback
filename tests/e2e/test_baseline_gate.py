@@ -50,6 +50,10 @@ def test_injected_latency_regression_fails_against_the_baseline(
     )
     write("scenarios/gate.yaml", SCENARIO)
 
+    # One throwaway call first: the first call after an agent starts is slower on a busy
+    # machine, and a baseline recorded on it would hide the regression under test.
+    warm = run_cli("run", "scenarios", "--trials", "1")
+    assert warm.returncode in (0, 1), warm.stdout + warm.stderr
     first = run_cli("run", "scenarios")
     assert first.returncode == 0, first.stdout + first.stderr
     saved = run_cli("baseline", "save", "main")
