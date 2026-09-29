@@ -28,6 +28,7 @@ from callback_voice.reference_agents.restaurant.voice.sounds_like_interruption i
     sounds_like_interruption,
 )
 from callback_voice.reference_agents.restaurant.voice.speech_chunks import speech_chunks
+from callback_voice.reference_agents.restaurant.voice.split_sentences import split_sentences
 
 log = logging.getLogger("callback.reference_agent")
 _PRE_ROLL_S = 0.15
@@ -222,7 +223,13 @@ class AgentSession:
     async def _speak(self, reply: Reply) -> None:
         log.info("agent: %s", reply.text)
         self._speaker.begin_reply()
-        chunks = speech_chunks(reply.text)
+        # Only the good agent opens with a short chunk. The buggy agent is deaf during
+        # its first sentence; shortening that sentence to "Sure," would hide its flaw.
+        chunks = (
+            speech_chunks(reply.text)
+            if self._behavior.barge_in == "smart"
+            else split_sentences(reply.text)
+        )
         if self._behavior.barge_in == "ignore":
             # Talks straight through, with no pauses for synthesis that could look like
             # it stopped to listen: render the whole reply before the first word.
