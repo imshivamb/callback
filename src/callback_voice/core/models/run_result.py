@@ -23,6 +23,9 @@ class RunResult(RecordModel):
     """Calls placed at once. Parallel calls on one machine compete for CPU and inflate
     latency, so runs are only comparable at the same concurrency."""
     providers: dict[str, str] = Field(default_factory=dict)
+    provider_models: dict[str, str] = Field(default_factory=dict)
+    """The exact model (or voice) behind each provider, e.g. ``llm: gemini-3.5-flash-lite``,
+    so a result says which model it came from, not just which service."""
     judge: dict[str, Any] | None = None
     vad: dict[str, Any] = Field(default_factory=dict)
     scenarios: list[ScenarioResult] = Field(default_factory=list)

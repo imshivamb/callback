@@ -185,3 +185,50 @@ def test_ci_yield_limit_leaves_talk_over_at_the_real_target(monkeypatch) -> None
     assert loosened.expect.thresholds.time_to_yield_p95_s == 1.1
     assert loosened.expect.thresholds.talk_over_grace_s == 0.6  # not stretched to 1.1
     assert (override.metric, override.target, override.applied) == ("time_to_yield_p95_s", 0.6, 1.1)
+
+
+def _latency_run(passed: bool):
+    from datetime import UTC, datetime
+
+    from callback_voice.core.models.aggregate import Aggregate
+    from callback_voice.core.models.run_result import RunResult
+    from callback_voice.core.models.scenario_result import ScenarioResult
+
+    latency = Aggregate(
+        name="response_latency_p95_s",
+        value=1.2 if passed else 4.1,
+        ci_low=None,
+        ci_high=None,
+        n=3,
+        unit="s",
+        method="deterministic",
+        threshold=1.5,
+        passed=passed,
+    )
+    scenario = ScenarioResult(scenario_id="s", agent="a", passed=passed, aggregates=[latency])
+    return RunResult(
+        run_id="r",
+        created_at=datetime.now(UTC),
+        callback_version="test",
+        agent_config_hash="h",
+        mode="off",
+        scenarios=[scenario],
+        passed=passed,
+        exit_code=0 if passed else 1,
+    )
+
+
+def test_reply_delay_failure_on_github_actions_names_the_runner_size() -> None:
+    from callback_voice.cli.render.ci_runner_hint import ci_runner_hint
+
+    failed, ok = _latency_run(passed=False), _latency_run(passed=True)
+    hint = ci_runner_hint(failed, {"GITHUB_ACTIONS": "true"}, 2)
+    assert hint is not None
+    assert "GitHub Actions runner with 2 CPU cores (s)" in hint.plain
+    assert "CALLBACK_CI_LATENCY_LIMIT_S" in hint.plain
+    already = ci_runner_hint(
+        failed, {"GITHUB_ACTIONS": "true", "CALLBACK_CI_LATENCY_LIMIT_S": "2.0"}, 4
+    )
+    assert already is not None and "is already 2.0 s" in already.plain
+    assert ci_runner_hint(failed, {}, 2) is None  # not on GitHub Actions
+    assert ci_runner_hint(ok, {"GITHUB_ACTIONS": "true"}, 2) is None  # nothing failed

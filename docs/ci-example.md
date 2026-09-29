@@ -106,6 +106,10 @@ stop when interrupted for CI only:
       CALLBACK_CI_YIELD_LIMIT_S: "1.1"     # time to stop when interrupted (p95)
 ```
 
+When reply delay fails on GitHub Actions, `callback run` prints the runner's CPU
+core count and points at `CALLBACK_CI_LATENCY_LIMIT_S`; it never loosens anything
+on its own.
+
 Every run that uses them records the loosened limit next to the real target in
 `results.json` and shows it at the top of the report, so it is never mistaken for
 the target. The baseline comparison is unaffected, and so is the talk-over check,
@@ -118,8 +122,10 @@ agent stops in 0.49 s on a laptop, but on GitHub's runners it measured 0.59–0.
 Its speed there is limited by the small speech model it uses to tell "sorry, wait"
 from "mm-hmm", which runs 2–3× slower on busy shared CPUs; waiting less before
 judging made it miss real interruptions. 1.1 s passes every call we measured, while
-our deliberately buggy agent, which talks through its first sentence, still fails
-(1.16–1.20 s on runners; a narrow margin), and an agent that ignores interruptions
+our deliberately buggy agent still fails clearly: its microphone is muted for the
+first 1.8 s of every reply and it keeps talking 0.6 s after deciding to stop, so it
+took 1.89 s to stop in our barge-in test on a laptop (both delays are counted in audio played, so
+a slower machine can only make that later). An agent that ignores interruptions
 fails by seconds. Your agent's numbers will differ: measure them, and on a dedicated
 or larger runner remove the allowance. For latency you can trust as an
 absolute number, use a dedicated or larger runner, or point Callback at a deployed

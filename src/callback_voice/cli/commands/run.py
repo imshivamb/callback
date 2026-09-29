@@ -1,9 +1,11 @@
 import asyncio
+import os
 from pathlib import Path
 
 import typer
 
 from callback_voice.cli.console import console
+from callback_voice.cli.render.ci_runner_hint import ci_runner_hint
 from callback_voice.cli.render.limit_notice import limit_notice
 from callback_voice.cli.render.run_plan import run_plan
 from callback_voice.cli.render.run_summary import run_summary
@@ -80,7 +82,7 @@ def run(
         judge_usd_per_1k=judge.usd_per_1k_tokens if judge is not None else None,
     )
     judge_name = project.providers.judge.name if project.providers.judge else None
-    console.print(run_plan(estimate, llm_choice.name, judge_name, mode))
+    console.print(run_plan(estimate, f"{llm_choice.name} {runtime.llm.model}", judge_name, mode))
     if estimate.usd > project.cost_cap_usd and not yes:
         if not console.is_terminal:
             raise ConfigError(
@@ -110,6 +112,8 @@ def run(
         )
     )
     console.print(run_summary(result, run_dir))
+    if (hint := ci_runner_hint(result, os.environ, os.cpu_count())) is not None:
+        console.print(hint)
     raise typer.Exit(result.exit_code)
 
 

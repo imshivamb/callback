@@ -86,6 +86,12 @@ async def run_suite(
         concurrency=project.concurrency,
         providers={k: v.name for k, v in project.providers if v is not None}
         | {"llm": runtime.llm_choice.name},
+        provider_models={
+            k: v.model or v.voice
+            for k, v in project.providers
+            if v is not None and k != "llm" and (v.model or v.voice)
+        }
+        | {"llm": runtime.llm.model},
         vad={"provider": project.providers.vad.name},
         judge=runtime.judge_info,
         scenarios=scenario_results,
