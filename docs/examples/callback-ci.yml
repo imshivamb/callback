@@ -42,8 +42,6 @@ jobs:
             ~/.cache/huggingface
           key: callback-speech-models-v1
 
-      # Until callback-voice is on PyPI, install from GitHub instead:
-      #   pip install "callback-voice[local] @ git+https://github.com/imshivamb/callback@main"
       - name: Install Callback
         run: pip install "callback-voice[local]"
 

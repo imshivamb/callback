@@ -3,7 +3,7 @@
 Callback phones your voice agent with simulated callers, deliberately makes the call
 messy, and measures what happened from the recorded audio.
 
-**Status:** Early release. Not on PyPI yet. Feedback welcome.
+**Status:** Early release (0.1.0 on PyPI as `callback-voice`). Feedback welcome.
 
 ![A caller says "mm-hmm" and the agent stops talking mid-sentence](docs/assets/false-yield-mm-hmm.png)
 
@@ -46,6 +46,20 @@ call and in what actually happened afterwards.
 
 It talks to agents over a WebSocket that carries raw 16 kHz audio, or joins them in a
 LiveKit room ([docs/transports.md](docs/transports.md)).
+
+## Install
+
+Needs Python 3.12 or newer and espeak-ng (used by the local voice).
+
+```bash
+brew install espeak-ng            # Debian/Ubuntu: sudo apt install espeak-ng
+pip install "callback-voice[local]"
+callback doctor
+callback demo
+```
+
+The rest of this page uses the source checkout (`uv run callback …`); with pip, drop
+the `uv run`.
 
 ## Quickstart (from source)
 
@@ -166,7 +180,6 @@ The audio clips are described in [docs/assets/README.md](docs/assets/README.md).
 ## Coming next
 
 - Calling agents over real phone numbers.
-- `pip install`.
 
 ## Docs
 
