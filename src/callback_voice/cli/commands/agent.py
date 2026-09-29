@@ -1,10 +1,14 @@
 import asyncio
 from dataclasses import replace
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import typer
 
 from callback_voice.cli.console import console
+
+if TYPE_CHECKING:
+    from callback_voice.reference_agents.restaurant.server.serve_agent import LiveKitAccess
 
 
 def register(app: typer.Typer) -> None:
@@ -35,6 +39,15 @@ def serve(
         min=0.0,
         help="Wait this long before synthesising each sentence (simulate a slow machine).",
     ),
+    livekit_url: str | None = typer.Option(
+        None,
+        "--livekit-url",
+        help="Also answer new LiveKit rooms on this server (e.g. ws://127.0.0.1:7880). "
+        "Joins with LIVEKIT_API_KEY and LIVEKIT_API_SECRET.",
+    ),
+    room_prefix: str = typer.Option(
+        "callback", "--room-prefix", help="Answer LiveKit rooms named PREFIX-<call id>."
+    ),
 ) -> None:
     from callback_voice.reference_agents.restaurant.server.configure_agent_logging import (
         configure_agent_logging,
@@ -43,6 +56,7 @@ def serve(
     from callback_voice.reference_agents.restaurant.voice.behavior import BUGGY, GOOD
 
     behavior = BUGGY if buggy else GOOD
+    livekit = _livekit_access(livekit_url, room_prefix) if livekit_url else None
     if add_latency:
         behavior = replace(
             behavior,
@@ -59,7 +73,7 @@ def serve(
     ready = asyncio.Event()
 
     async def main() -> None:
-        task = asyncio.create_task(serve_agent(behavior, host, port, ready))
+        task = asyncio.create_task(serve_agent(behavior, host, port, ready, livekit=livekit))
         with console.status("[muted]loading speech models…[/]", spinner="dots"):
             done, _ = await asyncio.wait(
                 {task, asyncio.create_task(ready.wait())}, return_when=asyncio.FIRST_COMPLETED
@@ -73,6 +87,8 @@ def serve(
             f"Olive & Ember ({label}) · ws://{host}:{port} · talk in a browser at "
             f"[brand]http://{host}:{port}[/] · Ctrl+C to stop"
         )
+        if livekit is not None:
+            console.print(f"answering LiveKit rooms {room_prefix}-* on {livekit.url}")
         console.print(f"[muted]log  {log_path}[/]")
         await task
 
@@ -80,3 +96,19 @@ def serve(
         asyncio.run(main())
     except KeyboardInterrupt:
         console.print("[muted]stopped[/]")
+
+
+def _livekit_access(url: str, room_prefix: str) -> "LiveKitAccess":
+    from callback_voice.errors import ConfigError
+
+    try:
+        from callback_voice.reference_agents.restaurant.server.serve_agent import LiveKitAccess
+        from callback_voice.transports.livekit_room import credentials
+    except ImportError as exc:
+        raise ConfigError(
+            "--livekit-url needs the LiveKit SDK", hint='pip install "callback-voice[livekit]"'
+        ) from exc
+    if not url.startswith(("ws://", "wss://")):
+        raise ConfigError(f"--livekit-url must start with ws:// or wss://, got {url!r}")
+    key, secret = credentials("LIVEKIT_API_KEY", "LIVEKIT_API_SECRET")
+    return LiveKitAccess(url, key, secret, room_prefix)

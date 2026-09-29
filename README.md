@@ -44,7 +44,8 @@ call and in what actually happened afterwards.
   so you can see every check pass and fail without building anything.
 - **A pass/fail exit code** for scripts and CI: 0 pass, 1 fail, 2 could not run.
 
-It talks to agents over a WebSocket that carries raw 16 kHz audio.
+It talks to agents over a WebSocket that carries raw 16 kHz audio, or joins them in a
+LiveKit room ([docs/transports.md](docs/transports.md)).
 
 ## Quickstart (from source)
 
@@ -164,13 +165,15 @@ The audio clips are described in [docs/assets/README.md](docs/assets/README.md).
 
 ## Coming next
 
-- Calling agents over real phone numbers and LiveKit rooms.
+- Calling agents over real phone numbers.
 - `pip install`.
 
 ## Docs
 
 - [docs/testing.md](docs/testing.md): running, reading results, chaos, replay, the
   test suite.
+- [docs/transports.md](docs/transports.md): connecting to your agent over a WebSocket
+  or a LiveKit room, and what LiveKit adds to the numbers.
 - [docs/ci-example.md](docs/ci-example.md): running Callback in your own CI, with a
   baseline and a copy-paste GitHub Actions workflow.
 - [docs/assets/README.md](docs/assets/README.md): what each recording and figure shows.

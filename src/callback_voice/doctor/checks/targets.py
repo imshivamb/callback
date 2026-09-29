@@ -1,7 +1,9 @@
 import asyncio
+import os
 from urllib.parse import urlsplit
 
 from callback_voice.core.config.project_config import ProjectConfig
+from callback_voice.core.config.target_config import LiveKitTarget
 from callback_voice.doctor.check_result import CheckResult
 
 _TIMEOUT_S = 1.5
@@ -33,8 +35,21 @@ async def _check_one(name: str, target: object) -> CheckResult:
             name,
             "warn",
             f"{transport} {url} is not accepting connections",
-            "Start the agent (the bundled examples: `callback agent serve`)",
+            "Start the LiveKit server (locally: `livekit-server --dev`)"
+            if isinstance(target, LiveKitTarget)
+            else "Start the agent (the bundled examples: `callback agent serve`)",
         )
     writer.close()
     await writer.wait_closed()
+    if isinstance(target, LiveKitTarget):
+        missing = [e for e in (target.api_key_env, target.api_secret_env) if not os.environ.get(e)]
+        if missing:
+            return CheckResult(
+                "targets",
+                name,
+                "warn",
+                f"livekit {url} is reachable, but {' and '.join(missing)} "
+                f"{'is' if len(missing) == 1 else 'are'} not set",
+                "Callback needs the server's API key and secret to create rooms",
+            )
     return CheckResult("targets", name, "ok", f"{transport} {url} is reachable")

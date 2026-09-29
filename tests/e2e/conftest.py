@@ -38,7 +38,7 @@ class RunningAgent:
 AGENT_LOGS = REPO / ".callback" / "e2e-agent-logs"
 
 
-def _serve(*flags: str) -> Iterator[RunningAgent]:
+def _serve(*flags: str, env: dict[str, str] | None = None) -> Iterator[RunningAgent]:
     """Start a reference agent with the real `callback agent serve` command.
 
     The agent writes its own timestamped conversation log (what it heard, said, and
@@ -64,7 +64,7 @@ def _serve(*flags: str) -> Iterator[RunningAgent]:
         ],
         stdout=subprocess.DEVNULL,
         stderr=stderr_file,
-        env=os.environ.copy(),
+        env={**os.environ, **(env or {})},
     )
     deadline = time.monotonic() + 600
     while time.monotonic() < deadline:

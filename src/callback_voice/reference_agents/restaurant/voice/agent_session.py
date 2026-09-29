@@ -5,7 +5,6 @@ import time
 from collections.abc import Coroutine
 from dataclasses import dataclass
 
-from websockets.asyncio.server import ServerConnection
 from websockets.exceptions import ConnectionClosed
 
 from callback_voice.audio.format import Audio
@@ -18,6 +17,7 @@ from callback_voice.providers.vad.speech_detector import SpeechDetector
 from callback_voice.reference_agents.restaurant.dialog.reply import Reply
 from callback_voice.reference_agents.restaurant.dialog.reservation_brain import ReservationBrain
 from callback_voice.reference_agents.restaurant.voice.behavior import AgentBehavior
+from callback_voice.reference_agents.restaurant.voice.call_line import CallLine
 from callback_voice.reference_agents.restaurant.voice.caller_turn_tracker import CallerTurnTracker
 from callback_voice.reference_agents.restaurant.voice.interruption_policy import (
     interruption_decision,
@@ -50,12 +50,12 @@ class AgentSession:
 
     def __init__(
         self,
-        ws: ServerConnection,
+        line: CallLine,
         behavior: AgentBehavior,
         models: AgentModels,
         brain: ReservationBrain,
     ) -> None:
-        self._ws = ws
+        self._line = line
         self._behavior = behavior
         self._m = models
         self._brain = brain
@@ -77,7 +77,7 @@ class AgentSession:
         watcher = asyncio.create_task(self._watch_silence())
         self._start_reply(self._speak(self._brain.greet()))
         try:
-            async for message in self._ws:
+            async for message in self._line:
                 if isinstance(message, bytes):
                     await self._on_audio(message)
                 elif '"hangup"' in message:
@@ -249,7 +249,7 @@ class AgentSession:
             self._hanging_up = True
             await self._speaker.idle.wait()
             await asyncio.sleep(0.4)
-            await self._ws.close(1000, "agent hung up")
+            await self._line.close()
 
     def _start_reply(self, work: Coroutine[None, None, None]) -> None:
         if self._reply_task and not self._reply_task.done():
@@ -274,4 +274,4 @@ class AgentSession:
 
     async def _send(self, frame: bytes) -> None:
         with contextlib.suppress(ConnectionClosed):
-            await self._ws.send(frame)
+            await self._line.send(frame)
