@@ -3,7 +3,7 @@ from typing import Final, Literal
 
 from callback_voice.reference_agents.restaurant.dialog.agent_flaws import TaskBug
 
-type BargeInPolicy = Literal["smart", "deaf_first_sentence", "ignore"]
+type BargeInPolicy = Literal["smart", "deaf_opening", "ignore"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -20,12 +20,18 @@ class AgentBehavior:
     end_of_turn_silence_s: float = 0.5
     """Caller silence that ends the caller's turn."""
     barge_in: BargeInPolicy = "smart"
-    """smart: yield within ~0.4 s to real speech. deaf_first_sentence: the mic is
-    muted while the first sentence of each reply plays (a common anti-echo hack),
-    so early barge-ins are talked over. Caught by time-to-yield and talk-over.
-    ignore: never yields and never answers anything said over it, as if the caller had
+    """smart: yield within ~0.4 s to real speech. deaf_opening: the mic is muted for
+    the first ``deaf_opening_s`` of each reply's audio (a common anti-echo hack with a
+    fixed window), so early barge-ins are talked over. Caught by time-to-yield and
+    talk-over. ignore: never yields and never answers anything said over it, as if the caller had
     not spoken (per call: ``?barge_in=ignore`` on the URL). Caught by time-to-yield and
     unanswered turns."""
+    deaf_opening_s: float = 0.0
+    """How much of each reply's audio plays with the mic muted (``deaf_opening`` only).
+    Counted in audio played, so a slow machine doesn't change it."""
+    stop_lag_s: float = 0.0
+    """Audio that keeps playing after the agent decides to stop, as if it had already
+    been sent downstream. Caught by time-to-yield."""
     filter_backchannels: bool = True
     """Keep talking through "mm-hmm". Without it the agent stops for any sound.
     Caught by false yield."""
@@ -49,7 +55,12 @@ GOOD: Final = AgentBehavior(name="good")
 BUGGY: Final = AgentBehavior(
     name="buggy",
     think_delay_s=1.3,
-    barge_in="deaf_first_sentence",
+    # Muted for 1.8 s: long enough to talk over an early barge-in, short enough that a
+    # "mm-hmm" 2 s into a reply is still heard (and wrongly stopped for, within 1 s even
+    # with the 0.6 s lag, so the false-yield bug stays visible).
+    barge_in="deaf_opening",
+    deaf_opening_s=1.8,
+    stop_lag_s=0.6,
     filter_backchannels=False,
     misread={"D": "B"},
     task_bugs=("wrong_hour", "ignores_party_change", "confirms_without_saving"),

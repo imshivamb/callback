@@ -10,7 +10,7 @@ _JUDGED_BACKCHANNEL_LIMIT_S = 1.5
 
 
 def interruption_decision(
-    behavior: AgentBehavior, *, speech_s: float, sentence_index: int, judged_backchannel: bool
+    behavior: AgentBehavior, *, speech_s: float, reply_played_s: float, judged_backchannel: bool
 ) -> Decision:
     """What the agent does when the caller talks while it is speaking.
 
@@ -20,12 +20,12 @@ def interruption_decision(
     keeps going past 1.5 s (``speech_s`` includes the detector's end hangover, so a
     long "mm-hmm" can read close to 1 s).
 
-    The buggy policy ignores everything during its first sentence, then yields to
-    any sound. The ``ignore`` policy never yields.
+    The buggy policy ignores everything during the first ``deaf_opening_s`` of each
+    reply's audio, then yields to any sound. The ``ignore`` policy never yields.
     """
     if behavior.barge_in == "ignore":
         return "deaf"
-    if behavior.barge_in == "deaf_first_sentence" and sentence_index <= 0:
+    if behavior.barge_in == "deaf_opening" and reply_played_s < behavior.deaf_opening_s:
         return "deaf"
     if not behavior.filter_backchannels:
         return "yield"

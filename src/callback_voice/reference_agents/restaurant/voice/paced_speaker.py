@@ -26,22 +26,39 @@ class PacedSpeaker:
         self.idle.set()
         self._stop_now = False
         self.sentence_index = -1
+        self.reply_played_s = 0.0
+        """Audio played since the reply began, including pauses between sentences."""
         self.speaking = False
         self.last_spoke_at = time.monotonic()
+        self._stop_at_s: float | None = None
 
     def begin_reply(self) -> None:
-        """Start numbering sentences from zero for a new reply."""
+        """Start numbering sentences, and counting audio, from zero for a new reply."""
         self.sentence_index = -1
+        self.reply_played_s = 0.0
+        self._stop_at_s = None
+
+    @property
+    def stopping(self) -> bool:
+        """A delayed stop is pending (``stop(after_s=...)``)."""
+        return self._stop_at_s is not None
 
     def enqueue(self, sentence: Audio) -> None:
         self._queue.append(sentence)
         self.idle.clear()
         self._wake.set()
 
-    def stop(self) -> None:
-        """Stop mid-frame and drop everything queued (the agent yields)."""
-        self._queue.clear()
-        self._stop_now = True
+    def stop(self, after_s: float = 0.0) -> None:
+        """Stop and drop everything queued (the agent yields).
+
+        With ``after_s``, keep playing that much more audio first, as an agent does whose
+        audio is already buffered downstream.
+        """
+        if after_s <= 0:
+            self._queue.clear()
+            self._stop_now = True
+        elif self._stop_at_s is None:
+            self._stop_at_s = self.reply_played_s + after_s
 
     @property
     def busy(self) -> bool:
@@ -67,9 +84,13 @@ class PacedSpeaker:
     async def _play(self, audio: Audio) -> None:
         start = time.monotonic()
         for n, offset in enumerate(range(0, audio.size, FRAME_SAMPLES)):
+            if self._stop_at_s is not None and self.reply_played_s >= self._stop_at_s:
+                self._stop_at_s = None
+                self.stop()
             if self._stop_now:
                 return
             await self._send(to_pcm16(audio[offset : offset + FRAME_SAMPLES]))
+            self.reply_played_s += FRAME_S
             delay = start + (n + 1) * FRAME_S - time.monotonic()
             if delay > 0:
                 await asyncio.sleep(delay)

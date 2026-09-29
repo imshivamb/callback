@@ -119,8 +119,8 @@ class AgentSession:
     def _on_caller_start(self, t_s: float) -> None:
         if self._holding_floor:
             deaf = self._behavior.barge_in == "ignore" or (
-                self._behavior.barge_in == "deaf_first_sentence"
-                and self._speaker.sentence_index <= 0
+                self._behavior.barge_in == "deaf_opening"
+                and self._speaker.reply_played_s < self._behavior.deaf_opening_s
             )
             self._turns.on_speech_start(t_s, "unheard" if deaf else "ignored")
             return
@@ -132,7 +132,7 @@ class AgentSession:
         decision = interruption_decision(
             self._behavior,
             speech_s=self._detector.speech_duration_s,
-            sentence_index=self._speaker.sentence_index,
+            reply_played_s=self._speaker.reply_played_s,
             judged_backchannel=self._judged_backchannel,
         )
         if decision == "yield":
@@ -170,10 +170,10 @@ class AgentSession:
         return self._speaker.busy or (replying and self._speaker.sentence_index >= 0)
 
     def _yield(self) -> None:
-        if self._hanging_up:
+        if self._hanging_up or self._speaker.stopping:
             return
         log.info("caller barged in; yielding (sentence %d)", self._speaker.sentence_index)
-        self._speaker.stop()
+        self._speaker.stop(after_s=self._behavior.stop_lag_s)
         if self._reply_task and not self._reply_task.done():
             self._reply_task.cancel()
         self._turns.promote_run()
@@ -223,8 +223,8 @@ class AgentSession:
     async def _speak(self, reply: Reply) -> None:
         log.info("agent: %s", reply.text)
         self._speaker.begin_reply()
-        # Only the good agent opens with a short chunk. The buggy agent is deaf during
-        # its first sentence; shortening that sentence to "Sure," would hide its flaw.
+        # Only the good agent opens with a short chunk; the buggy agent keeps its
+        # original sentence timing (see F52 in the history of this choice).
         chunks = (
             speech_chunks(reply.text)
             if self._behavior.barge_in == "smart"
