@@ -171,6 +171,8 @@ The audio clips are described in [docs/assets/README.md](docs/assets/README.md).
 
 - [docs/testing.md](docs/testing.md): running, reading results, chaos, replay, the
   test suite.
+- [docs/ci-example.md](docs/ci-example.md): running Callback in your own CI, with a
+  baseline and a copy-paste GitHub Actions workflow.
 - [docs/assets/README.md](docs/assets/README.md): what each recording and figure shows.
 
 ## License

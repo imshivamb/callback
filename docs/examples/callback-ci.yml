@@ -1,0 +1,100 @@
+# Example GitHub Actions workflow: call your voice agent with Callback on every pull
+# request, fail on a real regression against a saved baseline, and keep the report.
+# Copy to .github/workflows/callback.yml in your agent's repository and edit the
+# lines marked EDIT. See docs/ci-example.md for what each part is for.
+
+name: callback
+
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      save_baseline:
+        description: "Record this run as baseline 'main' (download it from the artifacts and commit it)"
+        type: boolean
+        default: false
+
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CALLBACK_MODEL_DIR: ~/.cache/callback/models
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: espeak-ng (the local voice's system dependency)
+        run: sudo apt-get update && sudo apt-get install -y espeak-ng
+
+      - name: Speech models (downloaded once, then cached)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/callback/models/kokoro
+            ~/.cache/huggingface
+          key: callback-speech-models-v1
+
+      # Until callback-voice is on PyPI, install from GitHub instead:
+      #   pip install "callback-voice[local] @ git+https://github.com/imshivamb/callback@main"
+      - name: Install Callback
+        run: pip install "callback-voice[local]"
+
+      # EDIT: start your agent so it listens on the URL in callback.yaml, and wait
+      # until it answers. This example starts Callback's own reference agent.
+      - name: Start the agent under test
+        run: |
+          callback agent serve --port 8765 &
+          for i in $(seq 1 120); do
+            curl -sf http://127.0.0.1:8765/health && break
+            sleep 2
+          done
+
+      # The first call after an agent starts is slower (models and caches warming up).
+      # A job always starts the agent fresh, so make one throwaway call first; otherwise
+      # that slow call widens the range and can hide a real regression.
+      - name: Warm the agent up
+        run: callback run scenarios --replay --trials 1 || true
+
+      # --replay: AI callers repeat the lines recorded in the committed cassettes, so
+      # CI makes no LLM calls and needs no API key. Scripted callers need none anyway.
+      # --baseline: compare with the committed baseline; a real regression exits 1.
+      - name: Call the agent
+        if: ${{ !inputs.save_baseline }}
+        run: callback run scenarios --replay --baseline main
+
+      # Run by hand with "save_baseline" ticked: records the baseline on this runner
+      # type, which is what later runs are compared on.
+      - name: Record the baseline
+        if: ${{ inputs.save_baseline }}
+        run: |
+          nproc  # the CPU count this runner type has: latency depends on it
+          # Exit 1 (a limit failed) still makes a valid baseline; exit 2 (the run could
+          # not happen) does not, and `baseline save` refuses such a run anyway.
+          set +e
+          callback run scenarios --replay
+          code=$?
+          set -e
+          if [ "$code" -ge 2 ]; then exit "$code"; fi
+          callback baseline save main
+
+      - name: Keep the baseline
+        if: ${{ inputs.save_baseline }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: callback-baseline
+          path: callback-baselines/
+
+      - name: Keep the report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: callback-report
+          path: |
+            .callback/runs/*/report.html
+            .callback/runs/*/results.json
+            .callback/runs/*/junit.xml
+          include-hidden-files: true
+          if-no-files-found: ignore
