@@ -1,0 +1,74 @@
+name: clean-install
+
+# What a new user does, on fresh machines: build the package, install it with plain
+# pip (no uv, no caches, models downloaded on first use), run `callback demo`. The
+# demo calls the bundled buggy agent, so success here means exit code 1 and a report.
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade build
+      - run: python -m build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  demo:
+    needs: build
+    name: demo (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - name: espeak-ng (the local voice's system dependency)
+        run: |
+          if [ "$RUNNER_OS" = "Linux" ]; then sudo apt-get update && sudo apt-get install -y espeak-ng
+          else brew install espeak-ng; fi
+      - name: pip install callback-voice[local] from the built wheel
+        run: |
+          python -m venv venv
+          venv/bin/python -m pip install --upgrade pip
+          venv/bin/pip install "$(ls dist/*.whl)[local]"
+      - run: venv/bin/callback --version
+      - run: venv/bin/callback doctor
+      - name: callback demo (expects exit 1 and a report)
+        run: |
+          mkdir try && cd try
+          set +e
+          ../venv/bin/callback demo --no-open
+          code=$?
+          set -e
+          echo "exit code: $code"
+          ls .callback/runs/*/report.html
+          test "$code" -eq 1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: demo-report-${{ matrix.os }}
+          path: |
+            try/.callback/runs/**/report.html
+            try/.callback/runs/**/results.json
+            try/.callback/demo-agent-logs/
+          include-hidden-files: true
+          if-no-files-found: ignore
