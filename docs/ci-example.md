@@ -5,11 +5,16 @@ that calls your voice agent on every pull request, fails when a number got reall
 worse against a saved baseline, and keeps the report. Copy it to
 `.github/workflows/callback.yml` in your agent's repository and edit the marked lines.
 
-We tested it as written in a public repository with the bundled reference agent, a
-3-call scenario and the baseline recorded on the same runner: the unchanged agent
-passed (reply-delay p95 0.99 s against a baseline of 1.01 s, nothing regressed), and
-the same agent made 0.4 s slower failed the job (1.38 s, +0.37 s regressed) while every
-call still passed its own limits.
+We tested it in a public repository with the bundled reference agent, a 3-call
+scenario and the baseline recorded on the same runner: the unchanged agent passed
+(reply-delay p95 0.99 s against a baseline of 1.01 s, nothing regressed), and the same
+agent made 0.4 s slower failed the job (1.38 s, +0.37 s regressed) while every call
+still passed its own limits. That test was not of the file exactly as shipped: the
+agent stopped 0.65–1.05 s after being interrupted on those runners, against the
+scenario's 0.6 s limit, so the time-to-yield limit was loosened in the test copy's
+scenario. The shipped file now does that with `CALLBACK_CI_YIELD_LIMIT_S` instead
+([below](#absolute-limits-on-slow-runners)); this version has not been re-run in that
+repository.
 
 ## What to commit first
 
@@ -92,16 +97,30 @@ measure your own runners.
 
 Scenario limits (for example reply delay p95 ≤ 1.5 s) are absolute. If your agent
 runs on the same shared runner as Callback, it may miss them there for reasons that
-have nothing to do with your change. You can loosen the reply-delay limit for CI
-only:
+have nothing to do with your change. You can loosen the reply delay and the time to
+stop when interrupted for CI only:
 
 ```yaml
     env:
-      CALLBACK_CI_LATENCY_LIMIT_S: "2.0"   # pick from your own measured runs
+      CALLBACK_CI_LATENCY_LIMIT_S: "2.0"   # reply delay p95; pick from your own runs
+      CALLBACK_CI_YIELD_LIMIT_S: "1.1"     # time to stop when interrupted (p95)
 ```
 
-Every run that uses it records the loosened limit next to the real target in
+Every run that uses them records the loosened limit next to the real target in
 `results.json` and shows it at the top of the report, so it is never mistaken for
-the target. The baseline comparison is unaffected. For latency you can trust as an
+the target. The baseline comparison is unaffected, and so is the talk-over check,
+which keeps the real time-to-yield target as its grace period.
+
+**Why the example sets the time-to-yield allowance to 1.1 s.** The `callback init`
+scenario expects the agent to stop within 0.6 s of being interrupted. Our reference
+agent stops in 0.49 s on a laptop, but on GitHub's runners it measured 0.59–0.64 s
+(6 calls, public repository, 4 cores) and 0.94–1.05 s (private repository, 2 cores).
+Its speed there is limited by the small speech model it uses to tell "sorry, wait"
+from "mm-hmm", which runs 2–3× slower on busy shared CPUs; waiting less before
+judging made it miss real interruptions. 1.1 s passes every call we measured, while
+our deliberately buggy agent, which talks through its first sentence, still fails
+(1.16–1.20 s on runners; a narrow margin), and an agent that ignores interruptions
+fails by seconds. Your agent's numbers will differ: measure them, and on a dedicated
+or larger runner remove the allowance. For latency you can trust as an
 absolute number, use a dedicated or larger runner, or point Callback at a deployed
 agent instead of one started inside the job.

@@ -8,6 +8,10 @@ class Thresholds(StrictModel):
 
     response_latency_p95_s: float = Field(default=1.5, gt=0)
     time_to_yield_p95_s: float = Field(default=0.6, gt=0)
+    talk_over_grace_s: float | None = Field(default=None, gt=0)
+    """How long after the caller cuts in the agent may keep talking before it counts as
+    talk-over. Defaults to the time-to-yield limit; its own setting, so loosening that
+    limit on CI doesn't loosen talk-over."""
     talk_over_ratio: float = Field(default=0.05, ge=0, le=1)
     false_yields: int = Field(default=0, ge=0)
     silence_reprompt_s: float = Field(default=8.0, gt=0)

@@ -2,7 +2,11 @@ from rich.text import Text
 
 from callback_voice.core.models.limit_override import LimitOverride
 
-_WHAT = {"response_latency_p95_s": "reply delay p95", "chaos_drift_max_s": "chaos timing drift"}
+_WHAT = {
+    "response_latency_p95_s": "reply delay p95",
+    "time_to_yield_p95_s": "time to stop when interrupted (p95)",
+    "chaos_drift_max_s": "chaos timing drift",
+}
 
 
 def limit_notice(overrides: list[LimitOverride]) -> Text | None:

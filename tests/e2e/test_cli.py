@@ -162,6 +162,26 @@ def test_ci_latency_limit_is_announced_and_validated(run_cli, write, monkeypatch
     assert "the real target is 0.1 s" in both.stdout
     monkeypatch.delenv("CALLBACK_CI_DRIFT_LIMIT_S")
 
+    monkeypatch.setenv("CALLBACK_CI_YIELD_LIMIT_S", "1.1")
+    yielding = run_cli("run", "s.yaml")
+    assert "time to stop when interrupted (p95) up to 1.1 s" in yielding.stdout, yielding.stdout
+    assert "the real target is 0.6 s" in yielding.stdout
+    monkeypatch.delenv("CALLBACK_CI_YIELD_LIMIT_S")
+
     monkeypatch.setenv("CALLBACK_CI_LATENCY_LIMIT_S", "fast")
     bad = run_cli("run", "s.yaml")
     assert bad.returncode == 2 and "is not a number of seconds" in bad.stderr
+
+
+def test_ci_yield_limit_leaves_talk_over_at_the_real_target(monkeypatch) -> None:
+    from callback_voice.core.models.scenario import Scenario
+    from callback_voice.core.runner.ci_limits import apply_ci_limits
+
+    scenario = Scenario.model_validate(
+        {"id": "s", "agent": "a", "caller": {"persona": "p", "goal": "g", "script": ["hi"]}}
+    )
+    monkeypatch.setenv("CALLBACK_CI_YIELD_LIMIT_S", "1.1")
+    [loosened], [override] = apply_ci_limits([scenario])
+    assert loosened.expect.thresholds.time_to_yield_p95_s == 1.1
+    assert loosened.expect.thresholds.talk_over_grace_s == 0.6  # not stretched to 1.1
+    assert (override.metric, override.target, override.applied) == ("time_to_yield_p95_s", 0.6, 1.1)

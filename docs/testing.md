@@ -391,7 +391,10 @@ on the agent, and never fails a run; on busy runners the worst call drifted 0.86
 precise than locally. Each call's drift is shown in its report header.
 
 Every other check (interruptions, "mm-hmm", silence, end state, facts, replay) is as
-strict on CI as anywhere. The unanswered-turn check has its own threshold
+strict on CI as anywhere. `CALLBACK_CI_YIELD_LIMIT_S` works like the latency limit for
+the time to stop when interrupted; the example workflow for your own CI sets it to
+1.1 s ([why](ci-example.md#absolute-limits-on-slow-runners)), but the `e2e` workflow
+does not, so there the good agent's 0.59–0.64 s against 0.6 s can fail. The unanswered-turn check has its own threshold
 (`unanswered_wait_s`, 1.5 s: how long the caller must wait in silence), which the CI
 latency limit does not touch.
 

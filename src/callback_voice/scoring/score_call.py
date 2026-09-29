@@ -46,7 +46,9 @@ def score_call(call_dir: Path, thresholds: Thresholds, vad: VoiceActivityModel) 
         response_latency(timeline, thresholds.response_latency_p95_s, thresholds.unanswered_turns),
         time_to_yield(timeline, thresholds.time_to_yield_p95_s),
         talk_over(
-            timeline, thresholds.talk_over_ratio, yield_grace_s=thresholds.time_to_yield_p95_s
+            timeline,
+            thresholds.talk_over_ratio,
+            yield_grace_s=thresholds.talk_over_grace_s or thresholds.time_to_yield_p95_s,
         ),
         false_yield(timeline, thresholds.false_yields),
         silence_handling(timeline, thresholds.silence_reprompt_s),

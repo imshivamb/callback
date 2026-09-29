@@ -6,17 +6,20 @@ from callback_voice.errors import ConfigError
 
 CI_LATENCY_ENV = "CALLBACK_CI_LATENCY_LIMIT_S"
 CI_DRIFT_ENV = "CALLBACK_CI_DRIFT_LIMIT_S"
+CI_YIELD_ENV = "CALLBACK_CI_YIELD_LIMIT_S"
 # environment variable -> (threshold field, metric it applies to)
 _CI_LIMITS = {
     CI_LATENCY_ENV: ("response_latency_p95_s", "response_latency_p95_s"),
     CI_DRIFT_ENV: ("chaos_drift_s", "chaos_drift_max_s"),
+    CI_YIELD_ENV: ("time_to_yield_p95_s", "time_to_yield_p95_s"),
 }
 
 
 def apply_ci_limits(scenarios: list[Scenario]) -> tuple[list[Scenario], list[LimitOverride]]:
     """Loosen limits on slow shared CI machines, and say so.
 
-    ``CALLBACK_CI_LATENCY_LIMIT_S`` raises the reply-delay limit and
+    ``CALLBACK_CI_LATENCY_LIMIT_S`` raises the reply-delay limit,
+    ``CALLBACK_CI_YIELD_LIMIT_S`` the time-to-yield limit and
     ``CALLBACK_CI_DRIFT_LIMIT_S`` the chaos-timing tolerance to at least the given
     seconds. Neither is set by default; each can only loosen a limit, and every change
     is returned so it can be recorded in results.json and shown in the report: a CI
@@ -39,7 +42,10 @@ def apply_ci_limits(scenarios: list[Scenario]) -> tuple[list[Scenario], list[Lim
             if ci_limit <= target:
                 loosened.append(s)
                 continue
-            thresholds = s.expect.thresholds.model_copy(update={field: ci_limit})
+            update: dict[str, float] = {field: ci_limit}
+            if field == "time_to_yield_p95_s" and s.expect.thresholds.talk_over_grace_s is None:
+                update["talk_over_grace_s"] = target  # talk-over keeps the real target
+            thresholds = s.expect.thresholds.model_copy(update=update)
             expect = s.expect.model_copy(update={"thresholds": thresholds})
             loosened.append(s.model_copy(update={"expect": expect}))
             overrides.append(

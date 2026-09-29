@@ -474,7 +474,7 @@ function renderTop() {
 function ciLimitBanner() {
   const overrides = DATA.run.limit_overrides || [];
   if (!overrides.length) return null;
-  const what = /** @type {Object<string, string>} */ ({ response_latency_p95_s: "Reply delay p95", chaos_drift_max_s: "Chaos timing drift" });
+  const what = /** @type {Object<string, string>} */ ({ response_latency_p95_s: "Reply delay p95", time_to_yield_p95_s: "Time to stop when interrupted (p95)", chaos_drift_max_s: "Chaos timing drift" });
   const lines = [...new Set(overrides.map((o) => o.metric))].map((metric) => {
     const these = overrides.filter((o) => o.metric === metric);
     const applied = [...new Set(these.map((o) => o.applied))].join(", ");
