@@ -8,6 +8,7 @@ from callback_voice import __version__
 from callback_voice.core.baseline.compare_to_baseline import compare_to_baseline
 from callback_voice.core.models.baseline import Baseline
 from callback_voice.core.models.limit_override import LimitOverride
+from callback_voice.core.models.llm_usage import LlmUsage
 from callback_voice.core.models.run_result import RunResult
 from callback_voice.core.models.scenario import Scenario
 from callback_voice.core.models.scenario_result import ScenarioResult
@@ -93,6 +94,7 @@ async def run_suite(
         }
         | {"llm": runtime.llm.model},
         vad={"provider": project.providers.vad.name},
+        llm_usage=_total_usage([t for s in scenario_results for t in s.trials]),
         judge=runtime.judge_info,
         scenarios=scenario_results,
         limit_overrides=limit_overrides or [],
@@ -120,3 +122,11 @@ def _scenario_result(scenario: Scenario, trials: list[TrialResult], seed: int) -
         aggregates=aggregates,
         failure_reasons=reasons,
     )
+
+
+def _total_usage(trials: list[TrialResult]) -> dict[str, LlmUsage]:
+    totals: dict[str, LlmUsage] = {}
+    for trial in trials:
+        for role, usage in trial.llm_usage.items():
+            totals[role] = totals[role] + usage if role in totals else usage
+    return totals

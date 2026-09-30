@@ -11,6 +11,7 @@ from callback_voice.cli.render.rules_notice import rules_notice
 from callback_voice.cli.render.run_plan import run_plan
 from callback_voice.cli.render.run_summary import run_summary
 from callback_voice.cli.render.trial_line import trial_line
+from callback_voice.cli.render.usage_line import usage_line
 from callback_voice.core.config.load_project_config import load_project_config
 from callback_voice.core.config.project_config import RecordedMode
 from callback_voice.core.config.provider_config import LOCAL_CALLER_LLM
@@ -115,6 +116,8 @@ def run(
         )
     )
     console.print(run_summary(result, run_dir))
+    if (used := usage_line(result.llm_usage)) is not None:
+        console.print(used)
     if (hint := ci_runner_hint(result, os.environ, os.cpu_count())) is not None:
         console.print(hint)
     raise typer.Exit(result.exit_code)

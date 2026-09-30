@@ -11,6 +11,7 @@ from callback_voice.core.models.trial_result import TrialResult
 from callback_voice.core.runner.runtime import Runtime
 from callback_voice.core.runner.trial_verdict import trial_verdict
 from callback_voice.errors import CallbackError
+from callback_voice.providers.llm.usage_meter import UsageMeter
 from callback_voice.scoring.evaluate_call import evaluate_call
 from callback_voice.scoring.verifiers.check_state import check_state
 from callback_voice.scoring.verifiers.resolve_webhook import resolve_webhook
@@ -29,12 +30,14 @@ async def run_trial(
     call_dir = run_dir / "calls" / call_id
     try:
         target = runtime.project.targets[scenario.agent]
+        caller_llm = None if scenario.caller.script else UsageMeter(runtime.llm)
+        judge = UsageMeter(runtime.judge) if runtime.judge is not None else None
         brain = build_brain(
             scenario,
             seed=seed,
             recorded=runtime.recorded,
             cassette_dir=runtime.cassette_dir,
-            llm=None if scenario.caller.script else runtime.llm,
+            llm=caller_llm,
         )
         setup = CallSetup(
             call_id=call_id,
@@ -70,7 +73,7 @@ async def run_trial(
             vad=runtime.make_vad(),
             stt=runtime.scoring_stt,
             careful_stt=runtime.careful_stt,
-            judge=runtime.judge,
+            judge=judge,
             state=state,
             language=scenario.caller.language,
         )
@@ -108,6 +111,11 @@ async def run_trial(
         review=score.review,
         verifier_results=[state] if state is not None else [],
         call=record,
+        llm_usage={
+            role: usage
+            for role, meter in (("caller", caller_llm), ("judge", judge))
+            if meter is not None and (usage := meter.usage()) is not None
+        },
     )
 
 
