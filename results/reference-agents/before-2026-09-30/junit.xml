@@ -1,0 +1,471 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="callback" time="8708.16" tests="179" failures="79" errors="0">
+  <testsuite name="backchannel--buggy" tests="9" failures="7" errors="0">
+    <testcase classname="backchannel--buggy" name="trial 1 (backchannel--buggy--t1)" time="49.00">
+      <failure message="response_latency_p95_s 1.95 s &gt; 1.5 s">response_latency_p95_s 1.95 s &gt; 1.5 s
+false_yields 6 &gt; 0</failure>
+    </testcase>
+    <testcase classname="backchannel--buggy" name="trial 2 (backchannel--buggy--t2)" time="44.42">
+      <failure message="response_latency_p95_s 1.972 s &gt; 1.5 s">response_latency_p95_s 1.972 s &gt; 1.5 s
+false_yields 6 &gt; 0</failure>
+    </testcase>
+    <testcase classname="backchannel--buggy" name="trial 3 (backchannel--buggy--t3)" time="44.36">
+      <failure message="response_latency_p95_s 1.94 s &gt; 1.5 s">response_latency_p95_s 1.94 s &gt; 1.5 s
+false_yields 6 &gt; 0</failure>
+    </testcase>
+    <testcase classname="backchannel--buggy" name="trial 4 (backchannel--buggy--t4)" time="44.02">
+      <failure message="response_latency_p95_s 1.938 s &gt; 1.5 s">response_latency_p95_s 1.938 s &gt; 1.5 s
+false_yields 6 &gt; 0</failure>
+    </testcase>
+    <testcase classname="backchannel--buggy" name="trial 5 (backchannel--buggy--t5)" time="46.24">
+      <failure message="response_latency_p95_s 1.978 s &gt; 1.5 s">response_latency_p95_s 1.978 s &gt; 1.5 s
+false_yields 6 &gt; 0</failure>
+    </testcase>
+    <testcase classname="backchannel--buggy" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 1.976 (95% CI 1.9465–1.98), limit &lt;= 1.5">response_latency_p95_s 1.976 (95% CI 1.9465–1.98), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="backchannel--buggy" name="aggregate talk_over_ratio" />
+    <testcase classname="backchannel--buggy" name="aggregate false_yields">
+      <failure message="false_yields 6 (95% CI 6–6), limit &lt;= 0">false_yields 6 (95% CI 6–6), limit &lt;= 0</failure>
+    </testcase>
+    <testcase classname="backchannel--buggy" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="backchannel--good" tests="9" failures="0" errors="0">
+    <testcase classname="backchannel--good" name="trial 1 (backchannel--good--t1)" time="72.08" />
+    <testcase classname="backchannel--good" name="trial 2 (backchannel--good--t2)" time="72.08" />
+    <testcase classname="backchannel--good" name="trial 3 (backchannel--good--t3)" time="72.08" />
+    <testcase classname="backchannel--good" name="trial 4 (backchannel--good--t4)" time="72.12" />
+    <testcase classname="backchannel--good" name="trial 5 (backchannel--good--t5)" time="72.08" />
+    <testcase classname="backchannel--good" name="aggregate response_latency_p95_s" />
+    <testcase classname="backchannel--good" name="aggregate talk_over_ratio" />
+    <testcase classname="backchannel--good" name="aggregate false_yields" />
+    <testcase classname="backchannel--good" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="barge-in--buggy" tests="9" failures="8" errors="0">
+    <testcase classname="barge-in--buggy" name="trial 1 (barge-in--buggy--t1)" time="83.76">
+      <failure message="response_latency_p95_s 1.95 s &gt; 1.5 s">response_latency_p95_s 1.95 s &gt; 1.5 s
+time_to_yield_p95_s 1.87 s &gt; 0.6 s
+talk_over_ratio 0.1093 &gt; 0.05</failure>
+    </testcase>
+    <testcase classname="barge-in--buggy" name="trial 2 (barge-in--buggy--t2)" time="83.76">
+      <failure message="response_latency_p95_s 1.945 s &gt; 1.5 s">response_latency_p95_s 1.945 s &gt; 1.5 s
+time_to_yield_p95_s 1.87 s &gt; 0.6 s
+talk_over_ratio 0.1093 &gt; 0.05</failure>
+    </testcase>
+    <testcase classname="barge-in--buggy" name="trial 3 (barge-in--buggy--t3)" time="83.76">
+      <failure message="response_latency_p95_s 1.968 s &gt; 1.5 s">response_latency_p95_s 1.968 s &gt; 1.5 s
+time_to_yield_p95_s 1.87 s &gt; 0.6 s
+talk_over_ratio 0.1093 &gt; 0.05</failure>
+    </testcase>
+    <testcase classname="barge-in--buggy" name="trial 4 (barge-in--buggy--t4)" time="83.76">
+      <failure message="response_latency_p95_s 1.965 s &gt; 1.5 s">response_latency_p95_s 1.965 s &gt; 1.5 s
+time_to_yield_p95_s 1.89 s &gt; 0.6 s
+talk_over_ratio 0.1093 &gt; 0.05</failure>
+    </testcase>
+    <testcase classname="barge-in--buggy" name="trial 5 (barge-in--buggy--t5)" time="83.76">
+      <failure message="response_latency_p95_s 1.998 s &gt; 1.5 s">response_latency_p95_s 1.998 s &gt; 1.5 s
+time_to_yield_p95_s 1.89 s &gt; 0.6 s
+talk_over_ratio 0.1093 &gt; 0.05</failure>
+    </testcase>
+    <testcase classname="barge-in--buggy" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 1.981 (95% CI 1.95–2), limit &lt;= 1.5">response_latency_p95_s 1.981 (95% CI 1.95–2), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="barge-in--buggy" name="aggregate time_to_yield_p95_s">
+      <failure message="time_to_yield_p95_s 1.89 (95% CI 1.87–1.89), limit &lt;= 0.6">time_to_yield_p95_s 1.89 (95% CI 1.87–1.89), limit &lt;= 0.6</failure>
+    </testcase>
+    <testcase classname="barge-in--buggy" name="aggregate talk_over_ratio">
+      <failure message="talk_over_ratio 0.1093 (95% CI 0.1093–0.1093), limit &lt;= 0.05">talk_over_ratio 0.1093 (95% CI 0.1093–0.1093), limit &lt;= 0.05</failure>
+    </testcase>
+    <testcase classname="barge-in--buggy" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="barge-in--good" tests="9" failures="0" errors="0">
+    <testcase classname="barge-in--good" name="trial 1 (barge-in--good--t1)" time="73.52" />
+    <testcase classname="barge-in--good" name="trial 2 (barge-in--good--t2)" time="73.46" />
+    <testcase classname="barge-in--good" name="trial 3 (barge-in--good--t3)" time="73.46" />
+    <testcase classname="barge-in--good" name="trial 4 (barge-in--good--t4)" time="73.46" />
+    <testcase classname="barge-in--good" name="trial 5 (barge-in--good--t5)" time="73.46" />
+    <testcase classname="barge-in--good" name="aggregate response_latency_p95_s" />
+    <testcase classname="barge-in--good" name="aggregate time_to_yield_p95_s" />
+    <testcase classname="barge-in--good" name="aggregate talk_over_ratio" />
+    <testcase classname="barge-in--good" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="ignored-interruption--buggy-ignores-interruptions" tests="14" failures="14" errors="0">
+    <testcase classname="ignored-interruption--buggy-ignores-interruptions" name="trial 1 (ignored-interruption--buggy-ignores-interruptions--t1)" time="82.80">
+      <failure message="response_latency_p95_s 1.96 s &gt; 1.5 s">response_latency_p95_s 1.96 s &gt; 1.5 s
+unanswered_turns 1 &gt; 0: The agent talked over “Sorry, it's for Saturday evening.”, stopped, and never answered it; the caller waited 2.6 s.
+time_to_yield_p95_s 5.36 s &gt; 0.6 s
+talk_over_ratio 0.1091 &gt; 0.05</failure>
+    </testcase>
+    <testcase classname="ignored-interruption--buggy-ignores-interruptions" name="trial 2 (ignored-interruption--buggy-ignores-interruptions--t2)" time="82.80">
+      <failure message="response_latency_p95_s 1.95 s &gt; 1.5 s">response_latency_p95_s 1.95 s &gt; 1.5 s
+unanswered_turns 1 &gt; 0: The agent talked over “Sorry, it's for Saturday evening.”, stopped, and never answered it; the caller waited 2.6 s.
+time_to_yield_p95_s 5.38 s &gt; 0.6 s
+talk_over_ratio 0.1091 &gt; 0.05</failure>
+    </testcase>
+    <testcase classname="ignored-interruption--buggy-ignores-interruptions" name="trial 3 (ignored-interruption--buggy-ignores-interruptions--t3)" time="82.80">
+      <failure message="response_latency_p95_s 1.96 s &gt; 1.5 s">response_latency_p95_s 1.96 s &gt; 1.5 s
+unanswered_turns 1 &gt; 0: The agent talked over “Sorry, it's for Saturday evening.”, stopped, and never answered it; the caller waited 2.6 s.
+time_to_yield_p95_s 5.36 s &gt; 0.6 s
+talk_over_ratio 0.1091 &gt; 0.05</failure>
+    </testcase>
+    <testcase classname="ignored-interruption--buggy-ignores-interruptions" name="trial 4 (ignored-interruption--buggy-ignores-interruptions--t4)" time="82.90">
+      <failure message="response_latency_p95_s 1.965 s &gt; 1.5 s">response_latency_p95_s 1.965 s &gt; 1.5 s
+unanswered_turns 1 &gt; 0: The agent talked over “Sorry, it's for Saturday evening.”, stopped, and never answered it; the caller waited 2.6 s.
+time_to_yield_p95_s 5.36 s &gt; 0.6 s
+talk_over_ratio 0.1087 &gt; 0.05</failure>
+    </testcase>
+    <testcase classname="ignored-interruption--buggy-ignores-interruptions" name="trial 5 (ignored-interruption--buggy-ignores-interruptions--t5)" time="82.90">
+      <failure message="response_latency_p95_s 1.97 s &gt; 1.5 s">response_latency_p95_s 1.97 s &gt; 1.5 s
+unanswered_turns 1 &gt; 0: The agent talked over “Sorry, it's for Saturday evening.”, stopped, and never answered it; the caller waited 2.6 s.
+time_to_yield_p95_s 5.36 s &gt; 0.6 s
+talk_over_ratio 0.109 &gt; 0.05</failure>
+    </testcase>
+    <testcase classname="ignored-interruption--buggy-ignores-interruptions" name="trial 6 (ignored-interruption--buggy-ignores-interruptions--t6)" time="82.80">
+      <failure message="response_latency_p95_s 1.948 s &gt; 1.5 s">response_latency_p95_s 1.948 s &gt; 1.5 s
+unanswered_turns 1 &gt; 0: The agent talked over “Sorry, it's for Saturday evening.”, stopped, and never answered it; the caller waited 2.6 s.
+time_to_yield_p95_s 5.36 s &gt; 0.6 s
+talk_over_ratio 0.1086 &gt; 0.05</failure>
+    </testcase>
+    <testcase classname="ignored-interruption--buggy-ignores-interruptions" name="trial 7 (ignored-interruption--buggy-ignores-interruptions--t7)" time="82.80">
+      <failure message="response_latency_p95_s 1.96 s &gt; 1.5 s">response_latency_p95_s 1.96 s &gt; 1.5 s
+unanswered_turns 1 &gt; 0: The agent talked over “Sorry, it's for Saturday evening.”, stopped, and never answered it; the caller waited 2.6 s.
+time_to_yield_p95_s 5.34 s &gt; 0.6 s
+talk_over_ratio 0.1091 &gt; 0.05</failure>
+    </testcase>
+    <testcase classname="ignored-interruption--buggy-ignores-interruptions" name="trial 8 (ignored-interruption--buggy-ignores-interruptions--t8)" time="82.80">
+      <failure message="response_latency_p95_s 1.948 s &gt; 1.5 s">response_latency_p95_s 1.948 s &gt; 1.5 s
+unanswered_turns 1 &gt; 0: The agent talked over “Sorry, it's for Saturday evening.”, stopped, and never answered it; the caller waited 2.6 s.
+time_to_yield_p95_s 5.36 s &gt; 0.6 s
+talk_over_ratio 0.1091 &gt; 0.05</failure>
+    </testcase>
+    <testcase classname="ignored-interruption--buggy-ignores-interruptions" name="trial 9 (ignored-interruption--buggy-ignores-interruptions--t9)" time="82.80">
+      <failure message="response_latency_p95_s 1.962 s &gt; 1.5 s">response_latency_p95_s 1.962 s &gt; 1.5 s
+unanswered_turns 1 &gt; 0: The agent talked over “Sorry, it's for Saturday evening.”, stopped, and never answered it; the caller waited 2.6 s.
+time_to_yield_p95_s 5.36 s &gt; 0.6 s
+talk_over_ratio 0.1091 &gt; 0.05</failure>
+    </testcase>
+    <testcase classname="ignored-interruption--buggy-ignores-interruptions" name="trial 10 (ignored-interruption--buggy-ignores-interruptions--t10)" time="82.90">
+      <failure message="response_latency_p95_s 1.95 s &gt; 1.5 s">response_latency_p95_s 1.95 s &gt; 1.5 s
+unanswered_turns 1 &gt; 0: The agent talked over “Sorry, it's for Saturday evening.”, stopped, and never answered it; the caller waited 2.6 s.
+time_to_yield_p95_s 5.38 s &gt; 0.6 s
+talk_over_ratio 0.1087 &gt; 0.05</failure>
+    </testcase>
+    <testcase classname="ignored-interruption--buggy-ignores-interruptions" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 1.97 (95% CI 1.951–1.97), limit &lt;= 1.5">response_latency_p95_s 1.97 (95% CI 1.951–1.97), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="ignored-interruption--buggy-ignores-interruptions" name="aggregate time_to_yield_p95_s">
+      <failure message="time_to_yield_p95_s 5.38 (95% CI 5.36–5.38), limit &lt;= 0.6">time_to_yield_p95_s 5.38 (95% CI 5.36–5.38), limit &lt;= 0.6</failure>
+    </testcase>
+    <testcase classname="ignored-interruption--buggy-ignores-interruptions" name="aggregate talk_over_ratio">
+      <failure message="talk_over_ratio 0.109 (95% CI 0.1088–0.1091), limit &lt;= 0.05">talk_over_ratio 0.109 (95% CI 0.1088–0.1091), limit &lt;= 0.05</failure>
+    </testcase>
+    <testcase classname="ignored-interruption--buggy-ignores-interruptions" name="aggregate unanswered_turns">
+      <failure message="unanswered_turns 1 (95% CI 1–1), limit &lt;= 0">unanswered_turns 1 (95% CI 1–1), limit &lt;= 0</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="move-and-resize--buggy" tests="11" failures="9" errors="0">
+    <testcase classname="move-and-resize--buggy" name="trial 1 (move-and-resize--buggy--t1)" time="94.04">
+      <failure message="response_latency_p95_s 1.954 s &gt; 1.5 s">response_latency_p95_s 1.954 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: status is 'untouched', expected 'moved'; day is None, expected 'saturday'; hour is None, expected 19; minute is None, expected 30; party_size is None, expected 5.
+entity_fidelity 0.75 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).
+policy_violations 1 &gt; 0: Policy broken (reveals another guest's booking): the agent said “Let me check Saturday. The Aukhafer Party already has 7.30pm. I have 7pm or 7.30pm available. Which would you prefer?”.</failure>
+    </testcase>
+    <testcase classname="move-and-resize--buggy" name="trial 2 (move-and-resize--buggy--t2)" time="92.76">
+      <failure message="response_latency_p95_s 1.957 s &gt; 1.5 s">response_latency_p95_s 1.957 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: party_size is 4, expected 5.
+entity_fidelity 0.75 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).
+policy_violations 1 &gt; 0: Policy broken (reveals another guest's booking): the agent said “Let me check Saturday. The Akafer Party already has 7.30pm. I have 7pm or 7.30pm available. Which would you prefer?”.</failure>
+    </testcase>
+    <testcase classname="move-and-resize--buggy" name="trial 3 (move-and-resize--buggy--t3)" time="91.16">
+      <failure message="response_latency_p95_s 1.961 s &gt; 1.5 s">response_latency_p95_s 1.961 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: status is 'untouched', expected 'moved'; day is None, expected 'saturday'; hour is None, expected 19; minute is None, expected 30; party_size is None, expected 5.
+entity_fidelity 0.75 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).
+policy_violations 1 &gt; 0: Policy broken (reveals another guest's booking): the agent said “Let me check Saturday. The Akafer Party already has 7.30pm. I have 7pm or 7.30pm available. Which would you prefer?”.</failure>
+    </testcase>
+    <testcase classname="move-and-resize--buggy" name="trial 4 (move-and-resize--buggy--t4)" time="92.92">
+      <failure message="response_latency_p95_s 1.974 s &gt; 1.5 s">response_latency_p95_s 1.974 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: party_size is 4, expected 5.
+entity_fidelity 0.75 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).
+policy_violations 1 &gt; 0: Policy broken (reveals another guest's booking): the agent said “Let me check Saturday. The Akafer Party already has 7.30pm. I have 7pm or 7.30pm available. Which would you prefer?”.</failure>
+    </testcase>
+    <testcase classname="move-and-resize--buggy" name="trial 5 (move-and-resize--buggy--t5)" time="92.92">
+      <failure message="response_latency_p95_s 1.977 s &gt; 1.5 s">response_latency_p95_s 1.977 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: party_size is 4, expected 5.
+entity_fidelity 0.75 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).
+policy_violations 1 &gt; 0: Policy broken (reveals another guest's booking): the agent said “Let me check Saturday. The Akafer Party already has 7.30pm. I have 7pm or 7.30pm available. Which would you prefer?”.</failure>
+    </testcase>
+    <testcase classname="move-and-resize--buggy" name="aggregate task_success_rate">
+      <failure message="task_success_rate 0 (95% CI 0–0.4345), limit &gt;= 0.8">task_success_rate 0 (95% CI 0–0.4345), limit &gt;= 0.8</failure>
+    </testcase>
+    <testcase classname="move-and-resize--buggy" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 1.973 (95% CI 1.96–1.98), limit &lt;= 1.5">response_latency_p95_s 1.973 (95% CI 1.96–1.98), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="move-and-resize--buggy" name="aggregate talk_over_ratio" />
+    <testcase classname="move-and-resize--buggy" name="aggregate entity_fidelity">
+      <failure message="entity_fidelity 0.75 (95% CI 0.75–0.75), limit &gt;= 1">entity_fidelity 0.75 (95% CI 0.75–0.75), limit &gt;= 1</failure>
+    </testcase>
+    <testcase classname="move-and-resize--buggy" name="aggregate policy_violations">
+      <failure message="policy_violations 1 (95% CI 1–1), limit &lt;= 0">policy_violations 1 (95% CI 1–1), limit &lt;= 0</failure>
+    </testcase>
+    <testcase classname="move-and-resize--buggy" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="move-and-resize--good" tests="11" failures="0" errors="0">
+    <testcase classname="move-and-resize--good" name="trial 1 (move-and-resize--good--t1)" time="81.18" />
+    <testcase classname="move-and-resize--good" name="trial 2 (move-and-resize--good--t2)" time="81.02" />
+    <testcase classname="move-and-resize--good" name="trial 3 (move-and-resize--good--t3)" time="80.70" />
+    <testcase classname="move-and-resize--good" name="trial 4 (move-and-resize--good--t4)" time="80.86" />
+    <testcase classname="move-and-resize--good" name="trial 5 (move-and-resize--good--t5)" time="80.86" />
+    <testcase classname="move-and-resize--good" name="aggregate task_success_rate" />
+    <testcase classname="move-and-resize--good" name="aggregate response_latency_p95_s" />
+    <testcase classname="move-and-resize--good" name="aggregate talk_over_ratio" />
+    <testcase classname="move-and-resize--good" name="aggregate entity_fidelity" />
+    <testcase classname="move-and-resize--good" name="aggregate policy_violations" />
+    <testcase classname="move-and-resize--good" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="move-booking-noisy--buggy" tests="11" failures="8" errors="0">
+    <testcase classname="move-booking-noisy--buggy" name="trial 1 (move-booking-noisy--buggy--t1)" time="81.08">
+      <failure message="response_latency_p95_s 2.02 s &gt; 1.5 s">response_latency_p95_s 2.02 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: hour is 20, expected 19.
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-noisy--buggy" name="trial 2 (move-booking-noisy--buggy--t2)" time="80.98">
+      <failure message="response_latency_p95_s 1.965 s &gt; 1.5 s">response_latency_p95_s 1.965 s &gt; 1.5 s
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-noisy--buggy" name="trial 3 (move-booking-noisy--buggy--t3)" time="80.98">
+      <failure message="response_latency_p95_s 1.965 s &gt; 1.5 s">response_latency_p95_s 1.965 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: status is 'untouched', expected 'moved'; day is None, expected 'saturday'; hour is None, expected 19; minute is None, expected 30.
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-noisy--buggy" name="trial 4 (move-booking-noisy--buggy--t4)" time="80.98">
+      <failure message="response_latency_p95_s 1.945 s &gt; 1.5 s">response_latency_p95_s 1.945 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: hour is 20, expected 19.
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-noisy--buggy" name="trial 5 (move-booking-noisy--buggy--t5)" time="81.04">
+      <failure message="response_latency_p95_s 1.98 s &gt; 1.5 s">response_latency_p95_s 1.98 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: hour is 20, expected 19.
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-noisy--buggy" name="aggregate task_success_rate">
+      <failure message="task_success_rate 0.2 (95% CI 0.0362–0.6245), limit &gt;= 0.8">task_success_rate 0.2 (95% CI 0.0362–0.6245), limit &gt;= 0.8</failure>
+    </testcase>
+    <testcase classname="move-booking-noisy--buggy" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 1.99 (95% CI 1.961–2.03), limit &lt;= 1.5">response_latency_p95_s 1.99 (95% CI 1.961–2.03), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="move-booking-noisy--buggy" name="aggregate talk_over_ratio" />
+    <testcase classname="move-booking-noisy--buggy" name="aggregate entity_fidelity">
+      <failure message="entity_fidelity 0 (95% CI 0–0), limit &gt;= 1">entity_fidelity 0 (95% CI 0–0), limit &gt;= 1</failure>
+    </testcase>
+    <testcase classname="move-booking-noisy--buggy" name="aggregate policy_violations" />
+    <testcase classname="move-booking-noisy--buggy" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="move-booking-noisy--good" tests="11" failures="0" errors="0">
+    <testcase classname="move-booking-noisy--good" name="trial 1 (move-booking-noisy--good--t1)" time="72.08" />
+    <testcase classname="move-booking-noisy--good" name="trial 2 (move-booking-noisy--good--t2)" time="72.08" />
+    <testcase classname="move-booking-noisy--good" name="trial 3 (move-booking-noisy--good--t3)" time="72.02" />
+    <testcase classname="move-booking-noisy--good" name="trial 4 (move-booking-noisy--good--t4)" time="71.96" />
+    <testcase classname="move-booking-noisy--good" name="trial 5 (move-booking-noisy--good--t5)" time="72.02" />
+    <testcase classname="move-booking-noisy--good" name="aggregate task_success_rate" />
+    <testcase classname="move-booking-noisy--good" name="aggregate response_latency_p95_s" />
+    <testcase classname="move-booking-noisy--good" name="aggregate talk_over_ratio" />
+    <testcase classname="move-booking-noisy--good" name="aggregate entity_fidelity" />
+    <testcase classname="move-booking-noisy--good" name="aggregate policy_violations" />
+    <testcase classname="move-booking-noisy--good" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="move-booking-persona--buggy" tests="15" failures="13" errors="0">
+    <testcase classname="move-booking-persona--buggy" name="trial 1 (move-booking-persona--buggy--t1)" time="101.68">
+      <failure message="response_latency_p95_s 1.978 s &gt; 1.5 s">response_latency_p95_s 1.978 s &gt; 1.5 s
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="trial 2 (move-booking-persona--buggy--t2)" time="100.30">
+      <failure message="response_latency_p95_s 2.035 s &gt; 1.5 s">response_latency_p95_s 2.035 s &gt; 1.5 s
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="trial 3 (move-booking-persona--buggy--t3)" time="100.02">
+      <failure message="response_latency_p95_s 1.988 s &gt; 1.5 s">response_latency_p95_s 1.988 s &gt; 1.5 s
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="trial 4 (move-booking-persona--buggy--t4)" time="101.20">
+      <failure message="response_latency_p95_s 1.972 s &gt; 1.5 s">response_latency_p95_s 1.972 s &gt; 1.5 s
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="trial 5 (move-booking-persona--buggy--t5)" time="97.12">
+      <failure message="response_latency_p95_s 1.962 s &gt; 1.5 s">response_latency_p95_s 1.962 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: status is 'untouched', expected 'moved'; day is None, expected 'saturday'; hour is None, expected between 19 and 21.
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="trial 6 (move-booking-persona--buggy--t6)" time="97.66">
+      <failure message="response_latency_p95_s 2.44 s &gt; 1.5 s">response_latency_p95_s 2.44 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: status is 'untouched', expected 'moved'; day is None, expected 'saturday'; hour is None, expected between 19 and 21.
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="trial 7 (move-booking-persona--buggy--t7)" time="100.58">
+      <failure message="response_latency_p95_s 2.047 s &gt; 1.5 s">response_latency_p95_s 2.047 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: status is 'untouched', expected 'moved'; day is None, expected 'saturday'; hour is None, expected between 19 and 21.
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="trial 8 (move-booking-persona--buggy--t8)" time="107.98">
+      <failure message="response_latency_p95_s 2.036 s &gt; 1.5 s">response_latency_p95_s 2.036 s &gt; 1.5 s
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="trial 9 (move-booking-persona--buggy--t9)" time="99.70">
+      <failure message="response_latency_p95_s 2.027 s &gt; 1.5 s">response_latency_p95_s 2.027 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: status is 'untouched', expected 'moved'; day is None, expected 'saturday'; hour is None, expected between 19 and 21.
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="trial 10 (move-booking-persona--buggy--t10)" time="107.80">
+      <failure message="response_latency_p95_s 2.031 s &gt; 1.5 s">response_latency_p95_s 2.031 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: status is 'untouched', expected 'moved'; day is None, expected 'saturday'; hour is None, expected between 19 and 21.
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="aggregate task_success_rate">
+      <failure message="task_success_rate 0.5 (95% CI 0.2366–0.7634), limit &gt;= 0.8">task_success_rate 0.5 (95% CI 0.2366–0.7634), limit &gt;= 0.8</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 2.059 (95% CI 2.009–2.06), limit &lt;= 1.5">response_latency_p95_s 2.059 (95% CI 2.009–2.06), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="aggregate talk_over_ratio" />
+    <testcase classname="move-booking-persona--buggy" name="aggregate entity_fidelity">
+      <failure message="entity_fidelity 0 (95% CI 0–0), limit &gt;= 1">entity_fidelity 0 (95% CI 0–0), limit &gt;= 1</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="move-booking-persona--good" tests="15" failures="0" errors="0">
+    <testcase classname="move-booking-persona--good" name="trial 1 (move-booking-persona--good--t1)" time="98.76" />
+    <testcase classname="move-booking-persona--good" name="trial 2 (move-booking-persona--good--t2)" time="98.46" />
+    <testcase classname="move-booking-persona--good" name="trial 3 (move-booking-persona--good--t3)" time="88.06" />
+    <testcase classname="move-booking-persona--good" name="trial 4 (move-booking-persona--good--t4)" time="86.60" />
+    <testcase classname="move-booking-persona--good" name="trial 5 (move-booking-persona--good--t5)" time="88.30" />
+    <testcase classname="move-booking-persona--good" name="trial 6 (move-booking-persona--good--t6)" time="87.22" />
+    <testcase classname="move-booking-persona--good" name="trial 7 (move-booking-persona--good--t7)" time="85.58" />
+    <testcase classname="move-booking-persona--good" name="trial 8 (move-booking-persona--good--t8)" time="96.86" />
+    <testcase classname="move-booking-persona--good" name="trial 9 (move-booking-persona--good--t9)" time="88.08" />
+    <testcase classname="move-booking-persona--good" name="trial 10 (move-booking-persona--good--t10)" time="85.22" />
+    <testcase classname="move-booking-persona--good" name="aggregate task_success_rate" />
+    <testcase classname="move-booking-persona--good" name="aggregate response_latency_p95_s" />
+    <testcase classname="move-booking-persona--good" name="aggregate talk_over_ratio" />
+    <testcase classname="move-booking-persona--good" name="aggregate entity_fidelity" />
+    <testcase classname="move-booking-persona--good" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="move-booking-scripted--buggy" tests="11" failures="8" errors="0">
+    <testcase classname="move-booking-scripted--buggy" name="trial 1 (move-booking-scripted--buggy--t1)" time="81.14">
+      <failure message="response_latency_p95_s 2 s &gt; 1.5 s">response_latency_p95_s 2 s &gt; 1.5 s
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-scripted--buggy" name="trial 2 (move-booking-scripted--buggy--t2)" time="81.04">
+      <failure message="response_latency_p95_s 1.95 s &gt; 1.5 s">response_latency_p95_s 1.95 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: hour is 20, expected 19.
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-scripted--buggy" name="trial 3 (move-booking-scripted--buggy--t3)" time="81.20">
+      <failure message="response_latency_p95_s 2.005 s &gt; 1.5 s">response_latency_p95_s 2.005 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: status is 'untouched', expected 'moved'; day is None, expected 'saturday'; hour is None, expected 19; minute is None, expected 30.
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-scripted--buggy" name="trial 4 (move-booking-scripted--buggy--t4)" time="81.04">
+      <failure message="response_latency_p95_s 1.948 s &gt; 1.5 s">response_latency_p95_s 1.948 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: status is 'untouched', expected 'moved'; day is None, expected 'saturday'; hour is None, expected 19; minute is None, expected 30.
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-scripted--buggy" name="trial 5 (move-booking-scripted--buggy--t5)" time="81.04">
+      <failure message="response_latency_p95_s 1.948 s &gt; 1.5 s">response_latency_p95_s 1.948 s &gt; 1.5 s
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).</failure>
+    </testcase>
+    <testcase classname="move-booking-scripted--buggy" name="aggregate task_success_rate">
+      <failure message="task_success_rate 0.4 (95% CI 0.1176–0.7693), limit &gt;= 0.8">task_success_rate 0.4 (95% CI 0.1176–0.7693), limit &gt;= 0.8</failure>
+    </testcase>
+    <testcase classname="move-booking-scripted--buggy" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 2.001 (95% CI 1.95–2.01), limit &lt;= 1.5">response_latency_p95_s 2.001 (95% CI 1.95–2.01), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="move-booking-scripted--buggy" name="aggregate talk_over_ratio" />
+    <testcase classname="move-booking-scripted--buggy" name="aggregate entity_fidelity">
+      <failure message="entity_fidelity 0 (95% CI 0–0), limit &gt;= 1">entity_fidelity 0 (95% CI 0–0), limit &gt;= 1</failure>
+    </testcase>
+    <testcase classname="move-booking-scripted--buggy" name="aggregate policy_violations" />
+    <testcase classname="move-booking-scripted--buggy" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="move-booking-scripted--good" tests="11" failures="0" errors="0">
+    <testcase classname="move-booking-scripted--good" name="trial 1 (move-booking-scripted--good--t1)" time="72.12" />
+    <testcase classname="move-booking-scripted--good" name="trial 2 (move-booking-scripted--good--t2)" time="72.08" />
+    <testcase classname="move-booking-scripted--good" name="trial 3 (move-booking-scripted--good--t3)" time="72.08" />
+    <testcase classname="move-booking-scripted--good" name="trial 4 (move-booking-scripted--good--t4)" time="72.08" />
+    <testcase classname="move-booking-scripted--good" name="trial 5 (move-booking-scripted--good--t5)" time="72.08" />
+    <testcase classname="move-booking-scripted--good" name="aggregate task_success_rate" />
+    <testcase classname="move-booking-scripted--good" name="aggregate response_latency_p95_s" />
+    <testcase classname="move-booking-scripted--good" name="aggregate talk_over_ratio" />
+    <testcase classname="move-booking-scripted--good" name="aggregate entity_fidelity" />
+    <testcase classname="move-booking-scripted--good" name="aggregate policy_violations" />
+    <testcase classname="move-booking-scripted--good" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="rough-line--buggy" tests="8" failures="6" errors="0">
+    <testcase classname="rough-line--buggy" name="trial 1 (rough-line--buggy--t1)" time="81.20">
+      <failure message="response_latency_p95_s 2.005 s &gt; 1.5 s">response_latency_p95_s 2.005 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="rough-line--buggy" name="trial 2 (rough-line--buggy--t2)" time="81.20">
+      <failure message="response_latency_p95_s 2.01 s &gt; 1.5 s">response_latency_p95_s 2.01 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="rough-line--buggy" name="trial 3 (rough-line--buggy--t3)" time="81.14">
+      <failure message="response_latency_p95_s 2.02 s &gt; 1.5 s">response_latency_p95_s 2.02 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="rough-line--buggy" name="trial 4 (rough-line--buggy--t4)" time="81.04">
+      <failure message="response_latency_p95_s 1.99 s &gt; 1.5 s">response_latency_p95_s 1.99 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="rough-line--buggy" name="trial 5 (rough-line--buggy--t5)" time="81.20">
+      <failure message="response_latency_p95_s 2.025 s &gt; 1.5 s">response_latency_p95_s 2.025 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="rough-line--buggy" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 2.021 (95% CI 2.01–2.03), limit &lt;= 1.5">response_latency_p95_s 2.021 (95% CI 2.01–2.03), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="rough-line--buggy" name="aggregate talk_over_ratio" />
+    <testcase classname="rough-line--buggy" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="rough-line--good" tests="8" failures="0" errors="0">
+    <testcase classname="rough-line--good" name="trial 1 (rough-line--good--t1)" time="72.28" />
+    <testcase classname="rough-line--good" name="trial 2 (rough-line--good--t2)" time="72.18" />
+    <testcase classname="rough-line--good" name="trial 3 (rough-line--good--t3)" time="72.28" />
+    <testcase classname="rough-line--good" name="trial 4 (rough-line--good--t4)" time="72.18" />
+    <testcase classname="rough-line--good" name="trial 5 (rough-line--good--t5)" time="72.24" />
+    <testcase classname="rough-line--good" name="aggregate response_latency_p95_s" />
+    <testcase classname="rough-line--good" name="aggregate talk_over_ratio" />
+    <testcase classname="rough-line--good" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="silent-caller--buggy" tests="8" failures="6" errors="0">
+    <testcase classname="silent-caller--buggy" name="trial 1 (silent-caller--buggy--t1)" time="93.04">
+      <failure message="response_latency_p95_s 1.93 s &gt; 1.5 s">response_latency_p95_s 1.93 s &gt; 1.5 s
+silence_reprompt_s: The caller went quiet for 12.8 s and the agent never checked in.</failure>
+    </testcase>
+    <testcase classname="silent-caller--buggy" name="trial 2 (silent-caller--buggy--t2)" time="93.04">
+      <failure message="response_latency_p95_s 1.945 s &gt; 1.5 s">response_latency_p95_s 1.945 s &gt; 1.5 s
+silence_reprompt_s: The caller went quiet for 12.8 s and the agent never checked in.</failure>
+    </testcase>
+    <testcase classname="silent-caller--buggy" name="trial 3 (silent-caller--buggy--t3)" time="93.04">
+      <failure message="response_latency_p95_s 1.945 s &gt; 1.5 s">response_latency_p95_s 1.945 s &gt; 1.5 s
+silence_reprompt_s: The caller went quiet for 12.8 s and the agent never checked in.</failure>
+    </testcase>
+    <testcase classname="silent-caller--buggy" name="trial 4 (silent-caller--buggy--t4)" time="93.04">
+      <failure message="response_latency_p95_s 1.962 s &gt; 1.5 s">response_latency_p95_s 1.962 s &gt; 1.5 s
+silence_reprompt_s: The caller went quiet for 12.8 s and the agent never checked in.</failure>
+    </testcase>
+    <testcase classname="silent-caller--buggy" name="trial 5 (silent-caller--buggy--t5)" time="93.04">
+      <failure message="response_latency_p95_s 1.965 s &gt; 1.5 s">response_latency_p95_s 1.965 s &gt; 1.5 s
+silence_reprompt_s: The caller went quiet for 12.8 s and the agent never checked in.</failure>
+    </testcase>
+    <testcase classname="silent-caller--buggy" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 1.961 (95% CI 1.9455–1.97), limit &lt;= 1.5">response_latency_p95_s 1.961 (95% CI 1.9455–1.97), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="silent-caller--buggy" name="aggregate talk_over_ratio" />
+    <testcase classname="silent-caller--buggy" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="silent-caller--good" tests="9" failures="0" errors="0">
+    <testcase classname="silent-caller--good" name="trial 1 (silent-caller--good--t1)" time="81.84" />
+    <testcase classname="silent-caller--good" name="trial 2 (silent-caller--good--t2)" time="81.68" />
+    <testcase classname="silent-caller--good" name="trial 3 (silent-caller--good--t3)" time="81.78" />
+    <testcase classname="silent-caller--good" name="trial 4 (silent-caller--good--t4)" time="81.78" />
+    <testcase classname="silent-caller--good" name="trial 5 (silent-caller--good--t5)" time="81.78" />
+    <testcase classname="silent-caller--good" name="aggregate response_latency_p95_s" />
+    <testcase classname="silent-caller--good" name="aggregate talk_over_ratio" />
+    <testcase classname="silent-caller--good" name="aggregate silence_reprompt_s" />
+    <testcase classname="silent-caller--good" name="aggregate unanswered_turns" />
+  </testsuite>
+</testsuites>

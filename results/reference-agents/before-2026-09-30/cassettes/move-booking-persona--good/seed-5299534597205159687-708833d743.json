@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "lines": [
+    {
+      "agent_said": "Thanks for calling Olive and Ember. I'm Ava, the Reservations Assistant. How can I help you today?",
+      "text": "Hi Ava, I need to change an existing booking please.",
+      "hang_up": false,
+      "goal_reached": false
+    },
+    {
+      "agent_said": "Sure, I can help move your booking. What's the booking reference? It's the five character code in your confirmation.",
+      "text": "It is D X 7 Q 2.",
+      "hang_up": false,
+      "goal_reached": false
+    },
+    {
+      "agent_said": "Thanks Priya. I found your booking, reference DX7 Q2, a table for 4 on Friday at 8 pm. What day in time would you like instead?",
+      "text": "I'd like to move it to Saturday, anytime between 7 and 9 pm.",
+      "hang_up": false,
+      "goal_reached": false
+    },
+    {
+      "agent_said": "Let me check Saturday. I have 7pm or 7pm available. Which would you prefer?",
+      "text": "I'll take the 7pm slot please.",
+      "hang_up": false,
+      "goal_reached": false
+    },
+    {
+      "agent_said": "Great, Saturday at 7pm is available. Shall I move your table for 4 to then?",
+      "text": "Yes please, go ahead.",
+      "hang_up": false,
+      "goal_reached": false
+    },
+    {
+      "agent_said": "Done, your table for 4 is now on Saturday at 7pm. Your reference is still D, X7 Q2. I'll text a confirmation to 98100-12345. Is there anything else I can help with?",
+      "text": "No that is all, thanks so much for your help. Goodbye!",
+      "hang_up": true,
+      "goal_reached": true
+    }
+  ]
+}
