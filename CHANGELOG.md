@@ -1,9 +1,9 @@
 # Changelog
 
-## 0.1.1 (unreleased)
+## 0.1.1 (2026-09-30)
 
 Fixes for problems found by a 100-call run against the bundled reference agents
-([results/reference-agents](results/reference-agents)).
+([results](results/README.md)).
 
 ### Fixed
 

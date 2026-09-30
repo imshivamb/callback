@@ -1,9 +1,9 @@
-# Results: 100 calls to the reference agents
+# Setup: 100 calls to the reference agents
 
-The run behind Callback's published numbers: 100 calls to the bundled restaurant
-agents, a good one and a deliberately buggy one, through the same chaos and task
-scenarios. The results file will be committed here once the run is done; until then
-this folder holds only its setup.
+The 100-call run's setup: calls to the bundled restaurant agents, a good one and a
+deliberately buggy one, through the same chaos and task scenarios. Its results are
+in [`before-2026-09-30/`](before-2026-09-30), the run after fixes is in
+[`verification/`](verification), and [`../README.md`](../README.md) compares them.
 
 ## What it runs
 

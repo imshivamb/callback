@@ -299,7 +299,7 @@ A `must_not` entry is either a pattern (`{says: <regular expression>, why: ...}`
 checked on every call, or a plain-English sentence, which only the judge can check.
 
 - **Match what speech recognition writes, not what the agent meant.** Patterns run
-  on a transcript of the agent's audio, and names get spelled freely: in our test
+  on a transcript of the agent's audio, and names get spelled freely: in my test
   runs the agent said "Okafor" and the transcript said "Akafer" every time, so a rule
   listing guest names missed every leak. Match the shape of the sentence instead, as
   the bundled scenarios do: `\bthe \w+ party (already )?(has|is booked)`.

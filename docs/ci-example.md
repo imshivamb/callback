@@ -5,7 +5,7 @@ that calls your voice agent on every pull request, fails when a number got reall
 worse against a saved baseline, and keeps the report. Copy it to
 `.github/workflows/callback.yml` in your agent's repository and edit the marked lines.
 
-We tested it in a public repository with the bundled reference agent, a 3-call
+I tested it in a public repository with the bundled reference agent, a 3-call
 scenario and the baseline recorded on the same runner: the unchanged agent passed
 (reply-delay p95 0.99 s against a baseline of 1.01 s, nothing regressed), and the same
 agent made 0.4 s slower failed the job (1.38 s, +0.37 s regressed) while every call
@@ -70,7 +70,7 @@ latencies by default; `min_effect:` in `callback.yaml`).
 
 **Private repositories get smaller runners.** GitHub's standard `ubuntu-latest`
 runner has 4 CPU cores for public repositories and 2 for private ones. Your agent,
-Callback's caller and the scoring share those cores. In our test the same example was
+Callback's caller and the scoring share those cores. In my test the same example was
 about 3× slower in a private repository (reply-delay p95 4.1 s) than in a public one
 (0.97 s per call after the first). Record the baseline in the repository, and on the
 runner type, where you compare.
@@ -80,7 +80,7 @@ runner type, where you compare.
 Each scenario's `trials` is how many calls the numbers are based on. The quieter the
 machine, the fewer you need:
 
-- **Quiet runner** (our public Ubuntu runner: the same agent's calls within 0.03 s of
+- **Quiet runner** (my public Ubuntu runner: the same agent's calls within 0.03 s of
   each other): 3 trials caught an added 0.4 s delay every time, in the real test and in
   a simulation built from those calls, with no false alarms.
 - **Noisy runner** (GitHub's macOS runners: the same agent's calls ranged from 1.0 to
@@ -119,15 +119,15 @@ the target. The baseline comparison is unaffected, and so is the talk-over check
 which keeps the real time-to-yield target as its grace period.
 
 **Why the example sets the time-to-yield allowance to 1.1 s.** The `callback init`
-scenario expects the agent to stop within 0.6 s of being interrupted. Our reference
+scenario expects the agent to stop within 0.6 s of being interrupted. The reference
 agent stops in 0.49 s on a laptop, but on GitHub's runners it measured 0.59–0.64 s
 (6 calls, public repository, 4 cores) and 0.94–1.05 s (private repository, 2 cores).
 Its speed there is limited by the small speech model it uses to tell "sorry, wait"
 from "mm-hmm", which runs 2–3× slower on busy shared CPUs; waiting less before
-judging made it miss real interruptions. 1.1 s passes every call we measured, while
-our deliberately buggy agent still fails clearly: its microphone is muted for the
+judging made it miss real interruptions. 1.1 s passes every call I measured, while
+the deliberately buggy agent still fails clearly: its microphone is muted for the
 first 1.8 s of every reply and it keeps talking 0.6 s after deciding to stop, so it
-took 1.89 s to stop in our barge-in test on a laptop (both delays are counted in audio played, so
+took 1.89 s to stop in my barge-in test on a laptop (both delays are counted in audio played, so
 a slower machine can only make that later). An agent that ignores interruptions
 fails by seconds. Your agent's numbers will differ: measure them, and on a dedicated
 or larger runner remove the allowance. For latency you can trust as an

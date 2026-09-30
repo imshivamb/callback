@@ -156,7 +156,7 @@ The audio clips are described in [docs/assets/README.md](docs/assets/README.md).
   within ±50 ms ([test](tests/e2e/test_scoring_accuracy.py)).
 - **Hard checks decide.** Only rule-based checks can fail a run: timings, the real end
   state, required facts, and pattern rules.
-- **Real targets, even on slow CI.** The reply-delay target is 1.5 s. Our own test
+- **Real targets, even on slow CI.** The reply-delay target is 1.5 s. Callback's own test
   workflow runs on GitHub's shared machines, which are slower at speech synthesis, so it
   loosens that one limit to 2.0 s (`CALLBACK_CI_LATENCY_LIMIT_S`). Any run that does so
   says it in its results file and report; 2.0 s is not the target
@@ -190,6 +190,8 @@ The audio clips are described in [docs/assets/README.md](docs/assets/README.md).
 - [docs/ci-example.md](docs/ci-example.md): running Callback in your own CI, with a
   baseline and a copy-paste GitHub Actions workflow.
 - [docs/assets/README.md](docs/assets/README.md): what each recording and figure shows.
+- [results/README.md](results/README.md): Callback tested against its own reference
+  agents, 100 calls before and 18 after a round of fixes, with the numbers and caveats.
 
 ## License
 

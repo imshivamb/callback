@@ -1,0 +1,1847 @@
+{
+  "schema_version": 1,
+  "run_id": "20260930-055941",
+  "created_at": "2026-09-30T06:01:03.789726Z",
+  "callback_version": "0.1.0",
+  "git_sha": "fb1aae0352a5",
+  "agent_config_hash": "4e10d3db70c4",
+  "mode": "auto",
+  "concurrency": 1,
+  "providers": {
+    "stt": "faster-whisper",
+    "scoring_stt": "faster-whisper",
+    "tts": "kokoro",
+    "llm": "gemini",
+    "vad": "silero"
+  },
+  "provider_models": {
+    "stt": "base",
+    "scoring_stt": "small",
+    "tts": "af_heart",
+    "llm": "gemini-3.5-flash-lite"
+  },
+  "judge": null,
+  "vad": {
+    "provider": "silero"
+  },
+  "scenarios": [
+    {
+      "scenario_id": "move-booking-noisy--good",
+      "agent": "restaurant-good",
+      "source": "scenarios/move-booking-noisy--good.yaml",
+      "passed": true,
+      "trials": [
+        {
+          "call_id": "move-booking-noisy--good--t4",
+          "scenario_id": "move-booking-noisy--good",
+          "trial": 4,
+          "seed": 2465582731230138283,
+          "passed": true,
+          "metrics": [
+            {
+              "name": "response_latency_p50_s",
+              "value": 0.595,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": [
+                0.66,
+                0.57,
+                0.51,
+                0.61,
+                0.63,
+                0.58
+              ],
+              "sample_times_s": [
+                8.67,
+                17.89,
+                33.98,
+                42.5,
+                50.32,
+                67.89
+              ]
+            },
+            {
+              "name": "response_latency_p95_s",
+              "value": 0.653,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": 1.5,
+              "comparator": "<=",
+              "passed": true,
+              "detail": null,
+              "samples": [
+                0.66,
+                0.57,
+                0.51,
+                0.61,
+                0.63,
+                0.58
+              ],
+              "sample_times_s": [
+                8.67,
+                17.89,
+                33.98,
+                42.5,
+                50.32,
+                67.89
+              ]
+            },
+            {
+              "name": "unanswered_turns",
+              "value": 0.0,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": 0.0,
+              "comparator": "<=",
+              "passed": true,
+              "detail": null,
+              "samples": [],
+              "sample_times_s": []
+            },
+            {
+              "name": "time_to_yield_p95_s",
+              "value": null,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": 0.6,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": [],
+              "sample_times_s": []
+            },
+            {
+              "name": "talk_over_ratio",
+              "value": 0.0,
+              "unit": "ratio",
+              "method": "deterministic",
+              "threshold": 0.05,
+              "comparator": "<=",
+              "passed": true,
+              "detail": null,
+              "samples": [],
+              "sample_times_s": []
+            },
+            {
+              "name": "false_yields",
+              "value": null,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": 0.0,
+              "comparator": "<=",
+              "passed": null,
+              "detail": "0 backchannel(s) said while the agent was talking",
+              "samples": [],
+              "sample_times_s": []
+            },
+            {
+              "name": "silence_reprompt_s",
+              "value": null,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": 8.0,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": [],
+              "sample_times_s": []
+            },
+            {
+              "name": "chaos_drift_max_s",
+              "value": null,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": 0.1,
+              "comparator": "<=",
+              "passed": null,
+              "detail": "Callback self-check; informational",
+              "samples": [],
+              "sample_times_s": []
+            },
+            {
+              "name": "call_duration_s",
+              "value": 71.96,
+              "unit": "s",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": [],
+              "sample_times_s": []
+            },
+            {
+              "name": "caller_turns",
+              "value": 6.0,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": [],
+              "sample_times_s": []
+            },
+            {
+              "name": "agent_turns",
+              "value": 7.0,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": null,
+              "samples": [],
+              "sample_times_s": []
+            },
+            {
+              "name": "task_success",
+              "value": 1.0,
+              "unit": "ratio",
+              "method": "deterministic",
+              "threshold": 0.8,
+              "comparator": ">=",
+              "passed": true,
+              "detail": "end state matches",
+              "samples": [],
+              "sample_times_s": []
+            },
+            {
+              "name": "entity_fidelity",
+              "value": 1.0,
+              "unit": "ratio",
+              "method": "deterministic",
+              "threshold": 1.0,
+              "comparator": ">=",
+              "passed": true,
+              "detail": "1/1 facts correct",
+              "samples": [],
+              "sample_times_s": []
+            },
+            {
+              "name": "facts_uncertain",
+              "value": 0.0,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": null,
+              "comparator": "<=",
+              "passed": null,
+              "detail": "needs a person to listen",
+              "samples": [],
+              "sample_times_s": []
+            },
+            {
+              "name": "policy_violations",
+              "value": 0.0,
+              "unit": "count",
+              "method": "deterministic",
+              "threshold": 0.0,
+              "comparator": "<=",
+              "passed": true,
+              "detail": "1 rule(s) checked",
+              "samples": [],
+              "sample_times_s": []
+            }
+          ],
+          "verifier_results": [
+            {
+              "name": "task_success",
+              "passed": true,
+              "method": "deterministic",
+              "detail": "end state matches",
+              "observed": {
+                "ref": "DX7Q2",
+                "name": "Priya Sharma",
+                "phone": "9810012345",
+                "day": "saturday",
+                "hour": 19,
+                "minute": 30,
+                "party_size": 4,
+                "status": "moved",
+                "window_seat": false
+              }
+            }
+          ],
+          "findings": [],
+          "failure_reasons": [],
+          "review": [],
+          "error": null,
+          "call": {
+            "call_id": "move-booking-noisy--good--t4",
+            "scenario_id": "move-booking-noisy--good",
+            "trial": 4,
+            "seed": 2465582731230138283,
+            "transport": "websocket",
+            "started_at": "2026-09-30T05:59:41.672024Z",
+            "duration_s": 71.96,
+            "end_reason": "caller_hangup",
+            "wav_path": "calls/move-booking-noisy--good--t4/call.wav",
+            "events": [
+              {
+                "t_s": 0.0,
+                "kind": "call_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "transport": "websocket"
+                }
+              },
+              {
+                "t_s": 0.0,
+                "kind": "chaos",
+                "chaos_id": "noise",
+                "chaos_type": "noise",
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "bed": "street",
+                  "snr_db": 12.0
+                }
+              },
+              {
+                "t_s": 0.064,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 1
+                }
+              },
+              {
+                "t_s": 5.0,
+                "kind": "chaos",
+                "chaos_id": "packet_loss-1",
+                "chaos_type": "packet_loss",
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "pct": 3.0,
+                  "phase": "start"
+                }
+              },
+              {
+                "t_s": 6.22,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 8.72,
+                "text": "Hi, I need to move my booking to Saturday.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.002
+                  }
+                }
+              },
+              {
+                "t_s": 9.472,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 2
+                }
+              },
+              {
+                "t_s": 16.2,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 17.93,
+                "text": "It's D X 7 Q 2.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.001
+                  }
+                }
+              },
+              {
+                "t_s": 18.496,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 3
+                }
+              },
+              {
+                "t_s": 31.66,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 34.01,
+                "text": "Anytime between seven and nine is fine.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.001
+                  }
+                }
+              },
+              {
+                "t_s": 34.528,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 4
+                }
+              },
+              {
+                "t_s": 40.0,
+                "kind": "chaos",
+                "chaos_id": "packet_loss-1",
+                "chaos_type": "packet_loss",
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "phase": "end",
+                  "frames_dropped": 44
+                }
+              },
+              {
+                "t_s": 41.16,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 42.54,
+                "text": "Seven thirty works.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.001
+                  }
+                }
+              },
+              {
+                "t_s": 43.2,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 5
+                }
+              },
+              {
+                "t_s": 49.42,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 50.37,
+                "text": "Yes please.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.001
+                  }
+                }
+              },
+              {
+                "t_s": 51.008,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 6
+                }
+              },
+              {
+                "t_s": 66.22,
+                "kind": "caller_utterance",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": 67.95,
+                "text": "No, that's all. Thanks, bye.",
+                "data": {
+                  "tag": "line",
+                  "caller_timing": {
+                    "brain_s": 0.0,
+                    "tts_s": 0.001
+                  }
+                }
+              },
+              {
+                "t_s": 68.48,
+                "kind": "agent_turn_start",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": null,
+                "data": {
+                  "turn": 7
+                }
+              },
+              {
+                "t_s": 71.96,
+                "kind": "call_end",
+                "chaos_id": null,
+                "chaos_type": null,
+                "intended_s": null,
+                "end_s": null,
+                "text": "caller_hangup",
+                "data": {}
+              }
+            ],
+            "transcript": [
+              {
+                "speaker": "agent",
+                "start_s": 0.05,
+                "end_s": 5.47,
+                "text": "Thanks for calling Olive and Ember. I'm Ava, the Reservations Assistant. How can I help you today?",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": [
+                  {
+                    "text": "Thanks",
+                    "start_s": 0.0,
+                    "end_s": 0.16,
+                    "p": 0.935
+                  },
+                  {
+                    "text": "for",
+                    "start_s": 0.16,
+                    "end_s": 0.36,
+                    "p": 0.998
+                  },
+                  {
+                    "text": "calling",
+                    "start_s": 0.36,
+                    "end_s": 0.62,
+                    "p": 0.976
+                  },
+                  {
+                    "text": "Olive",
+                    "start_s": 0.62,
+                    "end_s": 1.04,
+                    "p": 0.688
+                  },
+                  {
+                    "text": "and",
+                    "start_s": 1.04,
+                    "end_s": 1.32,
+                    "p": 0.863
+                  },
+                  {
+                    "text": "Ember.",
+                    "start_s": 1.32,
+                    "end_s": 1.64,
+                    "p": 0.919
+                  },
+                  {
+                    "text": "I'm",
+                    "start_s": 1.92,
+                    "end_s": 2.12,
+                    "p": 0.937
+                  },
+                  {
+                    "text": "Ava,",
+                    "start_s": 2.12,
+                    "end_s": 2.38,
+                    "p": 0.893
+                  },
+                  {
+                    "text": "the",
+                    "start_s": 2.68,
+                    "end_s": 2.76,
+                    "p": 0.917
+                  },
+                  {
+                    "text": "Reservations",
+                    "start_s": 2.76,
+                    "end_s": 3.4,
+                    "p": 0.785
+                  },
+                  {
+                    "text": "Assistant.",
+                    "start_s": 3.4,
+                    "end_s": 3.8,
+                    "p": 0.861
+                  },
+                  {
+                    "text": "How",
+                    "start_s": 4.28,
+                    "end_s": 4.42,
+                    "p": 0.995
+                  },
+                  {
+                    "text": "can",
+                    "start_s": 4.42,
+                    "end_s": 4.6,
+                    "p": 0.991
+                  },
+                  {
+                    "text": "I",
+                    "start_s": 4.6,
+                    "end_s": 4.7,
+                    "p": 0.998
+                  },
+                  {
+                    "text": "help",
+                    "start_s": 4.7,
+                    "end_s": 4.88,
+                    "p": 0.999
+                  },
+                  {
+                    "text": "you",
+                    "start_s": 4.88,
+                    "end_s": 5.02,
+                    "p": 0.999
+                  },
+                  {
+                    "text": "today?",
+                    "start_s": 5.02,
+                    "end_s": 5.28,
+                    "p": 0.997
+                  }
+                ]
+              },
+              {
+                "speaker": "caller",
+                "start_s": 6.26,
+                "end_s": 8.67,
+                "text": "Hi, I need to move my booking to Saturday.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 9.33,
+                "end_s": 15.45,
+                "text": "Sure, I can help move your booking. What's the booking reference? It's the five character code in your confirmation.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": [
+                  {
+                    "text": "Sure,",
+                    "start_s": 9.23,
+                    "end_s": 9.57,
+                    "p": 0.905
+                  },
+                  {
+                    "text": "I",
+                    "start_s": 9.95,
+                    "end_s": 10.09,
+                    "p": 0.995
+                  },
+                  {
+                    "text": "can",
+                    "start_s": 10.09,
+                    "end_s": 10.21,
+                    "p": 0.996
+                  },
+                  {
+                    "text": "help",
+                    "start_s": 10.21,
+                    "end_s": 10.41,
+                    "p": 0.996
+                  },
+                  {
+                    "text": "move",
+                    "start_s": 10.41,
+                    "end_s": 10.65,
+                    "p": 0.991
+                  },
+                  {
+                    "text": "your",
+                    "start_s": 10.65,
+                    "end_s": 10.81,
+                    "p": 0.997
+                  },
+                  {
+                    "text": "booking.",
+                    "start_s": 10.81,
+                    "end_s": 11.07,
+                    "p": 0.962
+                  },
+                  {
+                    "text": "What's",
+                    "start_s": 11.45,
+                    "end_s": 11.77,
+                    "p": 0.988
+                  },
+                  {
+                    "text": "the",
+                    "start_s": 11.77,
+                    "end_s": 11.89,
+                    "p": 0.991
+                  },
+                  {
+                    "text": "booking",
+                    "start_s": 11.89,
+                    "end_s": 12.09,
+                    "p": 0.942
+                  },
+                  {
+                    "text": "reference?",
+                    "start_s": 12.09,
+                    "end_s": 12.51,
+                    "p": 0.996
+                  },
+                  {
+                    "text": "It's",
+                    "start_s": 13.01,
+                    "end_s": 13.23,
+                    "p": 0.992
+                  },
+                  {
+                    "text": "the",
+                    "start_s": 13.23,
+                    "end_s": 13.33,
+                    "p": 0.994
+                  },
+                  {
+                    "text": "five",
+                    "start_s": 13.33,
+                    "end_s": 13.55,
+                    "p": 0.753
+                  },
+                  {
+                    "text": "character",
+                    "start_s": 13.55,
+                    "end_s": 13.87,
+                    "p": 0.561
+                  },
+                  {
+                    "text": "code",
+                    "start_s": 13.87,
+                    "end_s": 14.33,
+                    "p": 0.995
+                  },
+                  {
+                    "text": "in",
+                    "start_s": 14.33,
+                    "end_s": 14.67,
+                    "p": 0.979
+                  },
+                  {
+                    "text": "your",
+                    "start_s": 14.67,
+                    "end_s": 14.77,
+                    "p": 0.998
+                  },
+                  {
+                    "text": "confirmation.",
+                    "start_s": 14.77,
+                    "end_s": 15.07,
+                    "p": 0.989
+                  }
+                ]
+              },
+              {
+                "speaker": "caller",
+                "start_s": 16.23,
+                "end_s": 17.89,
+                "text": "It's D X 7 Q 2.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 18.46,
+                "end_s": 30.89,
+                "text": "Thanks, Priya. I found your booking, reference DX7-Q2, a table for four on Friday at 8pm. Sure, Saturday. What time works for you? We seat from 5 to 9, 30pm.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": [
+                  {
+                    "text": "Thanks,",
+                    "start_s": 18.36,
+                    "end_s": 18.68,
+                    "p": 0.923
+                  },
+                  {
+                    "text": "Priya.",
+                    "start_s": 18.84,
+                    "end_s": 19.16,
+                    "p": 0.967
+                  },
+                  {
+                    "text": "I",
+                    "start_s": 19.46,
+                    "end_s": 19.54,
+                    "p": 0.994
+                  },
+                  {
+                    "text": "found",
+                    "start_s": 19.54,
+                    "end_s": 19.78,
+                    "p": 0.758
+                  },
+                  {
+                    "text": "your",
+                    "start_s": 19.78,
+                    "end_s": 19.92,
+                    "p": 0.995
+                  },
+                  {
+                    "text": "booking,",
+                    "start_s": 19.92,
+                    "end_s": 20.16,
+                    "p": 0.944
+                  },
+                  {
+                    "text": "reference",
+                    "start_s": 20.5,
+                    "end_s": 20.74,
+                    "p": 0.704
+                  },
+                  {
+                    "text": "DX7",
+                    "start_s": 20.74,
+                    "end_s": 22.02,
+                    "p": 0.873
+                  },
+                  {
+                    "text": "-Q2,",
+                    "start_s": 22.02,
+                    "end_s": 22.82,
+                    "p": 0.742
+                  },
+                  {
+                    "text": "a",
+                    "start_s": 23.36,
+                    "end_s": 23.5,
+                    "p": 0.963
+                  },
+                  {
+                    "text": "table",
+                    "start_s": 23.5,
+                    "end_s": 23.78,
+                    "p": 0.989
+                  },
+                  {
+                    "text": "for",
+                    "start_s": 23.78,
+                    "end_s": 24.0,
+                    "p": 0.993
+                  },
+                  {
+                    "text": "four",
+                    "start_s": 24.0,
+                    "end_s": 24.24,
+                    "p": 0.644
+                  },
+                  {
+                    "text": "on",
+                    "start_s": 24.24,
+                    "end_s": 24.4,
+                    "p": 0.99
+                  },
+                  {
+                    "text": "Friday",
+                    "start_s": 24.4,
+                    "end_s": 24.68,
+                    "p": 0.998
+                  },
+                  {
+                    "text": "at",
+                    "start_s": 24.68,
+                    "end_s": 25.04,
+                    "p": 0.987
+                  },
+                  {
+                    "text": "8pm.",
+                    "start_s": 25.04,
+                    "end_s": 25.62,
+                    "p": 0.576
+                  },
+                  {
+                    "text": "Sure,",
+                    "start_s": 26.06,
+                    "end_s": 26.32,
+                    "p": 0.97
+                  },
+                  {
+                    "text": "Saturday.",
+                    "start_s": 26.38,
+                    "end_s": 26.7,
+                    "p": 0.994
+                  },
+                  {
+                    "text": "What",
+                    "start_s": 27.18,
+                    "end_s": 27.34,
+                    "p": 0.994
+                  },
+                  {
+                    "text": "time",
+                    "start_s": 27.34,
+                    "end_s": 27.58,
+                    "p": 0.995
+                  },
+                  {
+                    "text": "works",
+                    "start_s": 27.58,
+                    "end_s": 27.84,
+                    "p": 0.998
+                  },
+                  {
+                    "text": "for",
+                    "start_s": 27.84,
+                    "end_s": 28.06,
+                    "p": 0.999
+                  },
+                  {
+                    "text": "you?",
+                    "start_s": 28.06,
+                    "end_s": 28.22,
+                    "p": 0.999
+                  },
+                  {
+                    "text": "We",
+                    "start_s": 28.5,
+                    "end_s": 28.66,
+                    "p": 0.99
+                  },
+                  {
+                    "text": "seat",
+                    "start_s": 28.66,
+                    "end_s": 28.8,
+                    "p": 0.634
+                  },
+                  {
+                    "text": "from",
+                    "start_s": 28.8,
+                    "end_s": 28.98,
+                    "p": 0.997
+                  },
+                  {
+                    "text": "5",
+                    "start_s": 28.98,
+                    "end_s": 29.24,
+                    "p": 0.833
+                  },
+                  {
+                    "text": "to",
+                    "start_s": 29.24,
+                    "end_s": 29.42,
+                    "p": 0.507
+                  },
+                  {
+                    "text": "9,",
+                    "start_s": 29.42,
+                    "end_s": 29.74,
+                    "p": 0.994
+                  },
+                  {
+                    "text": "30pm.",
+                    "start_s": 30.04,
+                    "end_s": 30.64,
+                    "p": 0.925
+                  }
+                ]
+              },
+              {
+                "speaker": "caller",
+                "start_s": 31.69,
+                "end_s": 33.98,
+                "text": "Anytime between seven and nine is fine.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 34.49,
+                "end_s": 40.41,
+                "text": "Let me check Saturday. I have 7pm or 7, 30pm available. Which would you prefer?",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": [
+                  {
+                    "text": "Let",
+                    "start_s": 34.39,
+                    "end_s": 34.63,
+                    "p": 0.855
+                  },
+                  {
+                    "text": "me",
+                    "start_s": 34.63,
+                    "end_s": 34.75,
+                    "p": 0.998
+                  },
+                  {
+                    "text": "check",
+                    "start_s": 34.75,
+                    "end_s": 34.97,
+                    "p": 0.997
+                  },
+                  {
+                    "text": "Saturday.",
+                    "start_s": 34.97,
+                    "end_s": 35.41,
+                    "p": 0.987
+                  },
+                  {
+                    "text": "I",
+                    "start_s": 35.83,
+                    "end_s": 35.95,
+                    "p": 0.983
+                  },
+                  {
+                    "text": "have",
+                    "start_s": 35.95,
+                    "end_s": 36.15,
+                    "p": 0.997
+                  },
+                  {
+                    "text": "7pm",
+                    "start_s": 36.15,
+                    "end_s": 36.89,
+                    "p": 0.702
+                  },
+                  {
+                    "text": "or",
+                    "start_s": 36.89,
+                    "end_s": 37.17,
+                    "p": 0.925
+                  },
+                  {
+                    "text": "7,",
+                    "start_s": 37.17,
+                    "end_s": 37.51,
+                    "p": 0.989
+                  },
+                  {
+                    "text": "30pm",
+                    "start_s": 37.87,
+                    "end_s": 38.55,
+                    "p": 0.92
+                  },
+                  {
+                    "text": "available.",
+                    "start_s": 38.55,
+                    "end_s": 38.95,
+                    "p": 0.979
+                  },
+                  {
+                    "text": "Which",
+                    "start_s": 39.39,
+                    "end_s": 39.59,
+                    "p": 0.991
+                  },
+                  {
+                    "text": "would",
+                    "start_s": 39.59,
+                    "end_s": 39.77,
+                    "p": 0.967
+                  },
+                  {
+                    "text": "you",
+                    "start_s": 39.77,
+                    "end_s": 39.89,
+                    "p": 0.999
+                  },
+                  {
+                    "text": "prefer?",
+                    "start_s": 39.89,
+                    "end_s": 40.15,
+                    "p": 0.994
+                  }
+                ]
+              },
+              {
+                "speaker": "caller",
+                "start_s": 41.19,
+                "end_s": 42.5,
+                "text": "Seven thirty works.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 43.11,
+                "end_s": 48.65,
+                "text": "Great! Saturday at 7, 30pm is available. Shall I move your table for 4 to then?",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": [
+                  {
+                    "text": "Great!",
+                    "start_s": 43.01,
+                    "end_s": 43.39,
+                    "p": 0.866
+                  },
+                  {
+                    "text": "Saturday",
+                    "start_s": 43.81,
+                    "end_s": 44.19,
+                    "p": 0.954
+                  },
+                  {
+                    "text": "at",
+                    "start_s": 44.19,
+                    "end_s": 44.53,
+                    "p": 0.984
+                  },
+                  {
+                    "text": "7,",
+                    "start_s": 44.53,
+                    "end_s": 44.79,
+                    "p": 0.924
+                  },
+                  {
+                    "text": "30pm",
+                    "start_s": 45.07,
+                    "end_s": 45.77,
+                    "p": 0.708
+                  },
+                  {
+                    "text": "is",
+                    "start_s": 45.77,
+                    "end_s": 46.05,
+                    "p": 0.957
+                  },
+                  {
+                    "text": "available.",
+                    "start_s": 46.05,
+                    "end_s": 46.45,
+                    "p": 0.998
+                  },
+                  {
+                    "text": "Shall",
+                    "start_s": 46.77,
+                    "end_s": 46.95,
+                    "p": 0.972
+                  },
+                  {
+                    "text": "I",
+                    "start_s": 46.95,
+                    "end_s": 47.09,
+                    "p": 0.997
+                  },
+                  {
+                    "text": "move",
+                    "start_s": 47.09,
+                    "end_s": 47.27,
+                    "p": 0.998
+                  },
+                  {
+                    "text": "your",
+                    "start_s": 47.27,
+                    "end_s": 47.39,
+                    "p": 0.991
+                  },
+                  {
+                    "text": "table",
+                    "start_s": 47.39,
+                    "end_s": 47.73,
+                    "p": 0.999
+                  },
+                  {
+                    "text": "for",
+                    "start_s": 47.73,
+                    "end_s": 47.95,
+                    "p": 0.98
+                  },
+                  {
+                    "text": "4",
+                    "start_s": 47.95,
+                    "end_s": 48.19,
+                    "p": 0.591
+                  },
+                  {
+                    "text": "to",
+                    "start_s": 48.19,
+                    "end_s": 48.33,
+                    "p": 0.714
+                  },
+                  {
+                    "text": "then?",
+                    "start_s": 48.33,
+                    "end_s": 48.51,
+                    "p": 0.946
+                  }
+                ]
+              },
+              {
+                "speaker": "caller",
+                "start_s": 49.45,
+                "end_s": 50.32,
+                "text": "Yes please.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 50.95,
+                "end_s": 65.45,
+                "text": "Done, your table for 4 is now on Saturday at 7.30pm. Your reference is still D. X7 Q2. I'll text a confirmation to 98100 12345. Is there anything else I can help with?",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": [
+                  {
+                    "text": "Done,",
+                    "start_s": 50.85,
+                    "end_s": 51.17,
+                    "p": 0.899
+                  },
+                  {
+                    "text": "your",
+                    "start_s": 51.59,
+                    "end_s": 51.65,
+                    "p": 0.959
+                  },
+                  {
+                    "text": "table",
+                    "start_s": 51.65,
+                    "end_s": 51.97,
+                    "p": 0.972
+                  },
+                  {
+                    "text": "for",
+                    "start_s": 51.97,
+                    "end_s": 52.21,
+                    "p": 0.984
+                  },
+                  {
+                    "text": "4",
+                    "start_s": 52.21,
+                    "end_s": 52.51,
+                    "p": 0.54
+                  },
+                  {
+                    "text": "is",
+                    "start_s": 52.51,
+                    "end_s": 52.83,
+                    "p": 0.988
+                  },
+                  {
+                    "text": "now",
+                    "start_s": 52.83,
+                    "end_s": 53.05,
+                    "p": 0.987
+                  },
+                  {
+                    "text": "on",
+                    "start_s": 53.05,
+                    "end_s": 53.19,
+                    "p": 0.995
+                  },
+                  {
+                    "text": "Saturday",
+                    "start_s": 53.19,
+                    "end_s": 53.55,
+                    "p": 0.973
+                  },
+                  {
+                    "text": "at",
+                    "start_s": 53.55,
+                    "end_s": 53.87,
+                    "p": 0.992
+                  },
+                  {
+                    "text": "7",
+                    "start_s": 53.87,
+                    "end_s": 54.17,
+                    "p": 0.979
+                  },
+                  {
+                    "text": ".30pm.",
+                    "start_s": 54.17,
+                    "end_s": 55.15,
+                    "p": 0.633
+                  },
+                  {
+                    "text": "Your",
+                    "start_s": 55.55,
+                    "end_s": 55.61,
+                    "p": 0.986
+                  },
+                  {
+                    "text": "reference",
+                    "start_s": 55.61,
+                    "end_s": 55.95,
+                    "p": 0.994
+                  },
+                  {
+                    "text": "is",
+                    "start_s": 55.95,
+                    "end_s": 56.21,
+                    "p": 0.998
+                  },
+                  {
+                    "text": "still",
+                    "start_s": 56.21,
+                    "end_s": 56.39,
+                    "p": 0.995
+                  },
+                  {
+                    "text": "D.",
+                    "start_s": 56.39,
+                    "end_s": 56.63,
+                    "p": 0.433
+                  },
+                  {
+                    "text": "X7",
+                    "start_s": 56.95,
+                    "end_s": 57.53,
+                    "p": 0.746
+                  },
+                  {
+                    "text": "Q2.",
+                    "start_s": 57.53,
+                    "end_s": 58.17,
+                    "p": 0.689
+                  },
+                  {
+                    "text": "I'll",
+                    "start_s": 58.45,
+                    "end_s": 58.65,
+                    "p": 0.99
+                  },
+                  {
+                    "text": "text",
+                    "start_s": 58.65,
+                    "end_s": 58.91,
+                    "p": 0.996
+                  },
+                  {
+                    "text": "a",
+                    "start_s": 58.91,
+                    "end_s": 59.07,
+                    "p": 0.942
+                  },
+                  {
+                    "text": "confirmation",
+                    "start_s": 59.07,
+                    "end_s": 59.59,
+                    "p": 0.986
+                  },
+                  {
+                    "text": "to",
+                    "start_s": 59.59,
+                    "end_s": 59.97,
+                    "p": 0.992
+                  },
+                  {
+                    "text": "98100",
+                    "start_s": 59.97,
+                    "end_s": 61.33,
+                    "p": 0.765
+                  },
+                  {
+                    "text": "12345.",
+                    "start_s": 61.33,
+                    "end_s": 63.23,
+                    "p": 0.599
+                  },
+                  {
+                    "text": "Is",
+                    "start_s": 63.71,
+                    "end_s": 63.81,
+                    "p": 0.991
+                  },
+                  {
+                    "text": "there",
+                    "start_s": 63.81,
+                    "end_s": 63.97,
+                    "p": 1.0
+                  },
+                  {
+                    "text": "anything",
+                    "start_s": 63.97,
+                    "end_s": 64.27,
+                    "p": 0.998
+                  },
+                  {
+                    "text": "else",
+                    "start_s": 64.27,
+                    "end_s": 64.59,
+                    "p": 0.998
+                  },
+                  {
+                    "text": "I",
+                    "start_s": 64.59,
+                    "end_s": 64.91,
+                    "p": 0.984
+                  },
+                  {
+                    "text": "can",
+                    "start_s": 64.91,
+                    "end_s": 65.03,
+                    "p": 0.997
+                  },
+                  {
+                    "text": "help",
+                    "start_s": 65.03,
+                    "end_s": 65.23,
+                    "p": 0.999
+                  },
+                  {
+                    "text": "with?",
+                    "start_s": 65.23,
+                    "end_s": 65.45,
+                    "p": 0.996
+                  }
+                ]
+              },
+              {
+                "speaker": "caller",
+                "start_s": 66.25,
+                "end_s": 67.89,
+                "text": "No, that's all. Thanks, bye.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 68.47,
+                "end_s": 71.96,
+                "text": "You're all set. Thanks for calling Olive and Ember, and have a lo-",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": [
+                  {
+                    "text": "You're",
+                    "start_s": 68.37,
+                    "end_s": 68.61,
+                    "p": 0.782
+                  },
+                  {
+                    "text": "all",
+                    "start_s": 68.61,
+                    "end_s": 68.71,
+                    "p": 0.99
+                  },
+                  {
+                    "text": "set.",
+                    "start_s": 68.71,
+                    "end_s": 68.97,
+                    "p": 0.999
+                  },
+                  {
+                    "text": "Thanks",
+                    "start_s": 69.35,
+                    "end_s": 69.53,
+                    "p": 0.981
+                  },
+                  {
+                    "text": "for",
+                    "start_s": 69.53,
+                    "end_s": 69.75,
+                    "p": 0.997
+                  },
+                  {
+                    "text": "calling",
+                    "start_s": 69.75,
+                    "end_s": 70.03,
+                    "p": 0.994
+                  },
+                  {
+                    "text": "Olive",
+                    "start_s": 70.03,
+                    "end_s": 70.43,
+                    "p": 0.794
+                  },
+                  {
+                    "text": "and",
+                    "start_s": 70.43,
+                    "end_s": 70.69,
+                    "p": 0.845
+                  },
+                  {
+                    "text": "Ember,",
+                    "start_s": 70.69,
+                    "end_s": 71.03,
+                    "p": 0.912
+                  },
+                  {
+                    "text": "and",
+                    "start_s": 71.37,
+                    "end_s": 71.49,
+                    "p": 0.988
+                  },
+                  {
+                    "text": "have",
+                    "start_s": 71.49,
+                    "end_s": 71.65,
+                    "p": 0.994
+                  },
+                  {
+                    "text": "a",
+                    "start_s": 71.65,
+                    "end_s": 71.81,
+                    "p": 0.974
+                  },
+                  {
+                    "text": "lo",
+                    "start_s": 71.81,
+                    "end_s": 71.93,
+                    "p": 0.404
+                  },
+                  {
+                    "text": "-",
+                    "start_s": 71.93,
+                    "end_s": 71.93,
+                    "p": 0.229
+                  }
+                ]
+              }
+            ],
+            "speech": [
+              {
+                "speaker": "agent",
+                "start_s": 0.05,
+                "end_s": 4.02,
+                "text": "Thanks for calling Olive and Ember. I'm Ava, the Reservations Assistant. How can I help you today?",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 4.28,
+                "end_s": 5.47,
+                "text": "Thanks for calling Olive and Ember. I'm Ava, the Reservations Assistant. How can I help you today?",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "caller",
+                "start_s": 6.26,
+                "end_s": 8.67,
+                "text": "Hi, I need to move my booking to Saturday.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 9.33,
+                "end_s": 15.45,
+                "text": "Sure, I can help move your booking. What's the booking reference? It's the five character code in your confirmation.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "caller",
+                "start_s": 16.23,
+                "end_s": 17.89,
+                "text": "It's D X 7 Q 2.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 18.46,
+                "end_s": 22.88,
+                "text": "Thanks, Priya. I found your booking, reference DX7-Q2, a table for four on Friday at 8pm. Sure, Saturday. What time works for you? We seat from 5 to 9, 30pm.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 23.42,
+                "end_s": 25.82,
+                "text": "Thanks, Priya. I found your booking, reference DX7-Q2, a table for four on Friday at 8pm. Sure, Saturday. What time works for you? We seat from 5 to 9, 30pm.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 26.09,
+                "end_s": 29.82,
+                "text": "Thanks, Priya. I found your booking, reference DX7-Q2, a table for four on Friday at 8pm. Sure, Saturday. What time works for you? We seat from 5 to 9, 30pm.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 30.14,
+                "end_s": 30.89,
+                "text": "Thanks, Priya. I found your booking, reference DX7-Q2, a table for four on Friday at 8pm. Sure, Saturday. What time works for you? We seat from 5 to 9, 30pm.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "caller",
+                "start_s": 31.69,
+                "end_s": 33.98,
+                "text": "Anytime between seven and nine is fine.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 34.49,
+                "end_s": 37.66,
+                "text": "Let me check Saturday. I have 7pm or 7, 30pm available. Which would you prefer?",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 38.01,
+                "end_s": 40.41,
+                "text": "Let me check Saturday. I have 7pm or 7, 30pm available. Which would you prefer?",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "caller",
+                "start_s": 41.19,
+                "end_s": 42.5,
+                "text": "Seven thirty works.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 43.11,
+                "end_s": 43.62,
+                "text": "Great! Saturday at 7, 30pm is available. Shall I move your table for 4 to then?",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 43.9,
+                "end_s": 44.93,
+                "text": "Great! Saturday at 7, 30pm is available. Shall I move your table for 4 to then?",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 45.23,
+                "end_s": 48.65,
+                "text": "Great! Saturday at 7, 30pm is available. Shall I move your table for 4 to then?",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "caller",
+                "start_s": 49.45,
+                "end_s": 50.32,
+                "text": "Yes please.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 50.95,
+                "end_s": 54.29,
+                "text": "Done, your table for 4 is now on Saturday at 7.30pm. Your reference is still D. X7 Q2. I'll text a confirmation to 98100 12345. Is there anything else I can help with?",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 54.61,
+                "end_s": 61.66,
+                "text": "Done, your table for 4 is now on Saturday at 7.30pm. Your reference is still D. X7 Q2. I'll text a confirmation to 98100 12345. Is there anything else I can help with?",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 62.05,
+                "end_s": 65.45,
+                "text": "Done, your table for 4 is now on Saturday at 7.30pm. Your reference is still D. X7 Q2. I'll text a confirmation to 98100 12345. Is there anything else I can help with?",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "caller",
+                "start_s": 66.25,
+                "end_s": 67.89,
+                "text": "No, that's all. Thanks, bye.",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 68.47,
+                "end_s": 71.07,
+                "text": "You're all set. Thanks for calling Olive and Ember, and have a lo-",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              },
+              {
+                "speaker": "agent",
+                "start_s": 71.41,
+                "end_s": 71.96,
+                "text": "You're all set. Thanks for calling Olive and Ember, and have a lo-",
+                "interrupted_by": null,
+                "chaos_ids": [],
+                "words": []
+              }
+            ]
+          }
+        }
+      ],
+      "aggregates": [
+        {
+          "name": "task_success_rate",
+          "value": 1.0,
+          "ci_low": 0.2065,
+          "ci_high": 1.0,
+          "n": 1,
+          "unit": "ratio",
+          "method": "deterministic",
+          "threshold": 0.8,
+          "comparator": ">=",
+          "passed": true
+        },
+        {
+          "name": "response_latency_p95_s",
+          "value": 0.6525,
+          "ci_low": 0.6025,
+          "ci_high": 0.66,
+          "n": 6,
+          "unit": "s",
+          "method": "deterministic",
+          "threshold": 1.5,
+          "comparator": "<=",
+          "passed": true
+        },
+        {
+          "name": "response_latency_p50_s",
+          "value": 0.595,
+          "ci_low": 0.54,
+          "ci_high": 0.645,
+          "n": 6,
+          "unit": "s",
+          "method": "deterministic",
+          "threshold": null,
+          "comparator": "<=",
+          "passed": null
+        },
+        {
+          "name": "talk_over_ratio",
+          "value": 0.0,
+          "ci_low": null,
+          "ci_high": null,
+          "n": 1,
+          "unit": "ratio",
+          "method": "deterministic",
+          "threshold": 0.05,
+          "comparator": "<=",
+          "passed": true
+        },
+        {
+          "name": "entity_fidelity",
+          "value": 1.0,
+          "ci_low": null,
+          "ci_high": null,
+          "n": 1,
+          "unit": "ratio",
+          "method": "deterministic",
+          "threshold": 1.0,
+          "comparator": ">=",
+          "passed": true
+        },
+        {
+          "name": "policy_violations",
+          "value": 0.0,
+          "ci_low": null,
+          "ci_high": null,
+          "n": 1,
+          "unit": "count",
+          "method": "deterministic",
+          "threshold": 0.0,
+          "comparator": "<=",
+          "passed": true
+        },
+        {
+          "name": "unanswered_turns",
+          "value": 0.0,
+          "ci_low": null,
+          "ci_high": null,
+          "n": 1,
+          "unit": "count",
+          "method": "deterministic",
+          "threshold": 0.0,
+          "comparator": "<=",
+          "passed": true
+        },
+        {
+          "name": "call_pass_rate",
+          "value": 1.0,
+          "ci_low": 0.2065,
+          "ci_high": 1.0,
+          "n": 1,
+          "unit": "ratio",
+          "method": "deterministic",
+          "threshold": null,
+          "comparator": ">=",
+          "passed": null
+        }
+      ],
+      "failure_reasons": []
+    }
+  ],
+  "limit_overrides": [],
+  "baseline_name": null,
+  "baseline_diff": [],
+  "passed": true,
+  "exit_code": 0,
+  "duration_s": 82.19
+}

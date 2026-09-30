@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 30
     env:
       CALLBACK_MODEL_DIR: ~/.cache/callback/models
-      # Shared runners are slower to stop when interrupted than your laptop (our reference
+      # Shared runners are slower to stop when interrupted than your laptop (the reference
       # agent: 0.49 s locally, 0.59-1.05 s on runners, against a 0.6 s target). This
       # allows up to 1.1 s here only; every run records and reports it next to the real
       # target. See docs/ci-example.md. Remove it on a dedicated or larger runner.
