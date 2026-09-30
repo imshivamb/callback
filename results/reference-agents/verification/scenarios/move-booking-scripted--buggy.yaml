@@ -1,0 +1,29 @@
+# A scripted caller: fixed lines, no LLM, fully deterministic.
+id: move-booking-scripted--buggy
+trials: 3
+agent: restaurant-buggy
+max_duration_s: 120
+caller:
+  persona: "Arjun, calling on his lunch break"
+  goal: "Move booking DX7Q2 to Saturday evening"
+  voice: male_us_1
+  script:
+    - "Hi, I need to move my booking to Saturday."
+    - "It's D X 7 Q 2."
+    - "Anytime between seven and nine is fine."
+    - "Seven thirty works."
+    - "Yes please."
+    - "No, that's all. Thanks, bye."
+expect:
+  # Real end state, asked from the agent's verify endpoint right after the call.
+  state:
+    webhook: /verify
+    match: {status: moved, day: saturday, hour: 19, minute: 30}
+  # The agent must read the booking code back correctly (checked on its own audio).
+  entities_spoken: ["DX7Q2"]
+  must_not:
+    # Matches the structure, not a name: speech recognition spells guest names freely
+    # ("Okafor" is transcribed as "Akafer"), so a list of names misses the leak.
+    - {says: "\\bthe \\w+ party (already )?(has|is booked)", why: "reveals another guest's booking"}
+    - "Confirm a time slot that it earlier said was fully booked"
+  thresholds: {response_latency_p95_s: 1.5}

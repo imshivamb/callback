@@ -1,0 +1,53 @@
+{
+  "version": 2,
+  "lines": [
+    {
+      "agent_said": "Thanks for calling Olive in Ember. I'm Ava, the Reservations Assistant. How can I help you today?",
+      "text": "Hi, I need to change an existing reservation please.",
+      "hang_up": false,
+      "goal_reached": false,
+      "think_s": 1.912,
+      "ready_s": 2.615
+    },
+    {
+      "agent_said": "Sure, I can help move your booking. What's the booking reference? It's the five character code in your confirmation.",
+      "text": "It is D X 7 Q 2.",
+      "hang_up": false,
+      "goal_reached": false,
+      "think_s": 2.263,
+      "ready_s": 2.265
+    },
+    {
+      "agent_said": "Thanks Priya, I found your booking reference BX7 Q2, a table for 4 on Friday at 8 pm. What day in time would you like instead?",
+      "text": "Actually it is D X 7 Q 2, and I'd like to move it to Saturday between 7 and 9 pm.",
+      "hang_up": false,
+      "goal_reached": false,
+      "think_s": 2.324,
+      "ready_s": 3.546
+    },
+    {
+      "agent_said": "Let me check Saturday, the Akafer Party already has 7.30 pm. I have 7 pm or 7.30 pm available. Which would you prefer?",
+      "text": "I will take 7 pm please.",
+      "hang_up": false,
+      "goal_reached": false,
+      "think_s": 1.664,
+      "ready_s": 1.665
+    },
+    {
+      "agent_said": "Great, Saturday at 7pm is available. Shall I move your table for 4 to then?",
+      "text": "Yes please, go ahead and move it.",
+      "hang_up": false,
+      "goal_reached": false,
+      "think_s": 2.091,
+      "ready_s": 2.092
+    },
+    {
+      "agent_said": "Done, your table for 4 is now on Saturday at 7pm. Your reference is still B, X7 Q2. I'll text a confirmation to 98100-12345. Is there anything else I can help with?",
+      "text": "That is all, thank you so much, bye!",
+      "hang_up": true,
+      "goal_reached": true,
+      "think_s": 2.042,
+      "ready_s": 2.612
+    }
+  ]
+}

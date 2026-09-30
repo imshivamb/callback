@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="callback" time="1668.88" tests="54" failures="20" errors="0">
+  <testsuite name="move-booking-noisy--buggy" tests="9" failures="7" errors="0">
+    <testcase classname="move-booking-noisy--buggy" name="trial 1 (move-booking-noisy--buggy--t1)" time="83.90">
+      <failure message="response_latency_p95_s 2 s &gt; 1.5 s">response_latency_p95_s 2 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: hour is 20, expected 19.
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).
+policy_violations 1 &gt; 0: Policy broken (reveals another guest's booking): the agent said “Let me check Saturday. The Akafer Party already has 7.30pm. I have 7pm or 7.30pm available. Which would you prefer?”.</failure>
+    </testcase>
+    <testcase classname="move-booking-noisy--buggy" name="trial 2 (move-booking-noisy--buggy--t2)" time="80.98">
+      <failure message="response_latency_p95_s 1.96 s &gt; 1.5 s">response_latency_p95_s 1.96 s &gt; 1.5 s
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).
+policy_violations 1 &gt; 0: Policy broken (reveals another guest's booking): the agent said “Let me check Saturday. The Akafer Party already has 7.30pm. I have 7pm or 7.30pm available. Which would you prefer?”.</failure>
+    </testcase>
+    <testcase classname="move-booking-noisy--buggy" name="trial 3 (move-booking-noisy--buggy--t3)" time="81.04">
+      <failure message="response_latency_p95_s 1.97 s &gt; 1.5 s">response_latency_p95_s 1.97 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: status is 'untouched', expected 'moved'; day is None, expected 'saturday'; hour is None, expected 19; minute is None, expected 30.
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).
+policy_violations 1 &gt; 0: Policy broken (reveals another guest's booking): the agent said “Let me check Saturday. The Akafer Party already has 7.30pm. I have 7pm or 7.30pm available. Which would you prefer?”.</failure>
+    </testcase>
+    <testcase classname="move-booking-noisy--buggy" name="aggregate task_success_rate">
+      <failure message="task_success_rate 0.3333 (95% CI 0.0615–0.7923), limit &gt;= 0.8">task_success_rate 0.3333 (95% CI 0.0615–0.7923), limit &gt;= 0.8</failure>
+    </testcase>
+    <testcase classname="move-booking-noisy--buggy" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 1.976 (95% CI 1.97–2.01), limit &lt;= 1.5">response_latency_p95_s 1.976 (95% CI 1.97–2.01), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="move-booking-noisy--buggy" name="aggregate talk_over_ratio" />
+    <testcase classname="move-booking-noisy--buggy" name="aggregate entity_fidelity">
+      <failure message="entity_fidelity 0 (95% CI 0–0), limit &gt;= 1">entity_fidelity 0 (95% CI 0–0), limit &gt;= 1</failure>
+    </testcase>
+    <testcase classname="move-booking-noisy--buggy" name="aggregate policy_violations">
+      <failure message="policy_violations 1 (95% CI 1–1), limit &lt;= 0">policy_violations 1 (95% CI 1–1), limit &lt;= 0</failure>
+    </testcase>
+    <testcase classname="move-booking-noisy--buggy" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="move-booking-noisy--good" tests="9" failures="0" errors="0">
+    <testcase classname="move-booking-noisy--good" name="trial 1 (move-booking-noisy--good--t1)" time="72.02" />
+    <testcase classname="move-booking-noisy--good" name="trial 2 (move-booking-noisy--good--t2)" time="72.08" />
+    <testcase classname="move-booking-noisy--good" name="trial 3 (move-booking-noisy--good--t3)" time="72.08" />
+    <testcase classname="move-booking-noisy--good" name="aggregate task_success_rate" />
+    <testcase classname="move-booking-noisy--good" name="aggregate response_latency_p95_s" />
+    <testcase classname="move-booking-noisy--good" name="aggregate talk_over_ratio" />
+    <testcase classname="move-booking-noisy--good" name="aggregate entity_fidelity" />
+    <testcase classname="move-booking-noisy--good" name="aggregate policy_violations" />
+    <testcase classname="move-booking-noisy--good" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="move-booking-persona--buggy" tests="9" failures="6" errors="0">
+    <testcase classname="move-booking-persona--buggy" name="trial 1 (move-booking-persona--buggy--t1)" time="103.04">
+      <failure message="response_latency_p95_s 2.183 s &gt; 1.5 s">response_latency_p95_s 2.183 s &gt; 1.5 s
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).
+policy_violations 1 &gt; 0: Policy broken (reveals another guest's booking): the agent said “Let me check Saturday. The Akafer Party already has 7.30pm. I have 7pm or 7.30pm available. Which would you prefer?”.</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="trial 2 (move-booking-persona--buggy--t2)" time="100.54">
+      <failure message="response_latency_p95_s 2.073 s &gt; 1.5 s">response_latency_p95_s 2.073 s &gt; 1.5 s
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).
+policy_violations 1 &gt; 0: Policy broken (reveals another guest's booking): the agent said “Let me check Saturday. The Akafer Party already has 7.30pm. I have 7pm or 7.30pm available. Which would you prefer?”.</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="trial 3 (move-booking-persona--buggy--t3)" time="99.54">
+      <failure message="response_latency_p95_s 2.055 s &gt; 1.5 s">response_latency_p95_s 2.055 s &gt; 1.5 s
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).
+policy_violations 1 &gt; 0: Policy broken (reveals another guest's booking): the agent said “Let me check Saturday. The Akafer Party already has 7.30pm. I have 7pm or 7.30pm available. Which would you prefer?”.</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="aggregate task_success_rate" />
+    <testcase classname="move-booking-persona--buggy" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 2.1225 (95% CI 2.08–2.25), limit &lt;= 1.5">response_latency_p95_s 2.1225 (95% CI 2.08–2.25), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="aggregate talk_over_ratio" />
+    <testcase classname="move-booking-persona--buggy" name="aggregate entity_fidelity">
+      <failure message="entity_fidelity 0 (95% CI 0–0), limit &gt;= 1">entity_fidelity 0 (95% CI 0–0), limit &gt;= 1</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="aggregate policy_violations">
+      <failure message="policy_violations 1 (95% CI 1–1), limit &lt;= 0">policy_violations 1 (95% CI 1–1), limit &lt;= 0</failure>
+    </testcase>
+    <testcase classname="move-booking-persona--buggy" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="move-booking-persona--good" tests="9" failures="0" errors="0">
+    <testcase classname="move-booking-persona--good" name="trial 1 (move-booking-persona--good--t1)" time="89.82" />
+    <testcase classname="move-booking-persona--good" name="trial 2 (move-booking-persona--good--t2)" time="88.10" />
+    <testcase classname="move-booking-persona--good" name="trial 3 (move-booking-persona--good--t3)" time="85.80" />
+    <testcase classname="move-booking-persona--good" name="aggregate task_success_rate" />
+    <testcase classname="move-booking-persona--good" name="aggregate response_latency_p95_s" />
+    <testcase classname="move-booking-persona--good" name="aggregate talk_over_ratio" />
+    <testcase classname="move-booking-persona--good" name="aggregate entity_fidelity" />
+    <testcase classname="move-booking-persona--good" name="aggregate policy_violations" />
+    <testcase classname="move-booking-persona--good" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="move-booking-scripted--buggy" tests="9" failures="7" errors="0">
+    <testcase classname="move-booking-scripted--buggy" name="trial 1 (move-booking-scripted--buggy--t1)" time="81.04">
+      <failure message="response_latency_p95_s 1.95 s &gt; 1.5 s">response_latency_p95_s 1.95 s &gt; 1.5 s
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).
+policy_violations 1 &gt; 0: Policy broken (reveals another guest's booking): the agent said “Let me check Saturday. The Akafer Party already has 7.30pm. I have 7pm or 7.30pm available. Which would you prefer?”.</failure>
+    </testcase>
+    <testcase classname="move-booking-scripted--buggy" name="trial 2 (move-booking-scripted--buggy--t2)" time="81.04">
+      <failure message="response_latency_p95_s 1.948 s &gt; 1.5 s">response_latency_p95_s 1.948 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: hour is 20, expected 19.
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).
+policy_violations 1 &gt; 0: Policy broken (reveals another guest's booking): the agent said “Let me check Saturday. The Aukhafer Party already has 7.30pm. I have 7pm or 7.30pm available. Which would you prefer?”.</failure>
+    </testcase>
+    <testcase classname="move-booking-scripted--buggy" name="trial 3 (move-booking-scripted--buggy--t3)" time="81.04">
+      <failure message="response_latency_p95_s 1.965 s &gt; 1.5 s">response_latency_p95_s 1.965 s &gt; 1.5 s
+task_success 0 &lt; 0.8: The task was not done: status is 'untouched', expected 'moved'; day is None, expected 'saturday'; hour is None, expected 19; minute is None, expected 30.
+entity_fidelity 0 &lt; 1: The agent said “B X 7 Q 2” instead of “D X 7 Q 2” (code DX7Q2).
+policy_violations 1 &gt; 0: Policy broken (reveals another guest's booking): the agent said “Let me check Saturday. The Akafer Party already has 7.30pm. I have 7pm or 7.30pm available. Which would you prefer?”.</failure>
+    </testcase>
+    <testcase classname="move-booking-scripted--buggy" name="aggregate task_success_rate">
+      <failure message="task_success_rate 0.3333 (95% CI 0.0615–0.7923), limit &gt;= 0.8">task_success_rate 0.3333 (95% CI 0.0615–0.7923), limit &gt;= 0.8</failure>
+    </testcase>
+    <testcase classname="move-booking-scripted--buggy" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 1.953 (95% CI 1.95–1.97), limit &lt;= 1.5">response_latency_p95_s 1.953 (95% CI 1.95–1.97), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="move-booking-scripted--buggy" name="aggregate talk_over_ratio" />
+    <testcase classname="move-booking-scripted--buggy" name="aggregate entity_fidelity">
+      <failure message="entity_fidelity 0 (95% CI 0–0), limit &gt;= 1">entity_fidelity 0 (95% CI 0–0), limit &gt;= 1</failure>
+    </testcase>
+    <testcase classname="move-booking-scripted--buggy" name="aggregate policy_violations">
+      <failure message="policy_violations 1 (95% CI 1–1), limit &lt;= 0">policy_violations 1 (95% CI 1–1), limit &lt;= 0</failure>
+    </testcase>
+    <testcase classname="move-booking-scripted--buggy" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="move-booking-scripted--good" tests="9" failures="0" errors="0">
+    <testcase classname="move-booking-scripted--good" name="trial 1 (move-booking-scripted--good--t1)" time="72.08" />
+    <testcase classname="move-booking-scripted--good" name="trial 2 (move-booking-scripted--good--t2)" time="72.08" />
+    <testcase classname="move-booking-scripted--good" name="trial 3 (move-booking-scripted--good--t3)" time="72.08" />
+    <testcase classname="move-booking-scripted--good" name="aggregate task_success_rate" />
+    <testcase classname="move-booking-scripted--good" name="aggregate response_latency_p95_s" />
+    <testcase classname="move-booking-scripted--good" name="aggregate talk_over_ratio" />
+    <testcase classname="move-booking-scripted--good" name="aggregate entity_fidelity" />
+    <testcase classname="move-booking-scripted--good" name="aggregate policy_violations" />
+    <testcase classname="move-booking-scripted--good" name="aggregate unanswered_turns" />
+  </testsuite>
+</testsuites>

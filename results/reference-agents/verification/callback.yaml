@@ -1,0 +1,36 @@
+# Verification run after fixes: 18 calls to the bundled reference agents.
+# Start the agents first (from anywhere):
+#   callback agent serve                      (good,  port 8765)
+#   callback agent serve --buggy --port 8766  (buggy, port 8766)
+# Then, in this folder:  callback run scenarios
+
+targets:
+  restaurant-good:
+    transport: websocket
+    url: ws://127.0.0.1:8765
+  restaurant-buggy:
+    transport: websocket
+    url: ws://127.0.0.1:8766
+  restaurant-buggy-ignores-interruptions:
+    transport: websocket
+    url: ws://127.0.0.1:8766/?barge_in=ignore
+
+providers:
+  stt: {name: faster-whisper, model: base}
+  tts: {name: kokoro, voice: af_heart}
+  # The AI caller (20 of the 100 calls). Pinned to one model, not the moving
+  # "-latest" alias, so the result says exactly which model produced it; the model
+  # is recorded in results.json under provider_models.
+  # usd_per_1k_tokens is Google's paid output price for this model ($2.50 per 1M,
+  # September 2026), so the estimate printed before the run is a worst case. On the
+  # Gemini free tier the run costs nothing.
+  llm:
+    name: gemini
+    model: gemini-3.5-flash-lite
+    usd_per_1k_tokens: 0.0025
+  scoring_stt: {name: faster-whisper, model: small}
+
+# One call at a time: parallel calls on one machine inflate latency.
+concurrency: 1
+cost_cap_usd: 1.0
+recorded: auto
