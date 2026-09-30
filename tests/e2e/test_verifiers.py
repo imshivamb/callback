@@ -36,7 +36,7 @@ expect:
   state: {{webhook: "{webhook}", match: {match}}}
   entities_spoken: ["DX7Q2"]
   must_not:
-    - {{says: "maria|daniel", why: "reveals another guest's booking"}}
+    - {{says: "\\\\bthe \\\\w+ party (already )?(has|is booked)", why: "reveals another guest's booking"}}
     - "Reveal another guest's booking"
 """
 

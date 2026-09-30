@@ -16,4 +16,8 @@ expect:
     webhook: /verify
     match: {status: moved, day: saturday, hour_between: [19, 21]}
   entities_spoken: ["DX7Q2"]
+  must_not:
+    # Matches the structure, not a name: speech recognition spells guest names freely
+    # ("Okafor" is transcribed as "Akafer"), so a list of names misses the leak.
+    - {says: "\\bthe \\w+ party (already )?(has|is booked)", why: "reveals another guest's booking"}
   thresholds: {response_latency_p95_s: 1.5}

@@ -293,6 +293,20 @@ with "hour is 19, expected 20".
 The judge is optional. To turn it on, uncomment `judge:` under `providers:` in
 `callback.yaml` (Gemini free tier, needs `GEMINI_API_KEY`). Its scores never fail a run.
 
+#### Writing `must_not` rules
+
+A `must_not` entry is either a pattern (`{says: <regular expression>, why: ...}`),
+checked on every call, or a plain-English sentence, which only the judge can check.
+
+- **Match what speech recognition writes, not what the agent meant.** Patterns run
+  on a transcript of the agent's audio, and names get spelled freely: in our test
+  runs the agent said "Okafor" and the transcript said "Akafer" every time, so a rule
+  listing guest names missed every leak. Match the shape of the sentence instead, as
+  the bundled scenarios do: `\bthe \w+ party (already )?(has|is booked)`.
+- **Plain-English rules need the judge.** Without one they are not checked, and
+  Callback says so: a warning before the first call, `rules_not_checked` on each
+  call, and a note at the top of the report. They are never counted as passed.
+
 ### Task bugs, more facts, and the review list
 
 `scenarios/restaurant/move-and-resize.yaml` moves the booking, changes the party size,
