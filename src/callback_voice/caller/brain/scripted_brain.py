@@ -12,6 +12,7 @@ class ScriptedBrain:
     """
 
     needs_agent_text = False
+    timing_missing = False
 
     def __init__(self, script: tuple[str, ...]) -> None:
         self._script = list(script)
@@ -33,3 +34,9 @@ class ScriptedBrain:
 
     def apply_updates(self, updates: dict[str, Any]) -> None:
         """Scripted callers do not adapt to changed facts."""
+
+    def note_timing(self, think_s: float, ready_s: float) -> None:
+        """Only recordings keep line timing."""
+
+    def replay_ready_s(self) -> float | None:
+        return None

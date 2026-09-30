@@ -21,6 +21,7 @@ class PersonaBrain:
     """
 
     needs_agent_text = True
+    timing_missing = False
 
     def __init__(
         self, llm: ChatModel, spec: CallerSpec, *, seed: int, temperature: float = 0.7
@@ -80,3 +81,9 @@ class PersonaBrain:
     @property
     def usd_spent(self) -> float:
         return (self.input_tokens + self.output_tokens) / 1000 * self._llm.usd_per_1k_tokens
+
+    def note_timing(self, think_s: float, ready_s: float) -> None:
+        """Only recordings keep line timing."""
+
+    def replay_ready_s(self) -> float | None:
+        return None

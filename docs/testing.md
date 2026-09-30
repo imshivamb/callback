@@ -324,6 +324,13 @@ uv run callback run scenarios/restaurant/move-booking-persona.yaml --record   # 
 uv run callback run scenarios/restaurant/move-booking-persona.yaml --replay   # no LLM at all
 ```
 
+Each recorded line also keeps how long the live caller took to decide it and to be
+ready to speak it (a second or two, mostly the LLM). A replay takes the same time,
+so the agent hears the caller at the same moments; a caller that answered instantly
+would cut into the agent's pauses and change the call. Recordings made by Callback
+0.1.0 have no timing: they still replay, but the call's event log says so and the
+call can differ from the original. Re-record them with `--record`.
+
 Editing the scenario's `caller:` block invalidates its recording automatically.
 If the agent's behaviour changes enough that the recorded caller no longer fits,
 the run errors (exit 2) and tells you to `--record` again.

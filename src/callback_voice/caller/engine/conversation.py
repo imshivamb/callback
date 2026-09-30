@@ -71,6 +71,14 @@ class Conversation:
         self.error: BaseException | None = None
 
     def start(self) -> None:
+        if self._brain.timing_missing:
+            self._log.add(
+                0.0,
+                "note",
+                text="recorded caller has no line timing (recorded by an older version): "
+                "lines are spoken as soon as they are ready, so this call may differ from "
+                "the original; re-record with --record",
+            )
         if self._spec.speaks_first:
             self._begin_planning(agent_said_audio=None)
 
@@ -169,9 +177,11 @@ class Conversation:
             )
         thinking = time.monotonic()
         line = await self._brain.next_line(agent_said)
+        think_s = time.monotonic() - began
         self._committed = True
         self._timing = {"brain_s": round(time.monotonic() - thinking, 3)}
         if line is None:
+            self._brain.note_timing(think_s, think_s)
             self.hang_up_at = self._ctx.t_s
             return
         self.caller_turn += 1
@@ -182,12 +192,19 @@ class Conversation:
             self._brain.revise_last_line(plan.text)
         if plan.updates:
             self._brain.apply_updates(plan.updates)
-        await self._say(plan)
+        await self._say(plan, planned_at=began, think_s=think_s)
 
-    async def _say(self, plan: LinePlan) -> None:
+    async def _say(
+        self, plan: LinePlan, *, planned_at: float | None = None, think_s: float = 0.0
+    ) -> None:
         rendering = time.monotonic()
         audio = await self._speech.render(plan.text) if plan.text else np.zeros(0, np.float32)
         timing = {**self._timing, "tts_s": round(time.monotonic() - rendering, 3)}
+        if planned_at is not None:  # a line the brain decided (not a nudge)
+            ready_s = self._brain.replay_ready_s()
+            if ready_s is not None and (wait := planned_at + ready_s - time.monotonic()) > 0:
+                await asyncio.sleep(wait)  # speak when the recorded caller did
+            self._brain.note_timing(think_s, time.monotonic() - planned_at)
         self._timing = {}
         if plan.dtmf:
             audio = np.concatenate([audio, dtmf_tones(plan.dtmf)])

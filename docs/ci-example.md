@@ -36,7 +36,10 @@ callback baseline save main
 git add callback.yaml scenarios callback-cache callback-baselines
 ```
 
-Scripted callers need no recording; only AI (persona) callers do.
+Scripted callers need no recording; only AI (persona) callers do. A recording keeps
+each line's timing as well as its words, so CI replays the caller at the pace it
+had live. Recordings made with Callback 0.1.0 have no timing; re-record them with
+`--record` after upgrading.
 
 ## What the workflow does
 
