@@ -68,15 +68,34 @@ async def evaluate_call(
 
     rule_checks = [r for r in expect.must_not if isinstance(r, MustNotRule)]
     judged_rules = [r for r in expect.must_not if isinstance(r, str)]
+    judging = judge is not None and bool(transcript)
+    unchecked = [] if judging else judged_rules
     results = [
         task_success(state, expect.thresholds.task_success_rate, timing.timeline.duration_s),
         entity_fidelity(facts, expect.thresholds.entity_fidelity),
-        policy_rules(transcript, rule_checks, expect.thresholds.policy_violations),
+        policy_rules(
+            transcript,
+            rule_checks,
+            expect.thresholds.policy_violations,
+            not_checked=len(unchecked),
+        ),
     ]
-    if judge is not None and transcript:
+    if judge is not None and judging:
         results.append(await judge_call(judge, transcript, judged_rules))
 
     metrics = [*timing.metrics, *(m for r in results for m in r.metrics)]
+    if unchecked:
+        # Never let a rule that could not be checked read like one that passed.
+        why = "no judge is configured (providers.judge)" if judge is None else "no transcript"
+        metrics.append(
+            Metric(
+                name="rules_not_checked",
+                value=len(unchecked),
+                unit="count",
+                method="judge",
+                detail=f"{len(unchecked)} plain-English rule(s) not checked: {why}",
+            )
+        )
     findings = sorted(
         [*timing.findings, *(f for r in results for f in r.findings)], key=lambda f: f.t_s
     )

@@ -232,3 +232,20 @@ def test_reply_delay_failure_on_github_actions_names_the_runner_size() -> None:
     assert already is not None and "is already 2.0 s" in already.plain
     assert ci_runner_hint(failed, {}, 2) is None  # not on GitHub Actions
     assert ci_runner_hint(ok, {"GITHUB_ACTIONS": "true"}, 2) is None  # nothing failed
+
+
+def test_unchecked_plain_english_rules_are_announced_before_the_run() -> None:
+    from callback_voice.cli.render.rules_notice import rules_notice
+    from callback_voice.core.models.scenario import Scenario
+
+    base = {"agent": "a", "caller": {"persona": "p", "goal": "g", "script": ["hi"]}}
+    plain = Scenario.model_validate(
+        {**base, "id": "plain", "expect": {"must_not": ["Promise a refund", {"says": "x"}]}}
+    )
+    pattern_only = Scenario.model_validate(
+        {**base, "id": "pattern", "expect": {"must_not": [{"says": "x"}]}}
+    )
+    notice = rules_notice([plain, pattern_only], judge_configured=False)
+    assert notice is not None and "1 plain-English must_not rule(s) in plain" in notice.plain
+    assert rules_notice([plain], judge_configured=True) is None
+    assert rules_notice([pattern_only], judge_configured=False) is None

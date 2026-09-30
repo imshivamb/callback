@@ -7,6 +7,7 @@ import typer
 from callback_voice.cli.console import console
 from callback_voice.cli.render.ci_runner_hint import ci_runner_hint
 from callback_voice.cli.render.limit_notice import limit_notice
+from callback_voice.cli.render.rules_notice import rules_notice
 from callback_voice.cli.render.run_plan import run_plan
 from callback_voice.cli.render.run_summary import run_summary
 from callback_voice.cli.render.trial_line import trial_line
@@ -95,6 +96,8 @@ def run(
         )
     if (notice := limit_notice(overrides)) is not None:
         console.print(notice)
+    if (unchecked := rules_notice(scenarios, judge is not None)) is not None:
+        console.print(unchecked)
     console.print()
 
     def on_trial(scenario: Scenario, result: TrialResult) -> None:

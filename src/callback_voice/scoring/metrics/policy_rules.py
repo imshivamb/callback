@@ -8,9 +8,13 @@ from callback_voice.scoring.metrics.metric_result import MetricResult
 
 
 def policy_rules(
-    transcript: list[Turn], rules: list[MustNotRule], max_violations: int
+    transcript: list[Turn], rules: list[MustNotRule], max_violations: int, *, not_checked: int = 0
 ) -> MetricResult:
-    """Deterministic ``must_not`` checks: a regex over each agent turn's transcript."""
+    """Deterministic ``must_not`` checks: a regex over each agent turn's transcript.
+
+    ``not_checked`` counts the scenario's plain-English rules that no judge looked at;
+    the detail says so, so this metric never reads as if every rule passed.
+    """
     if not rules:
         return MetricResult(metrics=[])
     findings = [
@@ -33,7 +37,8 @@ def policy_rules(
                 unit="count",
                 threshold=max_violations,
                 passed=count <= max_violations,
-                detail=f"{len(rules)} rule(s) checked",
+                detail=f"{len(rules)} pattern rule(s) checked"
+                + (f"; {not_checked} plain-English rule(s) not checked" if not_checked else ""),
             )
         ],
         findings=findings,

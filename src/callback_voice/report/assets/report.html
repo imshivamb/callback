@@ -303,7 +303,7 @@ const METRIC_LABELS = {
   response_latency_p95_s: "Reply delay, p95", response_latency_p50_s: "Reply delay, p50",
   time_to_yield_p95_s: "Time to yield, p95", talk_over_ratio: "Talk-over", false_yields: "False yields",
   silence_reprompt_s: "Silence check-in", entity_fidelity: "Facts correct", policy_violations: "Policy violations",
-  unanswered_turns: "Unanswered turns",
+  unanswered_turns: "Unanswered turns", rules_not_checked: "Rules not checked",
 };
 /** @type {Object<string, string>} */
 const METRIC_TERMS = {
@@ -459,6 +459,7 @@ function renderTop() {
     ]),
     h("p", { class: "sentence" }, [DATA.summary.sentence]),
     ciLimitBanner(),
+    uncheckedRulesBanner(),
     h("div", { class: "meta num" }, [
       h("span", {}, [`run ${run.run_id}`]), h("span", {}, [when.toLocaleString()]),
       h("span", {}, [`exit code ${run.exit_code}`]), h("span", {}, [`${Math.round(run.duration_s)} s`]),
@@ -467,6 +468,18 @@ function renderTop() {
       h("span", {}, [`callback ${run.callback_version}`]),
     ]),
     tiles.length ? h("div", { class: "tiles" }, tiles) : null,
+  ]);
+}
+
+/** Rules nobody checked must never look like rules that passed: say so up top. */
+function uncheckedRulesBanner() {
+  const skipped = (DATA.scenarios || []).filter((s) =>
+    (s.aggregates || []).some((a) => a.name === "rules_not_checked" && (a.value || 0) > 0));
+  if (!skipped.length) return null;
+  return h("p", { class: "cilimit", role: "note" }, [
+    h("b", {}, ["Some rules were not checked. "]),
+    `Plain-English must_not rules in ${skipped.map((s) => s.scenario_id).join(", ")} need the LLM judge, `
+      + "which is not configured (providers.judge in callback.yaml). Pattern rules were checked.",
   ]);
 }
 

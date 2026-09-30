@@ -80,6 +80,7 @@ _NAMES = {
     "policy_violations": "policy violations",
     "unanswered_turns": "unanswered turns",
     "call_pass_rate": "calls passed",
+    "rules_not_checked": "rules not checked",
 }
 
 # Failures no across-call number carries, recognised in a scenario's reasons.

@@ -48,3 +48,39 @@ async def test_hard_check_still_calls_the_code_wrong(tmp_path: Path) -> None:
     # The judge's recorded view of the same call did not fail it.
     assert all(m["passed"] is None for m in recorded["judge_metrics"])
     assert min(m["value"] for m in recorded["judge_metrics"]) >= 4
+
+
+async def test_plain_english_rules_without_a_judge_are_not_checked_not_passed(
+    tmp_path: Path,
+) -> None:
+    audio, rate = sf.read(FIXTURE / "call.mp3", dtype="float32")
+    sf.write(tmp_path / "call.wav", audio, rate, subtype="PCM_16")
+    sf.write(
+        tmp_path / "caller_clean.wav", np.ascontiguousarray(audio[:, 0]), rate, subtype="PCM_16"
+    )
+    (tmp_path / "events.jsonl").write_bytes((FIXTURE / "events.jsonl").read_bytes())
+    expect = Expectation.model_validate(
+        {
+            "must_not": [
+                {"says": "zzz-never-said", "why": "a pattern rule"},
+                "Confirm a time slot that it earlier said was fully booked",
+            ]
+        }
+    )
+
+    result = await evaluate_call(
+        tmp_path,
+        expect,
+        vad=SileroVad(),
+        stt=FasterWhisperStt("small", words=True),
+        judge=None,
+        state=None,
+        language="en",
+    )
+
+    metrics = {m.name: m for m in result.metrics}
+    policy, skipped = metrics["policy_violations"], metrics["rules_not_checked"]
+    assert policy.passed is True and policy.detail is not None
+    assert "1 pattern rule(s) checked; 1 plain-English rule(s) not checked" in policy.detail
+    assert skipped.value == 1 and skipped.passed is None and skipped.method == "judge"
+    assert skipped.detail is not None and "no judge is configured" in skipped.detail
