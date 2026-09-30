@@ -135,7 +135,7 @@ class AgentSession:
             reply_played_s=self._speaker.reply_played_s,
             judged_backchannel=self._judged_backchannel,
         )
-        if decision == "yield":
+        if decision == "yield" and not self._speaker.stopping:  # log a delayed stop once
             log.info("yield: caller spoke for %.2f s", self._detector.speech_duration_s)
             self._yield()
         elif decision == "judge" and self._judge_task is None:
