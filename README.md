@@ -3,7 +3,7 @@
 Callback phones your voice agent with simulated callers, deliberately makes the call
 messy, and measures what happened from the recorded audio.
 
-**Status:** Early release (0.1.0 on PyPI as `callback-voice`). Feedback welcome.
+**Status:** Early release (0.1.1 on PyPI as `callback-voice`). Feedback welcome.
 
 ![A caller says "mm-hmm" and the agent stops talking mid-sentence](docs/assets/false-yield-mm-hmm.png)
 
