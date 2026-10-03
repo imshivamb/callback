@@ -15,6 +15,7 @@ from callback_voice.scoring.facts.check_facts import check_facts
 from callback_voice.scoring.judge.judge_call import judge_call
 from callback_voice.scoring.load_call_audio import load_call_audio
 from callback_voice.scoring.metrics.entity_fidelity import entity_fidelity
+from callback_voice.scoring.metrics.folded_turns import fold_unanswered
 from callback_voice.scoring.metrics.policy_rules import policy_rules
 from callback_voice.scoring.metrics.task_success import task_success
 from callback_voice.scoring.score_call import score_call
@@ -50,7 +51,8 @@ async def evaluate_call(
     when configured.
     """
     timing = score_call(call_dir, expect.thresholds, vad)
-    needs_words = bool(expect.entities_spoken or expect.must_not or judge is not None)
+    unanswered = any(f.metric == "unanswered_turns" for f in timing.findings)
+    needs_words = bool(expect.entities_spoken or expect.must_not or judge is not None or unanswered)
     agent_audio = load_call_audio(call_dir).agent
     transcript: list[Turn] = []
     if stt is not None and needs_words:
@@ -83,7 +85,16 @@ async def evaluate_call(
     if judge is not None and judging:
         results.append(await judge_call(judge, transcript, judged_rules))
 
-    metrics = [*timing.metrics, *(m for r in results for m in r.metrics)]
+    timing_metrics, timing_findings = timing.metrics, timing.findings
+    if unanswered and transcript:
+        timing_metrics, timing_findings = fold_unanswered(
+            timing_metrics,
+            timing_findings,
+            timing.timeline.utterances,
+            transcript,
+            expect.thresholds.unanswered_turns,
+        )
+    metrics = [*timing_metrics, *(m for r in results for m in r.metrics)]
     if unchecked:
         # Never let a rule that could not be checked read like one that passed.
         why = "no judge is configured (providers.judge)" if judge is None else "no transcript"
@@ -97,7 +108,7 @@ async def evaluate_call(
             )
         )
     findings = sorted(
-        [*timing.findings, *(f for r in results for f in r.findings)], key=lambda f: f.t_s
+        [*timing_findings, *(f for r in results for f in r.findings)], key=lambda f: f.t_s
     )
     speech = speech_turns(timing.timeline, transcript)
     return CallEvaluation(metrics, findings, transcript, review, speech)
