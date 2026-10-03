@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.1.2 (2026-10-03)
+
+### Added
+
+- **`agent_name` on LiveKit targets.** A LiveKit Agents worker registered with an
+  `agent_name` only joins rooms it is explicitly sent to, so Callback waited 20 s for an
+  agent that never came. Set `agent_name` and Callback asks for that agent in every room
+  it creates. See [docs/transports.md](docs/transports.md).
+- **Folded interruptions.** When a caller cuts in and the agent does not answer on its
+  own but works the point into its next full reply, the turn no longer counts in
+  `unanswered_turns`. It is reported in a new `folded_turns` metric and as a warning on
+  the timeline. The match is a word-overlap check on the recognised speech: a content
+  word the interruption introduced must appear in the agent's next reply. A late,
+  cut-off acknowledgement over the caller's next line is not that reply.
+
+### Fixed
+
+- **The report's speech view no longer shows the caller's words as the agent's.** For a
+  call with a transcript, each agent stretch carried the text of every overlapping turn,
+  the caller's included, and repeated a whole turn on each piece. Each stretch now carries
+  only the agent's own words inside it. No metric changes.
+
 ## 0.1.1 (2026-09-30)
 
 Fixes for problems found by a 100-call run against the bundled reference agents
