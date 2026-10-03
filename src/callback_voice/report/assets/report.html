@@ -346,7 +346,7 @@ const GLOSSARY = /** @type {Object<string, [string, string]>} */ ({
   talkover: ["Talk-over", "The share of the caller's speech that the agent talked over."],
   falseyield: ["False stop", "The agent stopped talking for a “mm-hmm” or “okay” it should have ignored."],
   silence: ["Check-in on silence", "When the caller goes quiet, how long before the agent checks in."],
-  passed: ["Calls passed", "Calls in which every hard check passed."],
+  passed: ["Calls on target", "Calls in which every hard check stayed within its limit."],
   unanswered: ["Unanswered turns", "The caller finished, waited at least the reply limit, and the agent said nothing. A caller who goes straight on to the next sentence doesn't count: the agent had no opening."],
   events: ["Events", "Amber ◆ marks a disturbance Callback caused on purpose (an interruption, noise, silence). Red ▼ marks a problem; hover it for one sentence."],
   caller: ["Caller", "The simulated caller, recorded on the left channel. Shaded blocks are where it was speaking."],
@@ -355,7 +355,7 @@ const GLOSSARY = /** @type {Object<string, [string, string]>} */ ({
 
 /** @type {Object<string, string>} */
 const METRIC_LABELS = {
-  task_success_rate: "Task success", call_pass_rate: "Calls passed",
+  task_success_rate: "Task success", call_pass_rate: "Calls on target",
   response_latency_p95_s: "Reply delay, slowest typical", response_latency_p50_s: "Reply delay, typical",
   time_to_yield_p95_s: "Time to stop when interrupted", talk_over_ratio: "Talk-over", false_yields: "False stops",
   silence_reprompt_s: "Check-in on silence", entity_fidelity: "Facts correct", policy_violations: "Policy violations",
@@ -457,7 +457,7 @@ function pip(ok, label) {
 /** @param {Call} c */
 function callMark(c) {
   if (c.error) return h("span", { class: "pip error", role: "img", "aria-label": "could not run" });
-  return pip(c.passed, c.passed ? "within every limit" : "over a limit");
+  return pip(c.passed, c.passed ? "on target" : "above target");
 }
 
 /** @param {Finding} f */
@@ -544,14 +544,14 @@ function renderVerdict() {
   const run = DATA.run;
   const { calls, failed, errored } = totals();
   const cls = run.exit_code === 0 ? "pass" : run.exit_code === 1 ? "fail" : "error";
-  const word = cls === "pass" ? "Within every limit" : cls === "fail" ? "Over a limit" : "Could not run";
+  const word = cls === "pass" ? "On target" : cls === "fail" ? "Above target" : "Could not run";
   const calls_ = `${calls} call${calls === 1 ? "" : "s"}`;
   const rows = checkRows();
   const over = rows.filter((r) => r.over > 0).length;
   const headline = errored
     ? `${errored} of ${calls_} could not run.`
-    : failed === 0 || !rows.length ? `${calls_} ran. Every check stayed within its limit.`
-    : `${calls_} ran. ${over} of ${rows.length} check${rows.length === 1 ? "" : "s"} went over a limit at least once.`;
+    : failed === 0 || !rows.length ? `${calls_} ran. Every check was on target.`
+    : `${calls_} ran. ${over} of ${rows.length} check${rows.length === 1 ? "" : "s"} went above target at least once.`;
   const scen = DATA.scenarios;
   const mins = run.duration_s >= 90 ? `${Math.round(run.duration_s / 60)} minutes` : `${Math.round(run.duration_s)} seconds`;
   return h("section", { class: "verdict" }, [
@@ -713,7 +713,7 @@ function renderFindings() {
       cv,
     ]);
   });
-  return section("problems", "What stood out", "The behaviours that went over a limit, most serious first. Each shows the moment it happened: the caller above, the agent below.", [
+  return section("problems", "What stood out", "The behaviours that went above target, most serious first. Each shows the moment it happened: the caller above, the agent below.", [
     h("div", { class: "ledger" }, rows),
   ]);
 }
@@ -825,7 +825,7 @@ function renderWall() {
       const dur = c.audio_s || c.duration_s || 0;
       const cv = /** @type {HTMLCanvasElement} */ (h("canvas", { role: "img", "aria-hidden": "true", style: `width:${Math.max(8, (dur / longest) * 100)}%` }));
       tapeCanvases.push({ cv, c });
-      return h("button", { class: "tape", "data-call": c.call_id, onclick: () => selectCall(c, true), "aria-label": `${s.scenario_id} trial ${c.trial}, ${c.error ? "could not run" : c.passed ? "within every limit" : "over a limit"}` }, [
+      return h("button", { class: "tape", "data-call": c.call_id, onclick: () => selectCall(c, true), "aria-label": `${s.scenario_id} trial ${c.trial}, ${c.error ? "could not run" : c.passed ? "on target" : "above target"}` }, [
         h("span", { class: "n num" }, [callMark(c), String(c.trial)]),
         h("span", { class: "strip" }, [cv]),
         h("span", { class: "t num" }, [dur ? `${Math.round(dur)} s` : ""]),
@@ -833,7 +833,7 @@ function renderWall() {
     });
     return h("div", { class: "scn" }, [
       h("div", { class: "scn-name" }, [
-        h("b", {}, [pip(ok, ok ? "within every limit" : "over a limit"), s.scenario_id]),
+        h("b", {}, [pip(ok, ok ? "on target" : "above target"), s.scenario_id]),
         h("span", {}, [wallSummary(s)]),
       ]),
       h("div", { class: "tapes" }, tapes),
@@ -842,7 +842,7 @@ function renderWall() {
   const legend = h("p", { class: "legend" }, [
     h("span", {}, [h("i", { style: "background:var(--caller)" }), "Caller speaking"]),
     h("span", {}, [h("i", { style: "background:var(--agent)" }), "Agent speaking"]),
-    h("span", {}, [h("i", { style: "background:var(--over);border-radius:0;width:3px;height:12px" }), "A limit was passed here"]),
+    h("span", {}, [h("i", { style: "background:var(--over);border-radius:0;width:3px;height:12px" }), "Above target here"]),
     h("span", {}, [h("i", { style: "background:var(--chaos);transform:rotate(45deg);border-radius:1px;width:8px;height:8px" }), "A disturbance Callback caused"]),
   ]);
   return section("calls", "Every call", "One row per call, all on the same clock, so a pattern shows at a glance. Select a call to open and play it.", [
@@ -854,7 +854,7 @@ function renderWall() {
 function wallSummary(s) {
   const n = s.calls.length, bad = s.calls.filter((c) => c.error || !c.passed).length;
   const calls = `${n} call${n === 1 ? "" : "s"}`;
-  return bad === 0 ? `${calls}, within every limit` : bad === n ? `${calls}, over a limit` : `${calls}, ${bad} over a limit`;
+  return bad === 0 ? `${calls}, on target` : bad === n ? `${calls}, above target` : `${calls}, ${bad} above target`;
 }
 
 /** @param {HTMLCanvasElement} cv @param {Call} c */
@@ -994,10 +994,10 @@ function renderCall() {
 /** Problems in this call, with repeats grouped. @param {Call} c */
 function renderProblems(c) {
   if (!c.findings.length) {
-    const why = c.failure_reasons.length ? c.failure_reasons.join(" ") : "Nothing in this call went over a limit.";
+    const why = c.failure_reasons.length ? c.failure_reasons.join(" ") : "Nothing in this call went above target.";
     return h("p", { class: c.passed ? "okline" : "failline" }, [why]);
   }
-  const list = h("ul", { class: "problems", "aria-label": "What went over a limit in this call" });
+  const list = h("ul", { class: "problems", "aria-label": "What went above target in this call" });
   for (const g of groupFindings(c)) {
     const first = c.findings[g.items[0]];
     const mark = h("span", { class: "sev" }, [icon(g.severity === "fail" ? "fail" : "warn", g.severity === "fail" ? "problem" : "warning")]);
@@ -1495,7 +1495,7 @@ function renderScenarioNumbers(s) {
     ];
   });
   return h("details", { class: "nscn" }, [
-    h("summary", {}, [pip(ok, ok ? "within every limit" : "over a limit"), h("b", {}, [s.scenario_id]), h("span", { class: "s" }, [`${s.agent}, ${s.calls.length} call${s.calls.length === 1 ? "" : "s"}. ${s.sentence}`]), h("span", { class: "chev" }, [])]),
+    h("summary", {}, [pip(ok, ok ? "on target" : "above target"), h("b", {}, [s.scenario_id]), h("span", { class: "s" }, [`${s.agent}, ${s.calls.length} call${s.calls.length === 1 ? "" : "s"}. ${s.sentence}`]), h("span", { class: "chev" }, [])]),
     rows.length ? h("div", { class: "metrics" }, [
       ...rows,
     ]) : h("p", { class: "quiet", style: "padding:0 0 22px 38px" }, ["No across-call numbers: this run was made by an older Callback."]),
@@ -1560,11 +1560,11 @@ window.addEventListener("resize", () => {
 
 // ---------- start ----------
 
-document.title = `${DATA.run.exit_code === 0 ? "Passed" : DATA.run.exit_code === 1 ? "Failed" : "Error"}: Callback run ${DATA.run.run_id}`;
+document.title = `${DATA.run.exit_code === 0 ? "On target" : DATA.run.exit_code === 1 ? "Above target" : "Could not run"}: Callback run ${DATA.run.run_id}`;
 app.append(
   ...[renderMasthead(), renderVerdict(), renderChecks(), renderFindings(), renderWall()].filter((n) => n !== null),
   h("section", { class: "section", id: "open" }, [
-    h("div", { class: "sechead" }, [h("h2", {}, [CALLS.length > 1 ? "Listen to a call" : "The call"]), h("p", { class: "sub" }, ["The two sides of the recording on one timeline. Anything that went over a limit is pinned; select one to hear it."])]),
+    h("div", { class: "sechead" }, [h("h2", {}, [CALLS.length > 1 ? "Listen to a call" : "The call"]), h("p", { class: "sub" }, ["The two sides of the recording on one timeline. Anything that went above target is pinned; select one to hear it."])]),
     callEl,
   ]),
   renderNumbers(),

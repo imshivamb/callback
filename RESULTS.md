@@ -127,24 +127,24 @@ acknowledgement, and a check-in within 8 s of silence. I set the reply limit fro
 that a pause of 1.5 to 2 s after the caller stops talking feels broken, and the rest to go
 with it.
 
-I looked for outside reference points:
+For outside context only, I looked for reference points:
 
 - **Human conversation.** The median gap between speakers is about 200 ms across ten
   languages, and a two-second reply is heard as an awkward silence, according to
   [Picovoice's guide to voice latency](https://picovoice.ai/guide/voice-agents/voice-ux-latency-turn-taking/)
   (it cites Stivers et al., 2009).
-- **Other platforms' defaults.** [Cekura's benchmark](https://www.cekura.ai/blogs/p99-latency-voice-ai-agents)
-  of six voice platforms run with their defaults reports median replies from 1.73 s
-  (ElevenLabs) to 3.16 s (Synthflow), with LiveKit at 2.46 s and 3.87 s at the 95th
-  percentile. It measures from the end of the caller's speech to the start of the agent's,
-  as Callback does. It fixes the model, prompt and voice across platforms, which my run did
-  not, and I could not confirm its publication date, so I read it as a rough comparison
-  from one source, not a standard.
+- **A third party's measurements of LiveKit's default setup.**
+  [Cekura](https://www.cekura.ai/blogs/p99-latency-voice-ai-agents) reports a median reply
+  of 2.46 s and 3.87 s at the 95th percentile, measured from the end of the caller's
+  speech to the start of the agent's, as Callback does. My hosted run, 2.47 s and 3.69 s,
+  sits in the same range. This is one vendor's benchmark, and Cekura is a company in the
+  same space as Callback, so it is not a neutral source. It fixes the model, prompt and voice,
+  which my run did not, and I could not confirm its publication date. I use it only to say
+  my numbers are in a plausible range, not to compare platforms, and I make no comparison
+  here.
 
-So my 1.5 s limit is stricter than what any default setup reached in that benchmark (the
-fastest median there is 1.73 s) and looser than the human rhythm. The starter's hosted
-median in my run, 2.47 s, and its 95th percentile, 3.69 s, are in the same range as that
-benchmark's figures for LiveKit.
+None of this makes 1.5 s a standard. It is a bar I picked, and going above it means "slower
+than my target", not "broken".
 
 ## Results
 

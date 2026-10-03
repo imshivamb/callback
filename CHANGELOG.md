@@ -18,10 +18,10 @@
 ### Changed
 
 - **A redesigned report.** The report now leads with what ran and what was measured ("24
-  calls ran. 5 of 6 checks went over a limit at least once"), not a verdict on the agent.
+  calls ran. 5 of 6 checks went above target at least once"), not a verdict on the agent.
   *Check by check* shows, for each limit, how many calls stayed within it and what was
   measured, so what held sits beside what did not. *What stood out* lists the behaviours
-  that went over a limit, each with its number and limit, a small picture of the moment it
+  that went above target, each with its number and limit, a small picture of the moment it
   happened and a **Hear it** button. *Every call* shows all calls as aligned tapes,
   grouped by scenario, so a pattern shows at a glance. The summary and titles use
   observational wording ("Replies slower than the limit"). The call player and the numbers

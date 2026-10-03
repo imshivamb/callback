@@ -110,12 +110,12 @@ under `calls/` with:
 a minute) are inside it, so it opens offline and can be attached to a pull request.
 From the top:
 
-1. **What ran, in plain words**, e.g. "24 calls ran. 5 of 6 checks went over a limit at
+1. **What ran, in plain words**, e.g. "24 calls ran. 5 of 6 checks went above target at
    least once", with the exit code and a note that the limits are the ones set in each
    scenario. It describes what was measured; it does not grade the agent.
 2. **Check by check**: for each limit, how many of the calls it applied to stayed within
    it, next to what was measured. What held sits beside what did not.
-3. **What stood out**: up to five behaviours that went over a limit, most serious first,
+3. **What stood out**: up to five behaviours that went above target, most serious first,
    one kind per row however many scenarios have it (the worst case is shown). Each row has
    the number and its limit, a small picture of the moment it happened (caller above,
    agent below, the stretch that went over the limit hatched in red), and **Hear it**,
