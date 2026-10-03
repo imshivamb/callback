@@ -25,12 +25,15 @@
   --agent: #00a58e;
   --caller-block: rgba(59, 59, 230, 0.09);
   --agent-block: rgba(0, 165, 142, 0.11);
-  --fail: #e5432d;
-  --fail-ink: #b92a16;
-  --fail-soft: rgba(229, 67, 45, 0.09);
-  --warn: #e29a00;
-  --warn-ink: #8a5a00;
-  --chaos: #d98200;
+  --over: #e39a00;
+  --over-ink: #8f5600;
+  --over-soft: rgba(227, 154, 0, 0.14);
+  --error: #d23b3b;
+  --error-ink: #a82727;
+  --error-soft: rgba(210, 59, 59, 0.1);
+  --warn: #7a8099;
+  --warn-ink: #444a66;
+  --chaos: #c93a96;
   --pass: #12a150;
   --pass-ink: #0b7a3b;
   --focus: #3b3be6;
@@ -38,8 +41,8 @@
   /* names the timeline canvas reads */
   --page: var(--paper); --surface: var(--card); --surface-2: var(--sunk);
   --hairline: var(--line); --axis: #c4c9dc; --muted: var(--quiet);
-  --critical: var(--fail); --critical-ink: var(--fail-ink);
-  --pin-span: rgba(229, 67, 45, 0.12); --playhead: var(--ink);
+  --critical: var(--over); --critical-ink: var(--over-ink);
+  --pin-span: rgba(227, 154, 0, 0.16); --playhead: var(--ink);
   --border: rgba(18, 20, 43, 0.1);
 }
 @media (prefers-color-scheme: dark) {
@@ -48,9 +51,10 @@
     --paper: #0a0c16; --card: #121528; --sunk: #1a1e36; --ink: #f1f2fa; --ink-2: #bcc1d8; --quiet: #8c93b2;
     --line: #232744; --line-2: #343a5e; --caller: #8a8cff; --agent: #2bd9be;
     --caller-block: rgba(138, 140, 255, 0.14); --agent-block: rgba(43, 217, 190, 0.14);
-    --fail: #ff6b57; --fail-ink: #ff9585; --fail-soft: rgba(255, 107, 87, 0.12);
-    --warn: #f6b84a; --warn-ink: #f6b84a; --chaos: #f2ae3d; --pass: #34d27b; --pass-ink: #34d27b;
-    --focus: #8a8cff; --axis: #3a4066; --pin-span: rgba(255, 107, 87, 0.2); --border: rgba(255, 255, 255, 0.1);
+    --over: #f5b342; --over-ink: #f5b342; --over-soft: rgba(245, 179, 66, 0.16);
+    --error: #ff6b6b; --error-ink: #ff9d9d; --error-soft: rgba(255, 107, 107, 0.14);
+    --warn: #8c93b2; --warn-ink: #bcc1d8; --chaos: #ff7ac6; --pass: #34d27b; --pass-ink: #34d27b;
+    --focus: #8a8cff; --axis: #3a4066; --pin-span: rgba(245, 179, 66, 0.2); --border: rgba(255, 255, 255, 0.1);
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.35);
   }
 }
@@ -59,9 +63,10 @@
   --paper: #0a0c16; --card: #121528; --sunk: #1a1e36; --ink: #f1f2fa; --ink-2: #bcc1d8; --quiet: #8c93b2;
   --line: #232744; --line-2: #343a5e; --caller: #8a8cff; --agent: #2bd9be;
   --caller-block: rgba(138, 140, 255, 0.14); --agent-block: rgba(43, 217, 190, 0.14);
-  --fail: #ff6b57; --fail-ink: #ff9585; --fail-soft: rgba(255, 107, 87, 0.12);
-  --warn: #f6b84a; --warn-ink: #f6b84a; --chaos: #f2ae3d; --pass: #34d27b; --pass-ink: #34d27b;
-  --focus: #8a8cff; --axis: #3a4066; --pin-span: rgba(255, 107, 87, 0.2); --border: rgba(255, 255, 255, 0.1);
+  --over: #f5b342; --over-ink: #f5b342; --over-soft: rgba(245, 179, 66, 0.16);
+  --error: #ff6b6b; --error-ink: #ff9d9d; --error-soft: rgba(255, 107, 107, 0.14);
+  --warn: #8c93b2; --warn-ink: #bcc1d8; --chaos: #ff7ac6; --pass: #34d27b; --pass-ink: #34d27b;
+  --focus: #8a8cff; --axis: #3a4066; --pin-span: rgba(245, 179, 66, 0.2); --border: rgba(255, 255, 255, 0.1);
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.35);
 }
 * { box-sizing: border-box; }
@@ -88,11 +93,13 @@ button { font: inherit; color: inherit; -webkit-appearance: none; appearance: no
 /* verdict */
 .verdict { padding: 44px 0 4px; }
 .stamp { display: inline-flex; align-items: center; gap: 8px; font-weight: 650; font-size: 14px; padding: 5px 12px 5px 8px; border-radius: 999px; margin: 0; }
-.stamp.fail, .stamp.error { background: var(--fail-soft); color: var(--fail-ink); }
+.stamp.fail { background: var(--over-soft); color: var(--over-ink); }
+.stamp.error { background: var(--error-soft); color: var(--error-ink); }
 .stamp.pass { background: rgba(18, 161, 80, 0.12); color: var(--pass-ink); }
 .pip { display: inline-block; flex: none; width: 10px; height: 10px; border-radius: 50%; }
 .pip.pass { background: var(--pass); }
-.pip.fail, .pip.error { background: var(--fail); }
+.pip.fail { background: var(--over); }
+.pip.error { background: var(--error); }
 .stamp .pip { width: 9px; height: 9px; }
 
 /* check by check */
@@ -104,7 +111,7 @@ button { font: inherit; color: inherit; -webkit-appearance: none; appearance: no
 .cbar { display: flex; gap: 3px; height: 12px; }
 .cbar span { display: block; min-width: 0; border-radius: 3px; }
 .cbar .in { background: var(--pass); }
-.cbar .out { background: var(--fail); }
+.cbar .out { background: var(--over); }
 .ccount { color: var(--quiet); font-size: 14px; }
 .ccount b { color: var(--ink); font: 650 17px var(--display); letter-spacing: -0.01em; }
 .ccount.held b { color: var(--pass-ink); }
@@ -122,7 +129,7 @@ h2 { font: 650 clamp(24px, 3vw, 32px)/1.1 var(--display); letter-spacing: -0.03e
 /* what went wrong: a ledger, each problem next to the moment it happened */
 .ledger { border-top: 1px solid var(--line-2); }
 .finding { display: grid; grid-template-columns: 176px minmax(0, 1fr) minmax(300px, 400px); gap: 8px 32px; padding: 26px 0; border-bottom: 1px solid var(--line); align-items: center; }
-.fvalue { font: 650 clamp(40px, 4.6vw, 58px)/0.95 var(--display); letter-spacing: -0.04em; color: var(--fail-ink); }
+.fvalue { font: 650 clamp(40px, 4.6vw, 58px)/0.95 var(--display); letter-spacing: -0.04em; color: var(--ink); }
 .fvalue small { font-size: 0.42em; font-weight: 600; letter-spacing: -0.01em; margin-left: 3px; }
 .flimit { display: block; margin-top: 8px; font: 500 13px/1.3 var(--sans); letter-spacing: 0; color: var(--quiet); }
 .fbody h3 { font: 650 22px/1.2 var(--display); letter-spacing: -0.02em; margin: 0 0 6px; }
@@ -155,7 +162,7 @@ h2 { font: 650 clamp(24px, 3vw, 32px)/1.1 var(--display); letter-spacing: -0.03e
 .ic { display: inline-flex; flex: none; }
 .ic svg { display: block; }
 .ic.pass { color: var(--pass); }
-.ic.fail { color: var(--fail); }
+.ic.fail { color: var(--over); }
 .ic.warn { color: var(--warn); }
 
 /* the call */
@@ -194,9 +201,9 @@ canvas { display: block; width: 100%; }
 .chip[aria-current="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); font-weight: 600; }
 .sev { display: inline-flex; align-self: center; }
 .note { font-size: 13px; color: var(--quiet); margin-top: 10px; }
-.error-box { border: 1px solid var(--fail); color: var(--fail-ink); border-radius: 8px; padding: 10px 12px; margin-top: 14px; white-space: pre-wrap; }
+.error-box { border: 1px solid var(--error); color: var(--error-ink); border-radius: 8px; padding: 10px 12px; margin-top: 14px; white-space: pre-wrap; }
 .okline { margin-top: 18px; color: var(--quiet); }
-.failline { margin-top: 18px; color: var(--fail-ink); font-weight: 600; }
+.failline { margin-top: 18px; color: var(--over-ink); font-weight: 600; }
 
 /* the numbers */
 .nscn { border-top: 1px solid var(--line); }
@@ -214,13 +221,13 @@ canvas { display: block; width: 100%; }
 .gauge .track { position: absolute; left: 0; right: 0; top: 10px; height: 3px; border-radius: 2px; background: var(--line); }
 .gauge .whisker { position: absolute; top: 5px; height: 13px; border-left: 2px solid var(--quiet); border-right: 2px solid var(--quiet); }
 .gauge .whisker::after { content: ""; position: absolute; left: 0; right: 0; top: 5px; border-top: 2px solid var(--quiet); }
-.gauge .limit { position: absolute; top: 1px; bottom: 1px; width: 0; border-left: 2px dashed var(--fail); }
+.gauge .limit { position: absolute; top: 1px; bottom: 1px; width: 0; border-left: 2px dashed var(--over); }
 .gauge .val { position: absolute; top: 4px; width: 15px; height: 15px; margin-left: -7px; border-radius: 50%; background: var(--ink); border: 3px solid var(--card); box-shadow: 0 0 0 1px var(--ink); }
-.gauge .val.bad { background: var(--fail); box-shadow: 0 0 0 1px var(--fail); }
+.gauge .val.bad { background: var(--over); box-shadow: 0 0 0 1px var(--over); }
 .gauge .val.good { background: var(--pass); box-shadow: 0 0 0 1px var(--pass); }
 .mval b { font: 650 17px var(--display); letter-spacing: -0.01em; }
 .mval small { display: block; color: var(--quiet); font-size: 12.5px; line-height: 1.3; }
-.diff.bad { color: var(--fail-ink); font-weight: 600; }
+.diff.bad { color: var(--over-ink); font-weight: 600; }
 .diff.good { color: var(--pass-ink); font-weight: 600; }
 
 .howto { margin-top: 40px; }
@@ -449,7 +456,7 @@ function pip(ok, label) {
 }
 /** @param {Call} c */
 function callMark(c) {
-  if (c.error) return pip(false, "could not run");
+  if (c.error) return h("span", { class: "pip error", role: "img", "aria-label": "could not run" });
   return pip(c.passed, c.passed ? "within every limit" : "over a limit");
 }
 
@@ -552,7 +559,7 @@ function renderVerdict() {
     h("h1", {}, [headline]),
     h("p", { class: "lede" }, [ledeText(errored, failed)]),
     h("p", { class: "facts num" }, [
-      `${calls_} across ${scen.length} scenario${scen.length === 1 ? "" : "s"}, ${mins}. The limits are the ones set in each scenario. Exit code ${run.exit_code}.`,
+      `${calls_} across ${scen.length} scenario${scen.length === 1 ? "" : "s"}, ${mins}. The limits are the ones set in each scenario: Callback's defaults unless a scenario changes them. They are starting points, not an industry standard. Exit code ${run.exit_code}.`,
       run.baseline_name ? ` Compared with baseline ${run.baseline_name}.` : "",
     ]),
     ciLimitBanner(),
@@ -774,13 +781,13 @@ function drawMoment(cv, c, f) {
   }
   // the problem itself
   const px = Math.max(x0, X(f.t_s)), pe = Math.min(x1, X(end));
-  if (f.end_s !== null && pe > px) hatch(g, px, yC, pe - px, yA + laneH - yC, css("--fail"));
-  g.strokeStyle = css("--fail"); g.lineWidth = 2;
+  if (f.end_s !== null && pe > px) hatch(g, px, yC, pe - px, yA + laneH - yC, css("--over"));
+  g.strokeStyle = css("--over"); g.lineWidth = 2;
   g.beginPath(); g.moveTo(px, yC - 4); g.lineTo(px, yA + laneH + 4); g.stroke();
   if (f.end_s !== null && pe > px) { g.beginPath(); g.moveTo(pe, yC - 4); g.lineTo(pe, yA + laneH + 4); g.stroke(); }
   g.lineWidth = 1;
   const word = (MOMENT_WORDS[f.metric] || ((d) => `${d.toFixed(2)} s`))(end - f.t_s);
-  g.font = `650 13px ${FONT}`; g.fillStyle = css("--fail-ink"); g.textBaseline = "alphabetic";
+  g.font = `650 13px ${FONT}`; g.fillStyle = css("--over-ink"); g.textBaseline = "alphabetic";
   const mid = (px + pe) / 2, tw = g.measureText(word).width;
   g.textAlign = "left";
   g.fillText(word, Math.min(x1 - tw, Math.max(x0, f.end_s !== null ? mid - tw / 2 : px + 6)), H - 8);
@@ -835,7 +842,7 @@ function renderWall() {
   const legend = h("p", { class: "legend" }, [
     h("span", {}, [h("i", { style: "background:var(--caller)" }), "Caller speaking"]),
     h("span", {}, [h("i", { style: "background:var(--agent)" }), "Agent speaking"]),
-    h("span", {}, [h("i", { style: "background:var(--fail);border-radius:0;width:3px;height:12px" }), "A limit was passed here"]),
+    h("span", {}, [h("i", { style: "background:var(--over);border-radius:0;width:3px;height:12px" }), "A limit was passed here"]),
     h("span", {}, [h("i", { style: "background:var(--chaos);transform:rotate(45deg);border-radius:1px;width:8px;height:8px" }), "A disturbance Callback caused"]),
   ]);
   return section("calls", "Every call", "One row per call, all on the same clock, so a pattern shows at a glance. Select a call to open and play it.", [
@@ -866,7 +873,7 @@ function drawTape(cv, c) {
   for (const m of c.chaos || []) diamond(g, X(m.t), 4, 3);
   for (const f of c.findings) {
     if (f.severity !== "fail") continue;
-    g.fillStyle = css("--fail");
+    g.fillStyle = css("--over");
     g.fillRect(X(f.t_s) - 0.75, 4, 1.5, 26);
   }
 }
@@ -1088,7 +1095,7 @@ function draw() {
   const sel = state.finding >= 0 ? c.findings[state.finding] : null;
   if (sel && sel.end_s !== null && sel.end_s > sel.t_s) {
     const a = Math.max(x0, X(sel.t_s)), b = Math.min(x1, X(sel.end_s));
-    if (b > a) hatch(g, a, yCaller, b - a, yAgent + L.lane - yCaller, css("--fail"));
+    if (b > a) hatch(g, a, yCaller, b - a, yAgent + L.lane - yCaller, css("--over"));
   }
 
   // speech blocks and waveforms
