@@ -504,6 +504,12 @@ unsplit originals are in `raw/`.
   add a little latency.
 - **One stack.** One agent, one set of models, one region, scripted English callers only.
   This says nothing about other LiveKit agents or about Pipecat.
+- **One conversation.** Every call follows the same script, planning a vegetarian dinner for
+  four, in the same synthetic voice; the calls differ in what Callback does during it
+  (an interruption, an "mm-hmm", street noise, silence, a change of mind, a request to
+  repeat). The agent's words are generated fresh each call, so its replies differ, but the
+  caller's lines do not. The results are about turn-taking, not about what the agent knows
+  or how it handles other topics.
 - **Small and a first run.** 48 counted calls, and 3 per scenario hosted. Ranges are wide,
   and a different afternoon would give different numbers.
 - **Two setups, not a controlled experiment.** The runs started about 53 minutes apart and differ
