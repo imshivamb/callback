@@ -1,0 +1,194 @@
+diff --git a/src/callback_voice/core/config/target_config.py b/src/callback_voice/core/config/target_config.py
+index dfd7e7b..a7100a2 100644
+--- a/src/callback_voice/core/config/target_config.py
++++ b/src/callback_voice/core/config/target_config.py
+@@ -24,6 +24,10 @@ class LiveKitTarget(StrictModel):
+     url: str = Field(pattern=r"^wss?://")
+     room_prefix: str = "callback"
+     agent_identity: str | None = None
++    agent_name: str | None = Field(
++        default=None,
++        description="Agent to dispatch into each room; needed when the worker uses explicit dispatch",
++    )
+     api_key_env: str = "LIVEKIT_API_KEY"
+     api_secret_env: str = "LIVEKIT_API_SECRET"
+ 
+diff --git a/src/callback_voice/scoring/evaluate_call.py b/src/callback_voice/scoring/evaluate_call.py
+index 809e993..abaf563 100644
+--- a/src/callback_voice/scoring/evaluate_call.py
++++ b/src/callback_voice/scoring/evaluate_call.py
+@@ -15,6 +15,7 @@ from callback_voice.scoring.facts.check_facts import check_facts
+ from callback_voice.scoring.judge.judge_call import judge_call
+ from callback_voice.scoring.load_call_audio import load_call_audio
+ from callback_voice.scoring.metrics.entity_fidelity import entity_fidelity
++from callback_voice.scoring.metrics.folded_turns import fold_unanswered
+ from callback_voice.scoring.metrics.policy_rules import policy_rules
+ from callback_voice.scoring.metrics.task_success import task_success
+ from callback_voice.scoring.score_call import score_call
+@@ -50,7 +51,8 @@ async def evaluate_call(
+     when configured.
+     """
+     timing = score_call(call_dir, expect.thresholds, vad)
+-    needs_words = bool(expect.entities_spoken or expect.must_not or judge is not None)
++    unanswered = any(f.metric == "unanswered_turns" for f in timing.findings)
++    needs_words = bool(expect.entities_spoken or expect.must_not or judge is not None or unanswered)
+     agent_audio = load_call_audio(call_dir).agent
+     transcript: list[Turn] = []
+     if stt is not None and needs_words:
+@@ -83,7 +85,16 @@ async def evaluate_call(
+     if judge is not None and judging:
+         results.append(await judge_call(judge, transcript, judged_rules))
+ 
+-    metrics = [*timing.metrics, *(m for r in results for m in r.metrics)]
++    timing_metrics, timing_findings = timing.metrics, timing.findings
++    if unanswered and transcript:
++        timing_metrics, timing_findings = fold_unanswered(
++            timing_metrics,
++            timing_findings,
++            timing.timeline.utterances,
++            transcript,
++            expect.thresholds.unanswered_turns,
++        )
++    metrics = [*timing_metrics, *(m for r in results for m in r.metrics)]
+     if unchecked:
+         # Never let a rule that could not be checked read like one that passed.
+         why = "no judge is configured (providers.judge)" if judge is None else "no transcript"
+@@ -97,7 +108,7 @@ async def evaluate_call(
+             )
+         )
+     findings = sorted(
+-        [*timing.findings, *(f for r in results for f in r.findings)], key=lambda f: f.t_s
++        [*timing_findings, *(f for r in results for f in r.findings)], key=lambda f: f.t_s
+     )
+     speech = speech_turns(timing.timeline, transcript)
+     return CallEvaluation(metrics, findings, transcript, review, speech)
+diff --git a/src/callback_voice/scoring/metrics/folded_turns.py b/src/callback_voice/scoring/metrics/folded_turns.py
+new file mode 100644
+index 0000000..d76d842
+--- /dev/null
++++ b/src/callback_voice/scoring/metrics/folded_turns.py
+@@ -0,0 +1,108 @@
++import re
++
++from callback_voice.core.models.finding import Finding
++from callback_voice.core.models.metric import Metric
++from callback_voice.core.models.turn import Turn
++from callback_voice.scoring.timeline.caller_utterance import CallerUtterance
++
++_STOP_TEXT = (
++    "a an and are as at be but by can could do does for from had has have he her his i if in "
++    "is it its just let make me my no not of oh ok okay on one or our please so sorry sure "
++    "that the their then there these they this to us was we were will with would yes you your"
++)
++_NUMBER_TEXT = (
++    "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen "
++    "fifteen sixteen seventeen eighteen nineteen twenty"
++)
++_STOPWORDS = frozenset(_STOP_TEXT.split())
++_NUMBERS = {str(i): w for i, w in enumerate(_NUMBER_TEXT.split())}
++
++
++def fold_unanswered(
++    metrics: list[Metric],
++    findings: list[Finding],
++    utterances: list[CallerUtterance],
++    transcript: list[Turn],
++    max_unanswered: int,
++) -> tuple[list[Metric], list[Finding]]:
++    """Count an interruption the agent worked into its next answer as handled, but flag it.
++
++    An unanswered turn after a barge-in is *folded* when the agent's next reply, once
++    the caller has gone on, repeats a content word that the interruption introduced
++    (a word no earlier caller line used; digits and number words are the same word).
++    A folded turn no longer counts in ``unanswered_turns``; it is reported in
++    ``folded_turns`` and as a warning. Every other unanswered turn is left as it was.
++    """
++    folded: list[Finding] = []
++    kept: list[Finding] = []
++    for finding in findings:
++        utt = _interruption(finding, utterances)
++        if utt is not None and _is_folded(finding, utt, utterances, transcript):
++            folded.append(
++                Finding(
++                    metric="folded_turns",
++                    t_s=finding.t_s,
++                    end_s=finding.end_s,
++                    message=(
++                        f"The agent did not answer “{_short(utt.text)}” on its own but worked "
++                        "it into its next answer."
++                    ),
++                    severity="warn",
++                    chaos_id=utt.chaos_id,
++                )
++            )
++        else:
++            kept.append(finding)
++    if not folded:
++        return metrics, findings
++    updated: list[Metric] = []
++    for metric in metrics:
++        if metric.name == "unanswered_turns" and metric.value is not None:
++            value = metric.value - len(folded)
++            metric = metric.model_copy(update={"value": value, "passed": value <= max_unanswered})
++        updated.append(metric)
++    updated.append(
++        Metric(
++            name="folded_turns",
++            value=len(folded),
++            unit="count",
++            detail="interruptions answered only inside the agent's next reply; counted as handled",
++        )
++    )
++    return updated, sorted([*kept, *folded], key=lambda f: f.t_s)
++
++
++def _interruption(finding: Finding, utterances: list[CallerUtterance]) -> CallerUtterance | None:
++    if finding.metric != "unanswered_turns":
++        return None
++    return next(
++        (u for u in utterances if u.tag == "barge_in" and abs(u.speech.end_s - finding.t_s) < 1e-6),
++        None,
++    )
++
++
++def _is_folded(
++    finding: Finding,
++    utt: CallerUtterance,
++    utterances: list[CallerUtterance],
++    transcript: list[Turn],
++) -> bool:
++    earlier = {
++        w for u in utterances if u.speech.start_s < utt.speech.start_s for w in _words(u.text)
++    }
++    introduced = _words(utt.text) - earlier
++    if not introduced or finding.end_s is None:
++        return False
++    reply = next(
++        (t for t in transcript if t.speaker == "agent" and t.start_s >= finding.end_s), None
++    )
++    return reply is not None and bool(introduced & _words(reply.text))
++
++
++def _words(text: str) -> set[str]:
++    tokens = re.findall(r"[a-z0-9']+", text.lower())
++    return {_NUMBERS.get(t, t) for t in tokens} - _STOPWORDS
++
++
++def _short(text: str, limit: int = 48) -> str:
++    return text if len(text) <= limit else text[: limit - 1].rstrip() + "…"
+diff --git a/src/callback_voice/transports/livekit_transport.py b/src/callback_voice/transports/livekit_transport.py
+index 3d1eb70..0e63ad3 100644
+--- a/src/callback_voice/transports/livekit_transport.py
++++ b/src/callback_voice/transports/livekit_transport.py
+@@ -82,6 +82,11 @@ class LiveKitTransport(Transport):
+                 metadata=room_metadata(call_id),
+                 empty_timeout=30,
+                 departure_timeout=5,
++                agents=(
++                    [api.RoomAgentDispatch(agent_name=self._target.agent_name)]
++                    if self._target.agent_name
++                    else []
++                ),
+             )
+         )
+         await self._room.connect(

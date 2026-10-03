@@ -74,7 +74,7 @@ I saw any result; they are not LiveKit's claims about the starter.
 | Models, all through LiveKit Inference | speech-to-text `assemblyai/universal-3-6-pro`; LLM `google/gemma-4-31b-it`; text-to-speech `fishaudio/s2.1-pro` with expressive mode on |
 | Also on, as shipped | LiveKit's turn detector, adaptive interruption handling, ai-coustics noise cancellation on the caller's audio |
 | Region | LiveKit Cloud project in India South (`ap-south`) |
-| Callback | 0.1.1 plus uncommitted source changes (see [Callback bugs](#callback-bugs)); the same source for both runs |
+| Callback | 0.1.1 plus uncommitted source changes (see [Callback bugs](#callback-bugs)); the same source for both runs. The exact source is [`callback-as-run.patch`](results/livekit-starter-2026-10-03/callback-as-run.patch), applied to commit `54111a6`; its hash matches the one recorded when the runs started |
 | Caller | Scripted, English, voiced by Callback's local speech model; scoring uses Callback's local speech recognition and voice-activity detection |
 
 I made one change that is not the starter's own, and I list it so nobody has to guess: the
