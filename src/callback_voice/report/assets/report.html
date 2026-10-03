@@ -148,11 +148,12 @@ h2 { font: 650 clamp(24px, 3vw, 32px)/1.1 var(--display); letter-spacing: -0.03e
 .scn-name b { font: 650 17px/1.2 var(--display); letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; overflow-wrap: anywhere; }
 .scn-name span { color: var(--quiet); font-size: 13px; line-height: 1.4; }
 .tapes { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.tape { display: grid; grid-template-columns: 26px minmax(0, 1fr) 44px; align-items: center; gap: 10px; width: 100%; text-align: left; background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 4px 6px; cursor: pointer; }
+.tape { cursor: pointer; display: grid; grid-template-columns: 26px minmax(0, 1fr) 70px; align-items: center; gap: 10px; width: 100%; text-align: left; background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 4px 6px; cursor: pointer; }
 .tape:hover { background: var(--sunk); }
 .tape[aria-current="true"] { background: var(--card); border-color: var(--ink); box-shadow: var(--shadow); }
 .tape .n { color: var(--quiet); font-size: 13px; display: flex; align-items: center; gap: 4px; }
-.tape .t { color: var(--quiet); font-size: 12.5px; text-align: right; }
+.tape .t { color: var(--quiet); font-size: 12.5px; display: flex; align-items: center; justify-content: flex-end; gap: 5px; }
+.tape:hover .t { color: var(--ink); }
 .tape .strip { min-width: 0; }
 .tape canvas { display: block; height: 34px; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 14px 0 0; color: var(--quiet); font-size: 13px; }
@@ -167,6 +168,8 @@ h2 { font: 650 clamp(24px, 3vw, 32px)/1.1 var(--display); letter-spacing: -0.03e
 
 /* the call */
 .player { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 28px 30px 26px; }
+.picker { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 22px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.picker select { font: inherit; padding: 6px 10px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--card); color: var(--ink); min-width: 0; max-width: 100%; cursor: pointer; }
 .callhead { display: flex; gap: 8px 14px; align-items: center; flex-wrap: wrap; }
 .callhead h3 { font: 650 26px/1.1 var(--display); letter-spacing: -0.025em; margin: 0; }
 .callfacts { color: var(--quiet); font-size: 13.5px; display: flex; gap: 4px 14px; flex-wrap: wrap; margin-top: 6px; }
@@ -825,10 +828,10 @@ function renderWall() {
       const dur = c.audio_s || c.duration_s || 0;
       const cv = /** @type {HTMLCanvasElement} */ (h("canvas", { role: "img", "aria-hidden": "true", style: `width:${Math.max(8, (dur / longest) * 100)}%` }));
       tapeCanvases.push({ cv, c });
-      return h("button", { class: "tape", "data-call": c.call_id, onclick: () => selectCall(c, true), "aria-label": `${s.scenario_id} trial ${c.trial}, ${c.error ? "could not run" : c.passed ? "on target" : "above target"}` }, [
+      return h("button", { class: "tape", title: "Open and play this call", "data-call": c.call_id, onclick: () => selectCall(c, true), "aria-label": `${s.scenario_id} trial ${c.trial}, ${c.error ? "could not run" : c.passed ? "on target" : "above target"}` }, [
         h("span", { class: "n num" }, [callMark(c), String(c.trial)]),
         h("span", { class: "strip" }, [cv]),
-        h("span", { class: "t num" }, [dur ? `${Math.round(dur)} s` : ""]),
+        h("span", { class: "t num" }, [glyph("play"), dur ? `${Math.round(dur)} s` : ""]),
       ]);
     });
     return h("div", { class: "scn" }, [
@@ -884,6 +887,21 @@ const canvas = /** @type {HTMLCanvasElement} */ (h("canvas", { id: "timeline-can
 const overview = /** @type {HTMLCanvasElement} */ (h("canvas", { id: "overview", "aria-label": "Whole call: click or drag to move the view" }));
 const tip = h("div", { class: "tip", role: "tooltip" });
 const callEl = h("div", { class: "player", id: "call", "aria-live": "polite" });
+
+/** Choose any call without going back to the list. @param {Call} c */
+function renderPicker(c) {
+  if (CALLS.length < 2) return null;
+  const i = CALLS.indexOf(c);
+  const pick = h("select", { id: "callpick", "aria-label": "Choose a call", onchange: (e) => selectCall(CALLS[Number(/** @type {HTMLSelectElement} */ (e.target).value)]) },
+    DATA.scenarios.map((s) => h("optgroup", { label: s.scenario_id }, s.calls.map((cc) => h("option", { value: String(CALLS.indexOf(cc)), selected: cc === c },
+      [`Trial ${cc.trial}${cc.error ? " (could not run)" : cc.passed ? " (on target)" : " (above target)"}`])))));
+  return h("div", { class: "picker" }, [
+    h("button", { class: "tool", type: "button", onclick: () => nextCall(-1) }, ["‹ Previous call"]),
+    pick,
+    h("button", { class: "tool", type: "button", onclick: () => nextCall(1) }, ["Next call ›"]),
+    h("span", { class: "quiet num" }, [`${i + 1} of ${CALLS.length} calls`]),
+  ]);
+}
 
 /** A window of FOCUS_SPAN_S around t, a third of the way in. @param {number} t @param {number} total */
 function around(t, total) {
@@ -973,6 +991,7 @@ function renderCall() {
     : h("span", { class: "quiet" }, ["Audio not embedded in this report"]);
   const playing = !audio.paused;
   callEl.replaceChildren(...[
+    renderPicker(c),
     h("div", { class: "callhead" }, [callMark(c), h("h3", {}, [`${c.scenario_id}, trial ${c.trial}`])]),
     h("div", { class: "callfacts num" }, [...facts.map((f) => h("span", {}, [/** @type {string} */ (f)])), driftFact(c)]),
     c.error ? h("div", { class: "error-box" }, [c.error]) : null,

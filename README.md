@@ -155,7 +155,8 @@ I ran Callback against the agent LiveKit's own starter template builds, unmodifi
 48 calls (30 with the agent on my laptop, 18 hosted on LiveKit Cloud). It kept talking
 1.0–1.2 s after being interrupted (limit 0.6 s) in all 8 interrupted calls, replied in
 2.5–3.7 s at the median (limit 1.5 s), and ignored "mm-hmm" 21 times out of 24. The write-up
-is in [RESULTS.md](RESULTS.md); the full reports are the
+is in [RESULTS.md](RESULTS.md); the recordings are in
+[moments to hear](https://imshivamb.github.io/callback/livekit-starter/listen.html); the full reports are the
 [laptop run](https://imshivamb.github.io/callback/livekit-starter/local.html) and the
 [hosted run](https://imshivamb.github.io/callback/livekit-starter/hosted.html).
 

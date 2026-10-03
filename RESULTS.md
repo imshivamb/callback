@@ -335,7 +335,29 @@ speech-to-text delay of 249 ms and end of turn of 450 ms, against 499 ms and 600
 tails view; and the 2.0 s end-of-turn tail on the hosted agent against the 2.5 s waits in
 the laptop log.
 
+## The recordings
+
+I recorded every call: 73 recordings in all, 30 with the agent on my laptop, 24 hosted
+(18 counted and 6 warm-ups), 12 from the pause test (10 counted and 2 warm-ups) and 7 early
+checks. 58 of them are counted in the numbers above. They come to about 310 MB, too much to
+commit, so the full set stays on my machine. What is public:
+
+- **[Moments to hear](https://imshivamb.github.io/callback/livekit-starter/listen.html):**
+  nine moments cut from the recordings, in tabs, each playable with its waveform. Seven went
+  above target; two held up (an “okay” ignored, and street noise).
+- **Every hosted call is playable** in the
+  [hosted report](https://imshivamb.github.io/callback/livekit-starter/hosted.html), and the
+  [pause test](https://imshivamb.github.io/callback/livekit-starter/pause-test.html) has its
+  ten calls. The
+  [laptop report](https://imshivamb.github.io/callback/livekit-starter/local.html) has all 30
+  timelines without audio.
+- **The three clips below**, as video and WAV, are in the repository.
+- **A separate run of 100 calls** against two reference agents I wrote is in
+  [results/README.md](results/README.md); it tests Callback itself, not LiveKit.
+
 ## Three moments to hear
+
+These three are also in the tabbed page above, with six more.
 
 Each clip is 11–13 s: an MP4 with a caption and a moving marker, plus the original audio
 as a WAV (caller left channel, agent right). Times are seconds into the call. I checked
