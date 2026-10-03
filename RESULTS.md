@@ -32,7 +32,8 @@ I saw any result; they are not LiveKit's claims about the starter.
    LiveKit Cloud cut about 1.2 s; the rest is the agent's own pipeline
    ([details](#reply-delay-and-how-much-of-it-was-my-setup)). One sentence
    of my script made the agent's turn detector wait the full 2.5 s in 10 of 10 test
-   calls, with or without a pause in my caller's voice
+   calls, with or without a pause in my caller's voice. That is one sentence, one voice
+   and one agent, and I did not test other wordings
    ([details](#end-of-turn-waits-one-sentence-the-agent-keeps-waiting-on)).
 3. **It mostly ignores "mm-hmm", with exceptions.** It kept talking through 21 of 24
    acknowledgements (88%). Three made it stop, 0.79–0.94 s after the caller spoke: 2
@@ -443,6 +444,10 @@ unsplit originals are in `raw/`.
 
 ## Limits
 
+- **The pause test is narrow.** One sentence, one synthetic voice, one agent, 5 calls per
+  variant, hosted only. It shows that removing my caller's pause did not remove the wait for
+  that sentence. It does not show why the detector waits, which other wordings it waits on,
+  or that it would do the same with a human voice.
 - **The pause test ran with debug logging on.** The hosted agent had `LIVEKIT_LOG_LEVEL=DEBUG`
   for the test (both variants), to log the end-of-turn probability. I set it back to `INFO`
   afterwards, so the secret still exists on the agent with that value. Debug logging could
