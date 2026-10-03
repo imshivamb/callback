@@ -15,6 +15,21 @@
   word the interruption introduced must appear in the agent's next reply. A late,
   cut-off acknowledgement over the caller's next line is not that reply.
 
+### Changed
+
+- **A redesigned report.** The report now leads with the verdict in plain words, then
+  *What went wrong*: each problem with its number and limit, a small picture of the moment
+  it happened and a **Hear it** button. *Every call* shows all calls as aligned tapes,
+  grouped by scenario, so a pattern shows at a glance. The call player and the numbers
+  (now a dot, a 95% range and a limit on one line) keep everything they had: timeline,
+  zoom, shortcuts, audio, baseline comparison. It opens on the call with the worst
+  problem, and is still one file that opens offline (it embeds a 22 KB subset of the
+  Bricolage Grotesque typeface, SIL OFL).
+- **One clause per kind of problem.** When many scenarios had the same problem with
+  different numbers, the summary sentence repeated it once per scenario ("replies too
+  slowly (3.69 s…), replies too slowly (3.62 s…)"). It now says it once, with the worst
+  case, and the report lists up to five kinds instead of three.
+
 ### Fixed
 
 - **The report's speech view no longer shows the caller's words as the agent's.** For a

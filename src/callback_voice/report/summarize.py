@@ -3,6 +3,7 @@
 Built from the numbers alone (no LLM), so the same results always read the same way.
 """
 
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -40,7 +41,7 @@ _KINDS: dict[str, _Kind] = {
     ),
     "time_to_yield_p95_s": _Kind(
         "time_to_yield",
-        "Talks over interruptions",
+        "Slow to stop when interrupted",
         "keeps talking when the caller interrupts ({v} vs {limit})",
         3,
     ),
@@ -52,7 +53,7 @@ _KINDS: dict[str, _Kind] = {
     ),
     "silence_reprompt_s": _Kind(
         "silence_reprompt",
-        "Slow to check on silence",
+        "Slow to check in on silence",
         "takes too long to check in when the caller goes quiet ({v} vs {limit})",
         5,
     ),
@@ -108,7 +109,8 @@ def summarize_run(result: RunResult) -> dict[str, Any]:
         )
         noun = "call" if calls == 1 else "calls"
         return {"sentence": f"The agent passed every check in {calls} {noun}{tail}.", "tiles": []}
-    phrases = list(dict.fromkeys(p["phrase"] for p in sorted(problems, key=_order)))
+    kinds = _by_kind(problems)
+    phrases = [k["phrase"] for k in kinds]
     failing = [s for s in result.scenarios if not s.passed or _regressed(s, result)]
     where = (
         f" (in {len(failing)} of {len(result.scenarios)} scenarios)"
@@ -116,11 +118,33 @@ def summarize_run(result: RunResult) -> dict[str, Any]:
         else ""
     )
     sentence = f"The agent {_join(phrases)}{where}."
-    tiles: list[dict[str, Any]] = []
+    tiles = [{k: v for k, v in kind.items() if k != "phrase"} for kind in kinds]
+    return {"sentence": sentence, "tiles": tiles[:5]}
+
+
+def _by_kind(problems: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """One entry per kind of problem, however many scenarios have it.
+
+    The entry is the worst case of its kind (the largest number over its limit), with the
+    count of scenarios that have it, so a run of twelve slow scenarios reads as one problem.
+    """
+    groups: dict[str, list[dict[str, Any]]] = {}
     for p in sorted(problems, key=_order):
-        if all(t["title"] != p["title"] for t in tiles):
-            tiles.append({k: v for k, v in p.items() if k != "phrase"})
-    return {"sentence": sentence, "tiles": tiles[:3]}
+        groups.setdefault(str(p["title"]), []).append(p)
+    kinds = []
+    for group in groups.values():
+        worst = max(group, key=_badness)
+        kinds.append({**worst, "scenarios": len({p["scenario_id"] for p in group})})
+    return sorted(kinds, key=_order)
+
+
+def _badness(p: dict[str, Any]) -> float:
+    """How far past its limit a problem is: larger is worse. Problems without a number tie."""
+    raw, limit = p.get("raw"), p.get("raw_limit")
+    if raw is None:
+        return 0.0
+    sign = 1.0 if p.get("comparator") == "<=" else -1.0
+    return float(sign * (raw - (limit or 0.0)))
 
 
 def summarize_scenario(scenario: ScenarioResult, result: RunResult) -> str:
@@ -162,7 +186,7 @@ def _problems(scenario: ScenarioResult, result: RunResult) -> list[dict[str, Any
                         "scenario_id": scenario.scenario_id,
                         "value": None,
                         "limit": None,
-                        "detail": reason.split(": ", 1)[-1],
+                        "detail": _plain(reason),
                         **_locate(scenario.trials, key),
                     }
                 )
@@ -201,6 +225,9 @@ def _problem(
         "phrase": kind.phrase.format(v=value, limit=limit, times=_times(a.value)),
         "weight": kind.weight,
         "scenario_id": scenario.scenario_id,
+        "raw": a.value,
+        "raw_limit": a.threshold,
+        "comparator": a.comparator,
         "value": value,
         "limit": f"{'≤' if a.comparator == '<=' else '≥'} {limit}",
         "detail": _how_often(scenario.trials, a),
@@ -298,3 +325,8 @@ def _fmt(v: float | None, unit: str) -> str:
         pct = v * 100
         return f"{pct:.1f}%" if 0 < pct < 10 and pct != int(pct) else f"{round(pct)}%"
     return f"{v:g}"
+
+
+def _plain(reason: str) -> str:
+    """A failure reason without the internal prefixes ("trial 1: silence_reprompt_s: ...")."""
+    return re.sub(r"^(?:trial \d+: )?[a-z][a-z0-9_]*: ", "", reason)

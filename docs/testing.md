@@ -110,18 +110,24 @@ under `calls/` with:
 a minute) are inside it, so it opens offline and can be attached to a pull request.
 From the top:
 
-1. **The verdict and one sentence** saying what went wrong, e.g. "The agent keeps
-   talking when the caller interrupts (1.16 s vs 0.6 s) and replies too slowly (2.24 s
-   vs a 1.5 s limit)." It is written from the numbers, the same way every time.
-2. **Up to three problem tiles**, most serious first, each with **▶ Hear it**, which
-   opens the call at that moment and plays it.
-3. **The call**: caller and agent waveforms on one time axis, an Events row (amber ◆
-   for disturbances Callback caused, red ▼ for problems), a "Wait before reply" bar per
-   answer against the dashed limit, and a whole-call strip to move around. Below it,
-   the problems in that call; repeats are grouped ("Slow reply ×6") with a chip per
-   occurrence.
-4. **Details** (folded): every number across calls with its 95% range and limit, and
-   what the terms mean. The ⓘ next to a term explains it on hover or keyboard focus.
+1. **The verdict in plain words**, e.g. "The agent failed 18 of 24 calls", then the worst
+   problem and how many others there are. It is written from the numbers, the same way
+   every time.
+2. **What went wrong**: up to five problems, most serious first, one kind per row however
+   many scenarios have it (the worst case is shown). Each row has the number and its
+   limit, a small picture of the moment it happened (caller above, agent below, the
+   problem hatched in red), and **Hear it**, which opens the call at that moment and
+   plays it.
+3. **Every call**: one row per call, grouped by scenario and drawn on the same clock, so
+   a pattern (the agent always answering late, say) shows at a glance. Red marks are
+   failed checks; amber ◆ marks disturbances Callback caused. Select a call to open it.
+4. **The call**: caller and agent waveforms on one time axis, an Events row, a "Wait
+   before reply" bar per answer against the dashed limit, and a whole-call strip to move
+   around. It opens on the call with the worst problem. Below it, the problems in that
+   call; repeats are grouped ("Slow reply ×6") with a chip per occurrence.
+5. **The numbers** (folded, one section per scenario): every number across calls as a dot
+   on a line, with its 95% range as a whisker and its limit as a dashed line. The ⓘ next
+   to a term explains it on hover or keyboard focus.
 
 | Do | See |
 |---|---|
@@ -242,8 +248,8 @@ uv run callback run scenarios/restaurant/ignored-interruption.yaml   # FAIL, exi
 
 The agent talks straight over "Sorry, it's for Saturday evening." and never answers it.
 The caller waits 2.5 s for a reply (noted in the event log as "no reply to the
-interruption; caller goes on"), then carries on. The report's first sentence starts
-"The agent doesn't answer the caller at all".
+interruption; caller goes on"), then carries on. The report's
+worst problem is "Ignores the caller".
 
 What you should see for the buggy agent, each with a one-line reason:
 "kept talking for 1.x s" (barge-in), "stopped talking 0.1 s after the caller said

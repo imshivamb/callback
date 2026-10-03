@@ -1,7 +1,9 @@
 # Licensing
 
 Callback is Apache-2.0 (see `LICENSE`). The Silero VAD model bundled for voice
-activity detection is MIT-licensed (see `NOTICE`).
+activity detection is MIT-licensed (see `NOTICE`). The report embeds a subset of the
+Bricolage Grotesque typeface for its headings, licensed under the SIL Open Font License 1.1
+(see `NOTICE` and `src/callback_voice/report/assets/display-font-OFL.txt`).
 
 The local speech models are an optional extra, `pip install "callback-voice[local]"`:
 

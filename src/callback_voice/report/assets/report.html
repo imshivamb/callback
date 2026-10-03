@@ -5,230 +5,260 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Callback report</title>
 <style>
+@font-face {
+  font-family: "Callback Display"; font-style: normal; font-weight: 560 760; font-display: swap;
+  src: url("data:font/woff2;base64,/*__CALLBACK_FONT__*/") format("woff2");
+}
 :root {
   color-scheme: light;
-  --page: #f6f5f2;
-  --surface: #fcfcfb;
-  --surface-2: #efeee9;
-  --ink: #0b0b0b;
-  --ink-2: #4a4945;
-  --muted: #6f6d67;
-  --hairline: #e3e2dc;
-  --axis: #c3c2b7;
-  --border: rgba(11, 11, 11, 0.09);
-  --caller: #2a78d6;
-  --agent: #1baf7a;
-  --caller-block: rgba(42, 120, 214, 0.10);
-  --agent-block: rgba(27, 175, 122, 0.12);
-  --good: #0ca30c;
-  --good-ink: #006300;
-  --warn: #fab219;
+  --display: "Callback Display", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --paper: #f3f4f8;
+  --card: #ffffff;
+  --sunk: #eceef5;
+  --ink: #12142b;
+  --ink-2: #444a66;
+  --quiet: #6a7090;
+  --line: #e1e4ee;
+  --line-2: #c9cee0;
+  --caller: #3b3be6;
+  --agent: #00a58e;
+  --caller-block: rgba(59, 59, 230, 0.09);
+  --agent-block: rgba(0, 165, 142, 0.11);
+  --fail: #e5432d;
+  --fail-ink: #b92a16;
+  --fail-soft: rgba(229, 67, 45, 0.09);
+  --warn: #e29a00;
   --warn-ink: #8a5a00;
-  --critical: #d03b3b;
-  --critical-ink: #b42323;
-  --chaos: #b7791f;
-  --pin-span: rgba(208, 59, 59, 0.13);
-  --playhead: #0b0b0b;
-  --focus: #2a78d6;
-  --selected-bg: #1c5cab;
-  --selected-ink: #ffffff;
-  --shadow: 0 1px 2px rgba(11, 11, 11, 0.05), 0 6px 20px rgba(11, 11, 11, 0.05);
+  --chaos: #d98200;
+  --pass: #12a150;
+  --pass-ink: #0b7a3b;
+  --focus: #3b3be6;
+  --shadow: 0 1px 2px rgba(18, 20, 43, 0.05), 0 12px 32px rgba(18, 20, 43, 0.07);
+  /* names the timeline canvas reads */
+  --page: var(--paper); --surface: var(--card); --surface-2: var(--sunk);
+  --hairline: var(--line); --axis: #c4c9dc; --muted: var(--quiet);
+  --critical: var(--fail); --critical-ink: var(--fail-ink);
+  --pin-span: rgba(229, 67, 45, 0.12); --playhead: var(--ink);
+  --border: rgba(18, 20, 43, 0.1);
 }
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) {
     color-scheme: dark;
-    --page: #0d0d0d; --surface: #1a1a19; --surface-2: #242422; --ink: #ffffff; --ink-2: #d0cfc6;
-    --muted: #9a988f; --hairline: #2c2c2a; --axis: #3d3d3a; --border: rgba(255, 255, 255, 0.09);
-    --caller: #3987e5; --agent: #199e70;
-    --caller-block: rgba(57, 135, 229, 0.16); --agent-block: rgba(25, 158, 112, 0.18);
-    --good-ink: #2fc42f; --warn-ink: #fab219;
-    --critical: #e25555; --critical-ink: #ff8080;
-    --chaos: #e0a445; --pin-span: rgba(226, 85, 85, 0.20); --playhead: #ffffff; --focus: #3987e5;
-    --selected-bg: #86b6ef; --selected-ink: #0b0b0b;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 20px rgba(0, 0, 0, 0.3);
+    --paper: #0a0c16; --card: #121528; --sunk: #1a1e36; --ink: #f1f2fa; --ink-2: #bcc1d8; --quiet: #8c93b2;
+    --line: #232744; --line-2: #343a5e; --caller: #8a8cff; --agent: #2bd9be;
+    --caller-block: rgba(138, 140, 255, 0.14); --agent-block: rgba(43, 217, 190, 0.14);
+    --fail: #ff6b57; --fail-ink: #ff9585; --fail-soft: rgba(255, 107, 87, 0.12);
+    --warn: #f6b84a; --warn-ink: #f6b84a; --chaos: #f2ae3d; --pass: #34d27b; --pass-ink: #34d27b;
+    --focus: #8a8cff; --axis: #3a4066; --pin-span: rgba(255, 107, 87, 0.2); --border: rgba(255, 255, 255, 0.1);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.35);
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --page: #0d0d0d; --surface: #1a1a19; --surface-2: #242422; --ink: #ffffff; --ink-2: #d0cfc6;
-  --muted: #9a988f; --hairline: #2c2c2a; --axis: #3d3d3a; --border: rgba(255, 255, 255, 0.09);
-  --caller: #3987e5; --agent: #199e70;
-  --caller-block: rgba(57, 135, 229, 0.16); --agent-block: rgba(25, 158, 112, 0.18);
-  --good-ink: #2fc42f; --warn-ink: #fab219;
-  --critical: #e25555; --critical-ink: #ff8080;
-  --chaos: #e0a445; --pin-span: rgba(226, 85, 85, 0.20); --playhead: #ffffff; --focus: #3987e5;
-    --selected-bg: #86b6ef; --selected-ink: #0b0b0b;
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 20px rgba(0, 0, 0, 0.3);
+  --paper: #0a0c16; --card: #121528; --sunk: #1a1e36; --ink: #f1f2fa; --ink-2: #bcc1d8; --quiet: #8c93b2;
+  --line: #232744; --line-2: #343a5e; --caller: #8a8cff; --agent: #2bd9be;
+  --caller-block: rgba(138, 140, 255, 0.14); --agent-block: rgba(43, 217, 190, 0.14);
+  --fail: #ff6b57; --fail-ink: #ff9585; --fail-soft: rgba(255, 107, 87, 0.12);
+  --warn: #f6b84a; --warn-ink: #f6b84a; --chaos: #f2ae3d; --pass: #34d27b; --pass-ink: #34d27b;
+  --focus: #8a8cff; --axis: #3a4066; --pin-span: rgba(255, 107, 87, 0.2); --border: rgba(255, 255, 255, 0.1);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.35);
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
-body {
-  background: var(--page);
-  color: var(--ink);
-  font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
-}
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { background: var(--paper); color: var(--ink); font: 15px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
 button { font: inherit; color: inherit; -webkit-appearance: none; appearance: none; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
-.wrap { max-width: 1160px; margin: 0 auto; padding: 32px 16px 80px; }
 .num { font-variant-numeric: tabular-nums; }
-.muted { color: var(--muted); }
-.panel {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
-  box-shadow: var(--shadow);
-}
+.quiet { color: var(--quiet); }
+.display { font-family: var(--display); font-weight: 650; letter-spacing: -0.02em; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
 
-/* 1. Verdict and the one sentence */
-.top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.badge {
-  display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px;
-  font-weight: 700; letter-spacing: 0.04em; font-size: 13px; color: #fff;
-}
-.badge.pass { background: var(--good); }
-.badge.fail, .badge.error { background: var(--critical); }
-.what { font-weight: 600; font-size: 15px; }
-.toolbar { margin-left: auto; display: flex; gap: 6px; }
-.ghost {
-  background: transparent; border: 1px solid var(--border); border-radius: 8px;
-  padding: 4px 10px; cursor: pointer; color: var(--ink-2); font-size: 13px;
-}
-.ghost:hover { background: var(--surface-2); }
-.sentence { font-size: 22px; line-height: 1.35; font-weight: 600; margin: 16px 0 6px; max-width: 60ch; letter-spacing: -0.01em; }
-.meta { color: var(--muted); font-size: 12.5px; display: flex; gap: 4px 14px; flex-wrap: wrap; }
+/* masthead */
+.masthead { display: flex; align-items: center; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.mark { display: inline-flex; align-items: center; gap: 10px; font: 650 19px/1 var(--display); letter-spacing: -0.02em; }
+.mark svg { display: block; }
+.runmeta { color: var(--quiet); font-size: 13px; }
+.tools { margin-left: auto; display: flex; gap: 8px; }
+.tool { background: transparent; border: 1px solid var(--line-2); border-radius: 8px; padding: 6px 12px; color: var(--ink-2); cursor: pointer; font-size: 13px; }
+.tool:hover { background: var(--sunk); color: var(--ink); }
 
-.cilimit {
-  margin: 12px 0 0; padding: 8px 12px; border-radius: 10px; max-width: 80ch;
-  border: 1px solid var(--warn); background: rgba(250, 178, 25, 0.10); color: var(--ink); font-size: 13px;
-}
+/* verdict */
+.verdict { padding: 44px 0 4px; }
+.stamp { display: inline-flex; align-items: center; gap: 8px; font-weight: 650; font-size: 14px; padding: 5px 12px 5px 8px; border-radius: 999px; margin: 0; }
+.stamp.fail, .stamp.error { background: var(--fail-soft); color: var(--fail-ink); }
+.stamp.pass { background: rgba(18, 161, 80, 0.12); color: var(--pass-ink); }
+h1 { font: 650 clamp(34px, 5.2vw, 60px)/1.02 var(--display); letter-spacing: -0.035em; margin: 18px 0 0; max-width: 20ch; text-wrap: balance; }
+.lede { font-size: clamp(17px, 2vw, 21px); line-height: 1.45; color: var(--ink-2); max-width: 56ch; margin: 16px 0 0; }
+.facts { color: var(--quiet); font-size: 14px; margin: 14px 0 0; }
+.banner { margin: 18px 0 0; padding: 10px 14px; border-radius: 8px; max-width: 78ch; border: 1px solid var(--warn); background: rgba(226, 154, 0, 0.09); font-size: 14px; }
 
-/* 2. Problem tiles */
-.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 12px; margin-top: 22px; }
-.tile { padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; border-left: 4px solid var(--critical); }
-.tile h3 { margin: 0; font-size: 14px; font-weight: 650; }
-.tile .big { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
-.tile .big small { font-size: 13px; font-weight: 500; color: var(--muted); margin-left: 6px; letter-spacing: 0; }
-.tile .detail { color: var(--ink-2); font-size: 13px; }
-.hearit {
-  align-self: flex-start; margin-top: 8px; border: 0; border-radius: 8px; padding: 6px 12px;
-  background: var(--ink); color: var(--surface); cursor: pointer; font-weight: 600; font-size: 13px;
-}
-.hearit:hover { opacity: 0.9; }
+/* section heads */
+.section { padding-top: 64px; }
+.sechead { display: flex; flex-direction: column; gap: 6px; margin-bottom: 22px; }
+h2 { font: 650 clamp(24px, 3vw, 32px)/1.1 var(--display); letter-spacing: -0.03em; margin: 0; }
+.sub { color: var(--quiet); max-width: 64ch; margin: 0; }
 
-/* 3. The call */
-h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; margin: 36px 0 10px; }
-.tabs { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin-bottom: 10px; }
-.tabs .group { color: var(--muted); font-size: 12.5px; margin: 0 2px 0 8px; }
-.tabs .group:first-child { margin-left: 0; }
-.tab {
-  display: inline-flex; gap: 6px; align-items: center; border: 1px solid var(--border);
-  background: var(--surface); color: var(--ink); border-radius: 999px; padding: 4px 12px; cursor: pointer; font-size: 13px;
-}
-/* Selected: an accent fill with bold text, so it can never read as disabled (6.6:1 light, 9.3:1 dark). */
-.tab[aria-current="true"] { background: var(--selected-bg); color: var(--selected-ink); border-color: var(--selected-bg); font-weight: 600; }
-.tab[aria-current="true"] .status { color: inherit; }
-.call { padding: 18px 20px 20px; }
-.callhead { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
-.callhead b { font-size: 16px; }
-.transport { display: flex; align-items: center; gap: 12px; margin: 14px 0 12px; flex-wrap: wrap; }
-.play {
-  width: 38px; height: 38px; border-radius: 50%; border: 0; cursor: pointer;
-  background: var(--ink); color: var(--surface); font-size: 14px; flex: none;
-}
-.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-.seg button { border: 0; background: transparent; padding: 4px 10px; cursor: pointer; color: var(--ink); font-size: 13px; }
-.seg button + button { border-left: 1px solid var(--border); }
-.seg button[aria-pressed="true"] { background: var(--selected-bg); color: var(--selected-ink); font-weight: 600; }
-.hint { margin-left: auto; color: var(--muted); font-size: 12.5px; }
+/* what went wrong: a ledger, each problem next to the moment it happened */
+.ledger { border-top: 1px solid var(--line-2); }
+.finding { display: grid; grid-template-columns: 176px minmax(0, 1fr) minmax(300px, 400px); gap: 8px 32px; padding: 26px 0; border-bottom: 1px solid var(--line); align-items: center; }
+.fvalue { font: 650 clamp(40px, 4.6vw, 58px)/0.95 var(--display); letter-spacing: -0.04em; color: var(--fail-ink); }
+.fvalue small { font-size: 0.42em; font-weight: 600; letter-spacing: -0.01em; margin-left: 3px; }
+.flimit { display: block; margin-top: 8px; font: 500 13px/1.3 var(--sans); letter-spacing: 0; color: var(--quiet); }
+.fbody h3 { font: 650 22px/1.2 var(--display); letter-spacing: -0.02em; margin: 0 0 6px; }
+.fbody p { margin: 0; color: var(--ink-2); max-width: 46ch; }
+.fscope { color: var(--quiet); font-size: 13.5px; margin-top: 6px !important; }
+.hear { margin-top: 16px; display: inline-flex; align-items: center; gap: 9px; border: 0; border-radius: 999px; padding: 8px 16px 8px 10px; background: var(--ink); color: var(--paper); cursor: pointer; font-weight: 600; font-size: 14px; }
+.hear:hover { opacity: 0.88; }
+.hear svg { display: block; }
+.moment { display: block; width: 100%; border-radius: 6px; background: var(--card); border: 1px solid var(--line); }
+.none { padding: 28px 0; border-top: 1px solid var(--line-2); color: var(--ink-2); font-size: 18px; }
 
-.timeline { display: grid; grid-template-columns: 156px 1fr; }
+/* every call: aligned tapes grouped by scenario */
+.wall { border-top: 1px solid var(--line-2); }
+.scn { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 4px 28px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.scn-name { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.scn-name b { font: 650 17px/1.2 var(--display); letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; overflow-wrap: anywhere; }
+.scn-name span { color: var(--quiet); font-size: 13px; line-height: 1.4; }
+.tapes { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.tape { display: grid; grid-template-columns: 26px minmax(0, 1fr) 44px; align-items: center; gap: 10px; width: 100%; text-align: left; background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 4px 6px; cursor: pointer; }
+.tape:hover { background: var(--sunk); }
+.tape[aria-current="true"] { background: var(--card); border-color: var(--ink); box-shadow: var(--shadow); }
+.tape .n { color: var(--quiet); font-size: 13px; display: flex; align-items: center; gap: 4px; }
+.tape .t { color: var(--quiet); font-size: 12.5px; text-align: right; }
+.tape .strip { min-width: 0; }
+.tape canvas { display: block; height: 34px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 14px 0 0; color: var(--quiet); font-size: 13px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 7px; vertical-align: -1px; }
+
+/* status marks */
+.ic { display: inline-flex; flex: none; }
+.ic svg { display: block; }
+.ic.pass { color: var(--pass); }
+.ic.fail { color: var(--fail); }
+.ic.warn { color: var(--warn); }
+
+/* the call */
+.player { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 28px 30px 26px; }
+.callhead { display: flex; gap: 8px 14px; align-items: center; flex-wrap: wrap; }
+.callhead h3 { font: 650 26px/1.1 var(--display); letter-spacing: -0.025em; margin: 0; }
+.callfacts { color: var(--quiet); font-size: 13.5px; display: flex; gap: 4px 14px; flex-wrap: wrap; margin-top: 6px; }
+.transport { display: flex; align-items: center; gap: 14px; margin: 22px 0 14px; flex-wrap: wrap; }
+.play { width: 44px; height: 44px; border-radius: 50%; border: 0; cursor: pointer; background: var(--ink); color: var(--paper); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.play:hover { opacity: 0.88; }
+.clock { font: 600 15px var(--sans); min-width: 108px; }
+.seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; background: transparent; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--ink-2); }
+.seg button + button { border-left: 1px solid var(--line-2); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); font-weight: 600; }
+.hint { margin-left: auto; color: var(--quiet); font-size: 13px; }
+.timeline { display: grid; grid-template-columns: 150px 1fr; }
 .labels { display: flex; flex-direction: column; }
 .label { display: flex; flex-direction: column; justify-content: center; padding-right: 10px; }
 .label b { font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; }
-.label .sub { color: var(--muted); font-size: 11.5px; }
+.label .lsub { color: var(--quiet); font-size: 12px; }
 .dot { width: 9px; height: 9px; border-radius: 3px; display: inline-block; flex: none; }
 canvas { display: block; width: 100%; }
 #timeline-canvas { cursor: pointer; }
-#overview { cursor: grab; border-radius: 6px; background: var(--surface-2); }
-.tip {
-  position: absolute; pointer-events: none; z-index: 5; max-width: 340px;
-  background: var(--ink); color: var(--surface); padding: 6px 9px; border-radius: 8px;
-  font-size: 12.5px; box-shadow: var(--shadow); display: none;
-}
-
-/* Problems in this call */
-.problems { list-style: none; margin: 16px 0 0; padding: 0; border-top: 1px solid var(--hairline); }
-.problems > li { border-bottom: 1px solid var(--hairline); }
-.prob { display: flex; gap: 10px; width: 100%; text-align: left; align-items: baseline; border: 0; background: transparent; padding: 9px 6px; cursor: pointer; border-radius: 8px; }
-.prob:hover, .prob[aria-current="true"] { background: var(--surface-2); }
-.prob .when { color: var(--muted); min-width: 58px; font-variant-numeric: tabular-nums; }
+#overview { cursor: grab; border-radius: 6px; background: var(--sunk); }
+.tip { position: absolute; pointer-events: none; z-index: 5; max-width: 340px; background: var(--ink); color: var(--paper); padding: 6px 10px; border-radius: 8px; font-size: 13px; box-shadow: var(--shadow); display: none; }
+.problems { list-style: none; margin: 24px 0 0; padding: 0; border-top: 1px solid var(--line); }
+.problems > li { border-bottom: 1px solid var(--line); }
+.prob { display: flex; gap: 12px; width: 100%; text-align: left; align-items: baseline; border: 0; background: transparent; padding: 11px 8px; cursor: pointer; border-radius: 8px; }
+.prob:hover, .prob[aria-current="true"] { background: var(--sunk); }
+.prob .when { color: var(--quiet); min-width: 62px; font-variant-numeric: tabular-nums; }
 .prob .kind { font-weight: 600; white-space: nowrap; }
-.prob .count { color: var(--muted); font-weight: 500; }
-.times { display: flex; flex-wrap: wrap; gap: 4px; padding: 0 6px 10px 74px; }
-.chip { border: 1px solid var(--border); border-radius: 6px; background: transparent; padding: 1px 7px; cursor: pointer; font-size: 12px; font-variant-numeric: tabular-nums; }
-.chip[aria-current="true"] { background: var(--selected-bg); color: var(--selected-ink); border-color: var(--selected-bg); font-weight: 600; }
-.sev { font-weight: 700; }
-.sev.fail { color: var(--critical-ink); }
-.sev.warn { color: var(--warn-ink); }
-.status.pass { color: var(--good-ink); font-weight: 700; }
-.status.fail { color: var(--critical-ink); font-weight: 700; }
-.note { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
-.error-box { border: 1px solid var(--critical); color: var(--critical-ink); border-radius: 8px; padding: 8px 10px; margin-top: 10px; white-space: pre-wrap; }
+.prob .count { color: var(--quiet); font-weight: 500; }
+.times { display: flex; flex-wrap: wrap; gap: 5px; padding: 0 8px 12px 82px; }
+.chip { border: 1px solid var(--line-2); border-radius: 6px; background: transparent; padding: 1px 8px; cursor: pointer; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.chip[aria-current="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); font-weight: 600; }
+.sev { display: inline-flex; align-self: center; }
+.note { font-size: 13px; color: var(--quiet); margin-top: 10px; }
+.error-box { border: 1px solid var(--fail); color: var(--fail-ink); border-radius: 8px; padding: 10px 12px; margin-top: 14px; white-space: pre-wrap; }
+.okline { margin-top: 18px; color: var(--quiet); }
+.failline { margin-top: 18px; color: var(--fail-ink); font-weight: 600; }
 
-/* 4. Details */
-details.more { margin-top: 28px; }
-details.more > summary { cursor: pointer; font-weight: 600; color: var(--ink-2); padding: 6px 0; }
-.scen { padding: 14px 16px; margin-top: 12px; }
-.scen header { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
-.scen p { margin: 4px 0 10px; color: var(--ink-2); }
-table { border-collapse: collapse; width: 100%; }
-td, th { padding: 5px 10px 5px 0; text-align: left; vertical-align: baseline; }
-th { font-weight: 500; color: var(--muted); font-size: 12px; border-bottom: 1px solid var(--hairline); white-space: nowrap; }
-.aggs td { border-bottom: 1px solid var(--hairline); }
-.aggs tr:last-child td { border-bottom: 0; }
-.aggs td.num { white-space: nowrap; }
-dl.glossary { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 12px 0 0; }
+/* the numbers */
+.nscn { border-top: 1px solid var(--line); }
+.nscn:last-of-type { border-bottom: 1px solid var(--line); }
+.nscn > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 24px 230px minmax(0, 1fr) 24px; gap: 14px; align-items: center; padding: 16px 0; }
+.nscn > summary::-webkit-details-marker { display: none; }
+.nscn > summary b { font: 650 17px/1.2 var(--display); letter-spacing: -0.02em; }
+.nscn > summary span.s { color: var(--quiet); font-size: 14px; }
+.nscn > summary .chev { width: 8px; height: 8px; border-right: 2px solid var(--quiet); border-bottom: 2px solid var(--quiet); transform: rotate(45deg); transition: transform 0.15s; justify-self: center; }
+.nscn[open] > summary .chev { transform: rotate(225deg); }
+.metrics { padding: 0 0 22px 38px; display: grid; grid-template-columns: minmax(150px, 230px) minmax(160px, 1fr) minmax(120px, 190px) 28px minmax(0, 90px); gap: 12px 20px; align-items: center; }
+.metrics .mh { color: var(--quiet); font-size: 12.5px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+.mname { display: flex; align-items: center; gap: 6px; font-size: 14.5px; }
+.gauge { position: relative; height: 22px; }
+.gauge .track { position: absolute; left: 0; right: 0; top: 10px; height: 3px; border-radius: 2px; background: var(--line); }
+.gauge .whisker { position: absolute; top: 5px; height: 13px; border-left: 2px solid var(--quiet); border-right: 2px solid var(--quiet); }
+.gauge .whisker::after { content: ""; position: absolute; left: 0; right: 0; top: 5px; border-top: 2px solid var(--quiet); }
+.gauge .limit { position: absolute; top: 1px; bottom: 1px; width: 0; border-left: 2px dashed var(--fail); }
+.gauge .val { position: absolute; top: 4px; width: 15px; height: 15px; margin-left: -7px; border-radius: 50%; background: var(--ink); border: 3px solid var(--card); box-shadow: 0 0 0 1px var(--ink); }
+.gauge .val.bad { background: var(--fail); box-shadow: 0 0 0 1px var(--fail); }
+.gauge .val.good { background: var(--pass); box-shadow: 0 0 0 1px var(--pass); }
+.mval b { font: 650 17px var(--display); letter-spacing: -0.01em; }
+.mval small { display: block; color: var(--quiet); font-size: 12.5px; line-height: 1.3; }
+.diff.bad { color: var(--fail-ink); font-weight: 600; }
+.diff.good { color: var(--pass-ink); font-weight: 600; }
+
+.howto { margin-top: 40px; }
+.howto > summary { cursor: pointer; font-weight: 600; color: var(--ink-2); padding: 6px 0; }
+dl.glossary { display: grid; grid-template-columns: max-content 1fr; gap: 8px 22px; margin: 14px 0 0; max-width: 78ch; }
 dl.glossary dt { font-weight: 600; }
 dl.glossary dd { margin: 0; color: var(--ink-2); }
+.foot { margin: 72px 0 60px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--quiet); font-size: 13px; }
 
-/* ⓘ explanations: hover or keyboard focus shows the text; screen readers get it as the label */
-.info {
-  position: relative; display: inline-flex; align-items: center; justify-content: center;
-  width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--axis); background: transparent;
-  color: var(--muted); font-size: 10.5px; font-weight: 700; cursor: help; padding: 0; line-height: 1;
-  font-family: Georgia, serif; font-style: italic;
-}
-.info:hover::after, .info:focus::after {
-  content: attr(data-tip); position: absolute; left: 0; top: calc(100% + 6px);
-  width: max-content; max-width: 280px; background: var(--ink); color: var(--surface); padding: 7px 10px;
-  border-radius: 8px; font: 400 12.5px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
-  text-align: left; z-index: 20; box-shadow: var(--shadow); white-space: normal;
-}
+/* ⓘ explanations */
+.info { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--line-2); background: transparent; color: var(--quiet); font: italic 700 10.5px/1 Georgia, serif; cursor: help; padding: 0; }
+.info:hover::after, .info:focus::after { content: attr(data-tip); position: absolute; left: 0; top: calc(100% + 6px); width: max-content; max-width: 280px; background: var(--ink); color: var(--paper); padding: 8px 11px; border-radius: 8px; font: 400 13px/1.4 var(--sans); text-align: left; z-index: 20; box-shadow: var(--shadow); white-space: normal; }
 
-dialog { border: 1px solid var(--border); border-radius: 14px; background: var(--surface); color: var(--ink); padding: 18px 22px; box-shadow: var(--shadow); }
-dialog::backdrop { background: rgba(0, 0, 0, 0.35); }
-kbd { font: 12px ui-monospace, Menlo, monospace; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 5px; padding: 1px 5px; background: var(--surface-2); }
+dialog { border: 1px solid var(--line-2); border-radius: 14px; background: var(--card); color: var(--ink); padding: 20px 24px; box-shadow: var(--shadow); }
+dialog::backdrop { background: rgba(10, 12, 22, 0.45); }
+dialog table { border-collapse: collapse; }
+dialog td { padding: 5px 16px 5px 0; vertical-align: baseline; }
+kbd { font: 12px ui-monospace, Menlo, monospace; border: 1px solid var(--line-2); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; background: var(--sunk); }
+
+@media (max-width: 980px) {
+  .finding { grid-template-columns: 1fr; gap: 14px; }
+  .scn { grid-template-columns: 1fr; }
+  .metrics { grid-template-columns: minmax(0, 1fr) 28px; }
+  .metrics .mh { display: none; }
+  .metrics .gauge, .metrics .mlim { grid-column: 1 / -1; }
+  .nscn > summary { grid-template-columns: 24px minmax(0, 1fr) 24px; }
+  .nscn > summary span.s { display: none; }
+}
 @media (max-width: 700px) {
-  .sentence { font-size: 18px; }
-  .timeline { grid-template-columns: 84px 1fr; }
-  .label .sub, .hint { display: none; }
+  .wrap { padding: 0 16px; }
+  .verdict { padding-top: 36px; }
+  .section { padding-top: 56px; }
+  .player { padding: 20px 16px; border-radius: 10px; }
+  .timeline { grid-template-columns: 78px 1fr; }
+  .label .lsub, .hint { display: none; }
+  .times { padding-left: 8px; }
+  .callhead h3 { font-size: 22px; }
 }
 </style>
 </head>
 <body>
-<main class="wrap" id="app"></main>
+<div class="wrap" id="app"></div>
 <audio id="audio" preload="auto"></audio>
 <dialog id="help">
-  <h3 style="margin-top:0">Keyboard shortcuts</h3>
+  <h3 class="display" style="margin:0 0 12px">Keyboard shortcuts</h3>
   <table>
-    <tr><td><kbd>Space</kbd></td><td>Play / pause</td></tr>
-    <tr><td><kbd>N</kbd> <kbd>P</kbd></td><td>Next / previous problem (plays from just before it)</td></tr>
-    <tr><td><kbd>J</kbd> <kbd>K</kbd></td><td>Next / previous call</td></tr>
-    <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Back / forward 1 s (<kbd>Shift</kbd>: 5 s)</td></tr>
-    <tr><td><kbd>+</kbd> <kbd>−</kbd> <kbd>0</kbd></td><td>Zoom in / out / whole call (or drag the whole-call strip)</td></tr>
-    <tr><td><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></td><td>Hear both sides / only the caller / only the agent</td></tr>
-    <tr><td><kbd>T</kbd></td><td>Light / dark</td></tr>
+    <tr><td><kbd>Space</kbd></td><td>Play or pause</td></tr>
+    <tr><td><kbd>N</kbd> <kbd>P</kbd></td><td>Next or previous problem (plays from just before it)</td></tr>
+    <tr><td><kbd>J</kbd> <kbd>K</kbd></td><td>Next or previous call</td></tr>
+    <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Back or forward 1 s (<kbd>Shift</kbd>: 5 s)</td></tr>
+    <tr><td><kbd>+</kbd> <kbd>−</kbd> <kbd>0</kbd></td><td>Zoom in, zoom out, whole call</td></tr>
+    <tr><td><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></td><td>Hear both sides, only the caller, only the agent</td></tr>
+    <tr><td><kbd>T</kbd></td><td>Light or dark</td></tr>
     <tr><td><kbd>?</kbd></td><td>This help</td></tr>
   </table>
-  <form method="dialog" style="margin-top:12px;text-align:right"><button class="ghost">Close</button></form>
+  <form method="dialog" style="margin-top:14px;text-align:right"><button class="tool">Close</button></form>
 </dialog>
 <script id="report-data" type="application/json">/*__CALLBACK_REPORT_DATA__*/null</script>
 <script>
@@ -251,8 +281,8 @@ kbd { font: 12px ui-monospace, Menlo, monospace; border: 1px solid var(--border)
  * @typedef {{metric: string, baseline: number|null, current: number|null, delta: number|null, direction: string, regressed: boolean}} Diff
  * @typedef {{scenario_id: string, agent: string, passed: boolean, sentence: string, failure_reasons: string[],
  *   aggregates: Aggregate[], baseline: Diff[], calls: Call[]}} Scenario
- * @typedef {{title: string, value: string|null, limit: string|null, detail: string, scenario_id: string,
- *   call_id: string|null, t_s: number|null, trial: number|null}} Tile
+ * @typedef {{title: string, value: string|null, limit: string|null, detail: string, scenario_id: string, scenarios?: number,
+ *   finding: string, call_id: string|null, t_s: number|null, trial: number|null}} Tile
  * @typedef {{run: {run_id: string, created_at: string, callback_version: string, git_sha: string|null, mode: string,
  *   duration_s: number, exit_code: number, passed: boolean, baseline_name: string|null,
  *   limit_overrides?: {scenario_id: string, metric: string, target: number, applied: number, source: string}[]},
@@ -281,17 +311,17 @@ const state = {
 
 /** Short explanations for every term the page uses: [term, explanation]. */
 const GLOSSARY = /** @type {Object<string, [string, string]>} */ ({
-  p95: ["p95 (95th percentile)", "95 out of every 100 replies were faster than this. It shows the slow cases without letting one outlier decide."],
-  p50: ["p50 (median)", "The typical value: half were faster, half slower."],
+  p95: ["Slowest typical (p95)", "95 out of every 100 replies were faster than this. It shows the slow cases without letting one outlier decide."],
+  p50: ["Typical (median)", "Half the replies were faster than this, half slower."],
   range: ["95% range", "Where the true value probably lies, judging from only these calls. More calls make it narrower."],
-  limit: ["Limit", "The pass/fail threshold set in the scenario. Only these hard checks can fail a run."],
+  limit: ["Limit", "The pass or fail line set in the scenario. Only these hard checks can fail a run."],
   wait: ["Wait before reply", "From the moment the caller stops talking to the agent's first sound, measured on the recording. Each bar is one reply."],
-  yield: ["Time to yield", "When the caller cuts in, how long the agent keeps talking before it stops."],
+  yield: ["Time to stop", "When the caller cuts in, how long the agent keeps talking before it goes quiet."],
   talkover: ["Talk-over", "The share of the caller's speech that the agent talked over."],
-  falseyield: ["False yield", "The agent stopped talking for a “mm-hmm” or “okay” it should have ignored."],
-  silence: ["Silence check-in", "When the caller goes quiet, how long before the agent checks in."],
+  falseyield: ["False stop", "The agent stopped talking for a “mm-hmm” or “okay” it should have ignored."],
+  silence: ["Check-in on silence", "When the caller goes quiet, how long before the agent checks in."],
   passed: ["Calls passed", "Calls in which every hard check passed."],
-  unanswered: ["Unanswered turns", "The caller finished, waited at least the reply-delay limit, and the agent said nothing. A caller who goes straight on to the next sentence doesn't count: the agent had no opening."],
+  unanswered: ["Unanswered turns", "The caller finished, waited at least the reply limit, and the agent said nothing. A caller who goes straight on to the next sentence doesn't count: the agent had no opening."],
   events: ["Events", "Amber ◆ marks a disturbance Callback caused on purpose (an interruption, noise, silence). Red ▼ marks a problem; hover it for one sentence."],
   caller: ["Caller", "The simulated caller, recorded on the left channel. Shaded blocks are where it was speaking."],
   agent: ["Agent", "Your agent, recorded on the right channel. Shaded blocks are where it was speaking."],
@@ -300,9 +330,9 @@ const GLOSSARY = /** @type {Object<string, [string, string]>} */ ({
 /** @type {Object<string, string>} */
 const METRIC_LABELS = {
   task_success_rate: "Task success", call_pass_rate: "Calls passed",
-  response_latency_p95_s: "Reply delay, p95", response_latency_p50_s: "Reply delay, p50",
-  time_to_yield_p95_s: "Time to yield, p95", talk_over_ratio: "Talk-over", false_yields: "False yields",
-  silence_reprompt_s: "Silence check-in", entity_fidelity: "Facts correct", policy_violations: "Policy violations",
+  response_latency_p95_s: "Reply delay, slowest typical", response_latency_p50_s: "Reply delay, typical",
+  time_to_yield_p95_s: "Time to stop when interrupted", talk_over_ratio: "Talk-over", false_yields: "False stops",
+  silence_reprompt_s: "Check-in on silence", entity_fidelity: "Facts correct", policy_violations: "Policy violations",
   unanswered_turns: "Unanswered turns", rules_not_checked: "Rules not checked",
 };
 /** @type {Object<string, string>} */
@@ -313,9 +343,10 @@ const METRIC_TERMS = {
 };
 /** @type {Object<string, string>} */
 const FINDING_LABELS = {
-  response_latency: "Slow reply", time_to_yield: "Late to yield", talk_over: "Talk-over",
-  false_yield: "False yield", silence_reprompt: "No check-in", task_success: "Task not done",
+  response_latency: "Slow reply", time_to_yield: "Slow to stop", talk_over: "Talk-over",
+  false_yield: "False stop", silence_reprompt: "No check-in", task_success: "Task not done",
   entity_fidelity: "Wrong fact", policy_violations: "Policy broken", unanswered_turns: "Never answered",
+  folded_turns: "Answered late",
 };
 /** @type {Object<string, number>} */
 const FINDING_WEIGHT = {
@@ -341,6 +372,27 @@ function h(tag, attrs = {}, children = []) {
   }
   for (const c of children) if (c !== null && c !== undefined && c !== false) el.append(c);
   return el;
+}
+
+const ICONS = {
+  pass: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="8" fill="currentColor"/><path d="M4.6 8.3l2.3 2.3 4.6-4.9" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  fail: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="8" fill="currentColor"/><path d="M5.4 5.4l5.2 5.2M10.6 5.4l-5.2 5.2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  warn: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.2l7 12.4H1z" fill="currentColor" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 6v3.6M8 11.4v.4" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  play: '<svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="currentColor" opacity=".16"/><path d="M8.6 6.6l7 4.4-7 4.4z" fill="currentColor"/></svg>',
+  bigplay: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 1.8l10 6.2-10 6.2z" fill="currentColor"/></svg>',
+  pause: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2h3.2v12H3.5zM9.3 2h3.2v12H9.3z" fill="currentColor"/></svg>',
+};
+/** @param {"pass"|"fail"|"warn"} kind @param {string} label */
+function icon(kind, label) {
+  const s = h("span", { class: `ic ${kind}`, role: "img", "aria-label": label });
+  s.innerHTML = ICONS[kind];
+  return s;
+}
+/** @param {keyof typeof ICONS} name */
+function glyph(name) {
+  const s = h("span", { class: "glyph", "aria-hidden": "true", style: "display:inline-flex" });
+  s.innerHTML = ICONS[name];
+  return s;
 }
 
 /** An ⓘ that explains a term on hover or keyboard focus. @param {string} key */
@@ -373,9 +425,9 @@ function css(name) {
 }
 
 /** @param {Call} c */
-function statusMark(c) {
-  if (c.error) return h("span", { class: "status fail", "aria-label": "could not run" }, ["!"]);
-  return c.passed ? h("span", { class: "status pass", "aria-label": "passed" }, ["✓"]) : h("span", { class: "status fail", "aria-label": "failed" }, ["✕"]);
+function callMark(c) {
+  if (c.error) return icon("fail", "could not run");
+  return c.passed ? icon("pass", "passed") : icon("fail", "failed");
 }
 
 /** @param {Finding} f */
@@ -429,46 +481,73 @@ function groupRange(c, g) {
   return `${lo.toFixed(2)}–${hi.toFixed(2)} s${limit ? ` (limit ${Number(limit)} s)` : ""}`;
 }
 
-// ---------- 1 + 2: verdict, one sentence, problem tiles ----------
+// ---------- the page, top to bottom ----------
 
-function renderTop() {
+function totals() {
+  const calls = CALLS.length;
+  const failed = CALLS.filter((c) => c.error || !c.passed).length;
+  const errored = CALLS.filter((c) => c.error).length;
+  return { calls, failed, errored };
+}
+
+function renderMasthead() {
   const run = DATA.run;
-  const word = run.exit_code === 0 ? "PASS" : run.exit_code === 1 ? "FAIL" : "ERROR";
-  const cls = run.exit_code === 0 ? "pass" : run.exit_code === 1 ? "fail" : "error";
-  const scen = DATA.scenarios;
-  const what = scen.length === 1
-    ? `${scen[0].scenario_id} · ${CALLS.length} call${CALLS.length === 1 ? "" : "s"} · ${scen[0].agent}`
-    : `${scen.length} scenarios · ${CALLS.length} calls`;
   const when = new Date(run.created_at);
-  const tiles = DATA.summary.tiles.map((t) => h("article", { class: "panel tile" }, [
-    h("h3", {}, [t.title]),
-    t.value ? h("div", { class: "big num" }, [t.value, t.limit ? h("small", {}, [t.limit.startsWith("was") ? t.limit : `limit ${t.limit.replace(/^[≤≥] /, "")}`]) : null]) : null,
-    h("div", { class: "detail" }, [t.detail, scen.length > 1 ? ` · ${t.scenario_id}` : ""]),
-    t.call_id !== null && t.t_s !== null ? h("button", {
-      class: "hearit", onclick: () => hearAt(/** @type {string} */ (t.call_id), /** @type {number} */ (t.t_s)),
-    }, [`▶ Hear it · trial ${t.trial}, ${clock(t.t_s)}`]) : null,
-  ]));
-  return h("header", {}, [
-    h("div", { class: "top" }, [
-      h("span", { class: `badge ${cls}`, role: "status" }, [word === "PASS" ? "✓ PASS" : word === "FAIL" ? "✕ FAIL" : "! ERROR"]),
-      h("span", { class: "what" }, [what]),
-      h("div", { class: "toolbar" }, [
-        h("button", { class: "ghost", onclick: toggleTheme, title: "Light / dark (T)" }, ["◐ Theme"]),
-        h("button", { class: "ghost", onclick: () => help.showModal(), title: "Keyboard shortcuts (?)" }, ["⌨ Keys"]),
-      ]),
+  return h("header", { class: "masthead" }, [
+    h("span", { class: "mark" }, [
+      (() => {
+        const s = h("span", { "aria-hidden": "true", style: "display:inline-flex" });
+        s.innerHTML = '<svg width="26" height="22" viewBox="0 0 26 22"><g fill="none" stroke-linecap="round" stroke-width="3"><path d="M3 9v4M8.5 5v12" stroke="var(--caller)"/><path d="M14 3v16M19.5 7v8M24 10v2" stroke="var(--agent)"/></g></svg>';
+        return s;
+      })(),
+      "callback",
     ]),
-    h("p", { class: "sentence" }, [DATA.summary.sentence]),
+    h("span", { class: "runmeta num" }, [`Run ${run.run_id}, ${when.toLocaleString()}, Callback ${run.callback_version}${run.git_sha ? `, commit ${run.git_sha.slice(0, 7)}` : ""}`]),
+    h("div", { class: "tools" }, [
+      h("button", { class: "tool", onclick: toggleTheme, title: "Light or dark (T)" }, ["Theme"]),
+      h("button", { class: "tool", onclick: () => help.showModal(), title: "Keyboard shortcuts (?)" }, ["Shortcuts"]),
+    ]),
+  ]);
+}
+
+function renderVerdict() {
+  const run = DATA.run;
+  const { calls, failed, errored } = totals();
+  const cls = run.exit_code === 0 ? "pass" : run.exit_code === 1 ? "fail" : "error";
+  const word = cls === "pass" ? "Passed" : cls === "fail" ? "Failed" : "Could not run";
+  const calls_ = `${calls} call${calls === 1 ? "" : "s"}`;
+  const headline = errored
+    ? `${errored} of ${calls_} could not run.`
+    : failed === 0 ? `Every check passed in ${calls_}.`
+    : calls === 1 ? "The agent failed this call." : `The agent failed ${failed} of ${calls} calls.`;
+  const scen = DATA.scenarios;
+  const mins = run.duration_s >= 90 ? `${Math.round(run.duration_s / 60)} minutes` : `${Math.round(run.duration_s)} seconds`;
+  return h("section", { class: "verdict" }, [
+    h("p", { class: `stamp ${cls}`, role: "status" }, [icon(cls === "pass" ? "pass" : "fail", word), word]),
+    h("h1", {}, [headline]),
+    h("p", { class: "lede" }, [ledeText(errored, failed)]),
+    h("p", { class: "facts num" }, [
+      `${calls_} across ${scen.length} scenario${scen.length === 1 ? "" : "s"}, ${mins}. Exit code ${run.exit_code}.`,
+      run.baseline_name ? ` Compared with baseline ${run.baseline_name}.` : "",
+    ]),
     ciLimitBanner(),
     uncheckedRulesBanner(),
-    h("div", { class: "meta num" }, [
-      h("span", {}, [`run ${run.run_id}`]), h("span", {}, [when.toLocaleString()]),
-      h("span", {}, [`exit code ${run.exit_code}`]), h("span", {}, [`${Math.round(run.duration_s)} s`]),
-      run.baseline_name ? h("span", {}, [`compared with baseline ${run.baseline_name}`]) : null,
-      run.git_sha ? h("span", {}, [`commit ${run.git_sha.slice(0, 7)}`]) : null,
-      h("span", {}, [`callback ${run.callback_version}`]),
-    ]),
-    tiles.length ? h("div", { class: "tiles" }, tiles) : null,
   ]);
+}
+
+/** @param {number} errored @param {number} failed */
+function ledeText(errored, failed) {
+  if (errored) return DATA.summary.sentence;
+  if (failed > 0 && DATA.summary.tiles.length) return shortLede(DATA.summary.tiles);
+  return DATA.run.baseline_name ? DATA.summary.sentence : "Every limit held. Open any call below to listen to it.";
+}
+
+/** The worst problem in a few words; the rest are listed below it. @param {Tile[]} tiles */
+function shortLede(tiles) {
+  const t = tiles[0];
+  const lead = t.value ? `${t.title}: ${t.value}${t.limit ? `, ${limitText(t.limit)}` : ""}.` : `${t.title}.`;
+  const more = tiles.length > 1 ? ` ${tiles.length - 1} more problem${tiles.length > 2 ? "s" : ""} below, worst first.` : "";
+  return lead + more;
 }
 
 /** Rules nobody checked must never look like rules that passed: say so up top. */
@@ -476,7 +555,7 @@ function uncheckedRulesBanner() {
   const skipped = (DATA.scenarios || []).filter((s) =>
     (s.aggregates || []).some((a) => a.name === "rules_not_checked" && (a.value || 0) > 0));
   if (!skipped.length) return null;
-  return h("p", { class: "cilimit", role: "note" }, [
+  return h("p", { class: "banner", role: "note" }, [
     h("b", {}, ["Some rules were not checked. "]),
     `Plain-English must_not rules in ${skipped.map((s) => s.scenario_id).join(", ")} need the LLM judge, `
       + "which is not configured (providers.judge in callback.yaml). Pattern rules were checked.",
@@ -494,23 +573,251 @@ function ciLimitBanner() {
     const target = [...new Set(these.map((o) => o.target))].join(", ");
     return `${what[metric] || metric} allowed up to ${applied} s on this machine (${these[0].source}); the real target is ${target} s.`;
   });
-  return h("p", { class: "cilimit", role: "note" }, [
+  return h("p", { class: "banner", role: "note" }, [
     h("b", {}, ["CI limit in use. "]),
     lines.join(" "),
     " Numbers between the two pass here but would fail the real target.",
   ]);
 }
 
-/** How precisely this call's chaos landed (a check on Callback itself). @param {Call} c */
-function driftFact(c) {
-  const m = (c.metrics || []).find((x) => x.name === "chaos_drift_max_s");
-  if (!m || m.value === null || m.value === undefined) return null;
-  const ms = Math.round(m.value * 1000);
-  const late = m.threshold !== null && m.value > m.threshold;
-  return h("span", {
-    class: late ? "sev warn" : "muted",
-    title: "How late the scheduled disturbances hit the line. A check on Callback itself, not the agent.",
-  }, [late ? `▲ chaos landed up to ${ms} ms late (tolerance ${Math.round((m.threshold || 0) * 1000)} ms)` : `chaos on time (within ${ms} ms)`]);
+/** @param {string} id @param {string} title @param {string} sub @param {(Node|null)[]} body */
+function section(id, title, sub, body) {
+  return h("section", { class: "section", id }, [
+    h("div", { class: "sechead" }, [h("h2", {}, [title]), sub ? h("p", { class: "sub" }, [sub]) : null]),
+    ...body,
+  ]);
+}
+
+// ---------- what went wrong: each problem beside the moment it happened ----------
+
+/** @param {Tile} t */
+function findingFor(t) {
+  const c = CALLS.find((x) => x.call_id === t.call_id);
+  if (!c || t.t_s === null) return null;
+  const f = c.findings.find((x) => Math.abs(x.t_s - /** @type {number} */ (t.t_s)) < 0.01);
+  return c.peaks && f ? { c, f } : null;
+}
+
+function renderFindings() {
+  const tiles = DATA.summary.tiles;
+  if (!tiles.length) {
+    if (!CALLS.some((c) => c.error)) return null;
+    return section("problems", "What went wrong", "", [h("p", { class: "none" }, ["Some calls could not run. Their errors are in the calls below."])]);
+  }
+  const rows = tiles.map((t) => {
+    const moment = findingFor(t);
+    const where = (t.scenarios || 1) > 1 ? `In ${t.scenarios} of ${DATA.scenarios.length} scenarios. Worst in ${t.scenario_id}.` : (DATA.scenarios.length > 1 ? `In ${t.scenario_id}.` : "");
+    const parsed = t.value ? null : String(t.detail).match(/(\d+(?:\.\d+)?) s/);
+    const [num, unit0] = t.value ? splitValue(t.value) : parsed ? [parsed[1], "s"] : [null, ""];
+    const unit = unit0 || (num && COUNTS.includes(t.finding) ? "per call" : "");
+    const cv = moment ? /** @type {HTMLCanvasElement} */ (h("canvas", { class: "moment", role: "img", "aria-label": `${t.title}: the moment it happened, caller above, agent below` })) : null;
+    if (cv && moment) momentCanvases.push({ cv, c: moment.c, f: moment.f });
+    return h("article", { class: "finding" }, [
+      h("div", { class: "fvalue num" }, num ? [num, unit ? h("small", {}, [unit]) : null, t.limit ? h("span", { class: "flimit" }, [limitText(t.limit)]) : parsed ? h("span", { class: "flimit" }, ["of silence, no check-in"]) : null] : [icon("fail", "problem")]),
+      h("div", { class: "fbody" }, [
+        h("h3", {}, [t.title]),
+        h("p", {}, [t.detail]),
+        where ? h("p", { class: "fscope" }, [where]) : null,
+        t.call_id !== null && t.t_s !== null ? h("button", {
+          class: "hear", onclick: () => hearAt(/** @type {string} */ (t.call_id), /** @type {number} */ (t.t_s)),
+        }, [glyph("bigplay"), `Hear it, trial ${t.trial} at ${clock(t.t_s)}`]) : null,
+      ]),
+      cv,
+    ]);
+  });
+  return section("problems", "What went wrong", "The problems that matter most, worst first. Each shows the moment it happened: the caller above, the agent below.", [
+    h("div", { class: "ledger" }, rows),
+  ]);
+}
+
+/** "1.05 s" -> ["1.05", "s"]; "6.6%" -> ["6.6", "%"]; "1" -> ["1", ""]. @param {string|null} v */
+function splitValue(v) {
+  if (v === null || v === undefined) return [null, ""];
+  const m = String(v).match(/^([\d.]+)\s*(.*)$/);
+  return m ? [m[1], m[2]] : [String(v), ""];
+}
+/** @param {string} limit */
+function limitText(limit) {
+  return limit.startsWith("was") ? limit : `limit ${limit.replace(/^[≤≥] /, "")}`;
+}
+
+/** Problems counted per call, not measured in seconds. */
+const COUNTS = ["false_yield", "unanswered_turns"];
+
+/** @type {{cv: HTMLCanvasElement, c: Call, f: Finding}[]} */
+const momentCanvases = [];
+
+const MOMENT_WORDS = /** @type {Object<string, (d: number) => string>} */ ({
+  response_latency: (d) => `${d.toFixed(2)} s of silence`,
+  time_to_yield: (d) => `${d.toFixed(2)} s to stop`,
+  talk_over: (d) => `${d.toFixed(2)} s talking over`,
+  unanswered_turns: (d) => `no answer for ${d.toFixed(1)} s`,
+  silence_reprompt: (d) => `${d.toFixed(1)} s of quiet`,
+  false_yield: () => "stopped for an “mm-hmm”",
+});
+
+/** @param {CanvasRenderingContext2D} g @param {number} x @param {number} y @param {number} w @param {number} hgt @param {string} color */
+function hatch(g, x, y, w, hgt, color) {
+  g.save();
+  g.beginPath(); g.rect(x, y, w, hgt); g.clip();
+  g.fillStyle = css("--pin-span"); g.fillRect(x, y, w, hgt);
+  g.strokeStyle = color; g.globalAlpha = 0.55; g.lineWidth = 1;
+  for (let k = -hgt; k < w + hgt; k += 7) { g.beginPath(); g.moveTo(x + k, y + hgt); g.lineTo(x + k + hgt, y); g.stroke(); }
+  g.restore();
+}
+
+/** One problem as a small two-lane picture: caller above, agent below, the problem hatched in red. @param {HTMLCanvasElement} cv @param {Call} c @param {Finding} f */
+function drawMoment(cv, c, f) {
+  if (!c.peaks) return;
+  const H = 146;
+  const { g, width } = prepare(cv, H);
+  const total = c.audio_s || c.duration_s || 1;
+  const end = f.end_s !== null && f.end_s > f.t_s ? f.end_s : f.t_s + 1.2;
+  let a = Math.max(0, f.t_s - 2.2), b = Math.min(total, end + 3);
+  if (b - a < 6) { b = Math.min(total, a + 6); a = Math.max(0, b - 6); }
+  const x0 = 12, x1 = width - 12;
+  /** @param {number} t */
+  const X = (t) => x0 + ((t - a) / (b - a)) * (x1 - x0);
+  const laneH = 38, yC = 30, yA = yC + laneH + 12;
+  g.font = `600 12px ${FONT}`; g.textAlign = "left"; g.textBaseline = "middle";
+  for (const [who, y, name] of /** @type {const} */ ([["caller", yC, "Caller"], ["agent", yA, "Agent"]])) {
+    g.fillStyle = css("--sunk"); roundRect(g, x0, y, x1 - x0, laneH, 5); g.fill();
+    for (const t of c.speech || []) {
+      if (t.who !== who || t.end < a || t.start > b) continue;
+      g.fillStyle = css(who === "caller" ? "--caller-block" : "--agent-block");
+      const s = Math.max(x0, X(t.start)), e = Math.min(x1, X(t.end));
+      roundRect(g, s, y, Math.max(2, e - s), laneH, 5); g.fill();
+    }
+    waveWindow(g, c.peaks[who], total, a, b, y, laneH, css(who === "caller" ? "--caller" : "--agent"), X, x0, x1);
+    g.fillStyle = css("--quiet"); g.fillText(name, x0 + 6, y - 9);
+  }
+  // the problem itself
+  const px = Math.max(x0, X(f.t_s)), pe = Math.min(x1, X(end));
+  if (f.end_s !== null && pe > px) hatch(g, px, yC, pe - px, yA + laneH - yC, css("--fail"));
+  g.strokeStyle = css("--fail"); g.lineWidth = 2;
+  g.beginPath(); g.moveTo(px, yC - 4); g.lineTo(px, yA + laneH + 4); g.stroke();
+  if (f.end_s !== null && pe > px) { g.beginPath(); g.moveTo(pe, yC - 4); g.lineTo(pe, yA + laneH + 4); g.stroke(); }
+  g.lineWidth = 1;
+  const word = (MOMENT_WORDS[f.metric] || ((d) => `${d.toFixed(2)} s`))(end - f.t_s);
+  g.font = `650 13px ${FONT}`; g.fillStyle = css("--fail-ink"); g.textBaseline = "alphabetic";
+  const mid = (px + pe) / 2, tw = g.measureText(word).width;
+  g.textAlign = "left";
+  g.fillText(word, Math.min(x1 - tw, Math.max(x0, f.end_s !== null ? mid - tw / 2 : px + 6)), H - 8);
+  g.textBaseline = "middle";
+}
+
+/** Bars for a stretch of one side's waveform. */
+function waveWindow(/** @type {CanvasRenderingContext2D} */ g, /** @type {number[]} */ peaks, /** @type {number} */ total, /** @type {number} */ a, /** @type {number} */ b, /** @type {number} */ y, /** @type {number} */ hgt, /** @type {string} */ color, /** @type {(t: number) => number} */ X, /** @type {number} */ x0, /** @type {number} */ x1) {
+  const per = total / peaks.length;
+  const i0 = Math.max(0, Math.floor(a / per)), i1 = Math.min(peaks.length - 1, Math.ceil(b / per));
+  const pxPer = (x1 - x0) / ((b - a) / per);
+  const stride = Math.max(1, Math.floor(2 / pxPer));
+  const mid = y + hgt / 2;
+  g.fillStyle = color;
+  for (let i = i0; i <= i1; i += stride) {
+    let p = 0;
+    for (let k = i; k < i + stride && k < peaks.length; k++) p = Math.max(p, peaks[k]);
+    const v = (p / 100) * (hgt / 2 - 3);
+    g.fillRect(X(i * per), mid - Math.max(0.5, v), Math.max(1, pxPer * stride - 0.6), Math.max(1, 2 * v));
+  }
+}
+
+// ---------- every call: aligned tapes ----------
+
+/** @type {{cv: HTMLCanvasElement, c: Call}[]} */
+const tapeCanvases = [];
+
+function renderWall() {
+  if (CALLS.length === 1) return null;
+  const longest = Math.max(1, ...CALLS.map((c) => c.audio_s || c.duration_s || 1));
+  const groups = DATA.scenarios.map((s) => {
+    const regressed = s.baseline.some((d) => d.regressed);
+    const ok = s.passed && !regressed;
+    const tapes = s.calls.map((c) => {
+      const dur = c.audio_s || c.duration_s || 0;
+      const cv = /** @type {HTMLCanvasElement} */ (h("canvas", { role: "img", "aria-hidden": "true", style: `width:${Math.max(8, (dur / longest) * 100)}%` }));
+      tapeCanvases.push({ cv, c });
+      return h("button", { class: "tape", "data-call": c.call_id, onclick: () => selectCall(c, true), "aria-label": `${s.scenario_id} trial ${c.trial}, ${c.error ? "could not run" : c.passed ? "passed" : "failed"}` }, [
+        h("span", { class: "n num" }, [callMark(c), String(c.trial)]),
+        h("span", { class: "strip" }, [cv]),
+        h("span", { class: "t num" }, [dur ? `${Math.round(dur)} s` : ""]),
+      ]);
+    });
+    return h("div", { class: "scn" }, [
+      h("div", { class: "scn-name" }, [
+        h("b", {}, [icon(ok ? "pass" : "fail", ok ? "passed" : "failed"), s.scenario_id]),
+        h("span", {}, [wallSummary(s)]),
+      ]),
+      h("div", { class: "tapes" }, tapes),
+    ]);
+  });
+  const legend = h("p", { class: "legend" }, [
+    h("span", {}, [h("i", { style: "background:var(--caller)" }), "Caller speaking"]),
+    h("span", {}, [h("i", { style: "background:var(--agent)" }), "Agent speaking"]),
+    h("span", {}, [h("i", { style: "background:var(--fail);border-radius:0;width:3px;height:12px" }), "A check failed here"]),
+    h("span", {}, [h("i", { style: "background:var(--chaos);transform:rotate(45deg);border-radius:1px;width:8px;height:8px" }), "A disturbance Callback caused"]),
+  ]);
+  return section("calls", "Every call", "One row per call, all on the same clock, so a pattern shows at a glance. Select a call to open and play it.", [
+    h("div", { class: "wall" }, groups), legend,
+  ]);
+}
+
+/** "3 calls, all failed" for the wall's scenario column. @param {Scenario} s */
+function wallSummary(s) {
+  const n = s.calls.length, bad = s.calls.filter((c) => c.error || !c.passed).length;
+  const calls = `${n} call${n === 1 ? "" : "s"}`;
+  return bad === 0 ? `${calls}, all passed` : bad === n ? (n === 1 ? "1 call, failed" : `${calls}, all failed`) : `${calls}, ${bad} failed`;
+}
+
+/** @param {HTMLCanvasElement} cv @param {Call} c */
+function drawTape(cv, c) {
+  const total = c.audio_s || c.duration_s || 1;
+  const { g, width } = prepare(cv, 34);
+  /** @param {number} t */
+  const X = (t) => 1 + (t / total) * (width - 2);
+  g.fillStyle = css("--sunk"); roundRect(g, 0, 0, width, 34, 4); g.fill();
+  for (const t of c.speech || []) {
+    const y = t.who === "caller" ? 8 : 19;
+    g.fillStyle = css(t.who === "caller" ? "--caller" : "--agent");
+    roundRect(g, X(t.start), y, Math.max(1.5, X(t.end) - X(t.start)), 8, 2); g.fill();
+  }
+  g.fillStyle = css("--chaos");
+  for (const m of c.chaos || []) diamond(g, X(m.t), 4, 3);
+  for (const f of c.findings) {
+    if (f.severity !== "fail") continue;
+    g.fillStyle = css("--fail");
+    if (f.end_s !== null && f.end_s > f.t_s) { g.globalAlpha = 0.11; g.fillRect(X(f.t_s), 0, Math.max(2, X(f.end_s) - X(f.t_s)), 34); g.globalAlpha = 1; }
+    g.fillRect(X(f.t_s) - 1, 0, 2, 34);
+  }
+}
+
+// ---------- the call ----------
+
+const canvas = /** @type {HTMLCanvasElement} */ (h("canvas", { id: "timeline-canvas", role: "img", tabindex: "0" }));
+const overview = /** @type {HTMLCanvasElement} */ (h("canvas", { id: "overview", "aria-label": "Whole call: click or drag to move the view" }));
+const tip = h("div", { class: "tip", role: "tooltip" });
+const callEl = h("div", { class: "player", id: "call", "aria-live": "polite" });
+
+/** A window of FOCUS_SPAN_S around t, a third of the way in. @param {number} t @param {number} total */
+function around(t, total) {
+  if (total <= FOCUS_SPAN_S * 1.5) return { t0: 0, t1: total };
+  const t0 = Math.min(Math.max(0, t - FOCUS_SPAN_S / 3), total - FOCUS_SPAN_S);
+  return { t0, t1: t0 + FOCUS_SPAN_S };
+}
+
+/** @param {Call} c @param {boolean} [focus] */
+function selectCall(c, focus = false) {
+  audio.pause();
+  state.call = c;
+  state.finding = primaryFinding(c);
+  const total = c.audio_s || c.duration_s || 1;
+  state.view = state.finding >= 0 ? around(c.findings[state.finding].t_s, total) : { t0: 0, t1: total };
+  if (c.audio) audio.src = c.audio; else audio.removeAttribute("src");
+  if (state.finding >= 0) audio.currentTime = Math.max(0, c.findings[state.finding].t_s - PRE_ROLL_S);
+  for (const b of document.querySelectorAll(".tape")) b.setAttribute("aria-current", String(b.getAttribute("data-call") === c.call_id));
+  try { history.replaceState(null, "", `#${encodeURIComponent(c.call_id)}`); } catch { /* file: URLs may refuse */ }
+  renderCall();
+  if (focus) { canvas.focus({ preventScroll: true }); document.getElementById("call")?.scrollIntoView({ behavior: "smooth", block: "start" }); }
 }
 
 /** Open the call, jump to the moment and play it. @param {string} callId @param {number} t */
@@ -529,46 +836,6 @@ function hearAt(callId, t) {
   document.getElementById("call")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-// ---------- 3: the call ----------
-
-const canvas = /** @type {HTMLCanvasElement} */ (h("canvas", { id: "timeline-canvas", role: "img", tabindex: "0" }));
-const overview = /** @type {HTMLCanvasElement} */ (h("canvas", { id: "overview", "aria-label": "Whole call: click or drag to move the view" }));
-const tip = h("div", { class: "tip", role: "tooltip" });
-const callEl = h("section", { class: "panel call", id: "call", "aria-live": "polite" });
-
-function renderTabs() {
-  const tabs = h("nav", { class: "tabs", "aria-label": "Calls" });
-  for (const s of DATA.scenarios) {
-    if (DATA.scenarios.length > 1) tabs.append(h("span", { class: "group" }, [s.scenario_id]));
-    for (const c of s.calls) {
-      tabs.append(h("button", { class: "tab", "data-call": c.call_id, onclick: () => selectCall(c, true) }, [statusMark(c), `Trial ${c.trial}`]));
-    }
-  }
-  return tabs;
-}
-
-/** A window of FOCUS_SPAN_S around t, a third of the way in. @param {number} t @param {number} total */
-function around(t, total) {
-  if (total <= FOCUS_SPAN_S * 1.5) return { t0: 0, t1: total };
-  const t0 = Math.min(Math.max(0, t - FOCUS_SPAN_S / 3), total - FOCUS_SPAN_S);
-  return { t0, t1: t0 + FOCUS_SPAN_S };
-}
-
-/** @param {Call} c @param {boolean} [focus] */
-function selectCall(c, focus = false) {
-  audio.pause();
-  state.call = c;
-  state.finding = primaryFinding(c);
-  const total = c.audio_s || c.duration_s || 1;
-  state.view = state.finding >= 0 ? around(c.findings[state.finding].t_s, total) : { t0: 0, t1: total };
-  if (c.audio) audio.src = c.audio; else audio.removeAttribute("src");
-  if (state.finding >= 0) audio.currentTime = Math.max(0, c.findings[state.finding].t_s - PRE_ROLL_S);
-  for (const b of document.querySelectorAll(".tab")) b.setAttribute("aria-current", String(b.getAttribute("data-call") === c.call_id));
-  try { history.replaceState(null, "", `#${encodeURIComponent(c.call_id)}`); } catch { /* file: URLs may refuse */ }
-  renderCall();
-  if (focus) canvas.focus();
-}
-
 const LAYOUT = { axis: 20, events: 44, lane: 62, gap: 6, gap2: 14, strip: 58, pad: 12 };
 
 /** The row names beside the canvas, as real text; heights match LAYOUT. */
@@ -579,15 +846,28 @@ function rowLabels() {
   const row = (hgt, kids) => h("div", { class: "label", style: `height:${hgt}px` }, kids);
   return h("div", { class: "labels" }, [
     row(L.axis, []),
-    row(L.events, [h("b", {}, ["Events", info("events")]), h("span", { class: "sub" }, ["◆ chaos · ▼ problem"])]),
-    row(L.lane, [h("b", {}, [h("span", { class: "dot", style: `background:${css("--caller")}` }), "Caller", info("caller")]), h("span", { class: "sub" }, ["left channel"])]),
+    row(L.events, [h("b", {}, ["Events", info("events")]), h("span", { class: "lsub" }, ["◆ on purpose · ▼ problem"])]),
+    row(L.lane, [h("b", {}, [h("span", { class: "dot", style: `background:${css("--caller")}` }), "Caller", info("caller")]), h("span", { class: "lsub" }, ["left channel"])]),
     row(L.gap, []),
-    row(L.lane, [h("b", {}, [h("span", { class: "dot", style: `background:${css("--agent")}` }), "Agent", info("agent")]), h("span", { class: "sub" }, ["right channel"])]),
+    row(L.lane, [h("b", {}, [h("span", { class: "dot", style: `background:${css("--agent")}` }), "Agent", info("agent")]), h("span", { class: "lsub" }, ["right channel"])]),
     row(L.gap2, []),
-    row(L.strip, [h("b", {}, ["Wait before reply", info("wait")]), h("span", { class: "sub" }, [limit ? `dashed line: ${limit} s limit` : "one bar per reply"])]),
+    row(L.strip, [h("b", {}, ["Wait before reply", info("wait")]), h("span", { class: "lsub" }, [limit ? `dashed line: ${limit} s limit` : "one bar per reply"])]),
     row(L.pad, []),
-    row(30, [h("b", {}, ["Whole call"]), h("span", { class: "sub" }, ["drag to move"])]),
+    row(30, [h("b", {}, ["Whole call"]), h("span", { class: "lsub" }, ["drag to move"])]),
   ]);
+}
+
+/** How precisely this call's chaos landed (a check on Callback itself). @param {Call} c */
+function driftFact(c) {
+  const m = (c.metrics || []).find((x) => x.name === "chaos_drift_max_s");
+  if (!m || m.value === null || m.value === undefined) return null;
+  const ms = Math.round(m.value * 1000);
+  const late = m.threshold !== null && m.value > m.threshold;
+  return h("span", {
+    class: late ? "" : "quiet",
+    style: late ? "color:var(--warn-ink);font-weight:600" : "",
+    title: "How late the scheduled disturbances hit the line. A check on Callback itself, not the agent.",
+  }, [late ? `Chaos landed up to ${ms} ms late (tolerance ${Math.round((m.threshold || 0) * 1000)} ms)` : `Chaos on time, within ${ms} ms`]);
 }
 
 function renderCall() {
@@ -597,24 +877,26 @@ function renderCall() {
     c.duration_s !== undefined ? `${c.duration_s.toFixed(0)} s call` : null,
     c.end_reason ? `ended: ${c.end_reason.replace(/_/g, " ")}` : null,
     `seed ${c.seed}`,
-  ].filter(Boolean).join(" · ");
+  ].filter(Boolean);
   const sides = /** @type {const} */ (["both", "caller", "agent"]);
   const hearSeg = c.audio
     ? h("div", { class: "seg", role: "group", "aria-label": "Hear" }, sides.map((side, k) => h("button", {
       "data-side": side, "aria-pressed": String(hear === side), title: `Key ${k + 1}`, onclick: () => setHear(side),
     }, [side === "both" ? "Both sides" : side === "caller" ? "Caller only" : "Agent only"])))
-    : h("span", { class: "muted" }, ["(audio not embedded)"]);
+    : h("span", { class: "quiet" }, ["Audio not embedded in this report"]);
+  const playing = !audio.paused;
   callEl.replaceChildren(...[
-    h("div", { class: "callhead" }, [statusMark(c), h("b", {}, [`${c.scenario_id} · trial ${c.trial}`]), h("span", { class: "muted num" }, [facts]), driftFact(c)]),
+    h("div", { class: "callhead" }, [callMark(c), h("h3", {}, [`${c.scenario_id}, trial ${c.trial}`])]),
+    h("div", { class: "callfacts num" }, [...facts.map((f) => h("span", {}, [/** @type {string} */ (f)])), driftFact(c)]),
     c.error ? h("div", { class: "error-box" }, [c.error]) : null,
     c.peaks ? h("div", { class: "transport" }, [
-      h("button", { class: "play", id: "play", onclick: togglePlay, "aria-label": "Play", title: "Play / pause (Space)" }, ["▶"]),
-      h("span", { class: "num", id: "time" }, [`${clock(audio.currentTime || 0)} / ${clock(c.audio_s || 0)}`]),
+      h("button", { class: "play", id: "play", onclick: togglePlay, "aria-label": playing ? "Pause" : "Play", title: "Play or pause (Space)" }, [glyph(playing ? "pause" : "bigplay")]),
+      h("span", { class: "clock num", id: "time" }, [`${clock(audio.currentTime || 0)} / ${clock(c.audio_s || 0)}`]),
       hearSeg,
-      h("span", { class: "hint" }, ["Click anywhere on the timeline to listen from there"]),
+      h("span", { class: "hint" }, ["Click the timeline to listen from that point"]),
     ]) : null,
     c.peaks ? h("div", { class: "timeline" }, [rowLabels(), h("div", { style: "position:relative;min-width:0" }, [canvas, overview, tip])])
-      : h("p", { class: "muted" }, ["No recording for this call."]),
+      : h("p", { class: "quiet" }, ["No recording for this call."]),
     renderProblems(c),
     c.remeasured ? h("p", { class: "note" }, ["Speech timings for this older run were re-measured from the recording with the same scorer."]) : null,
   ].filter((n) => n !== null));
@@ -626,24 +908,24 @@ function renderCall() {
 function renderProblems(c) {
   if (!c.findings.length) {
     const why = c.failure_reasons.length ? c.failure_reasons.join(" ") : "No problems in this call.";
-    return h("p", { class: c.passed ? "muted" : "sev fail", style: "margin-top:14px" }, [why]);
+    return h("p", { class: c.passed ? "okline" : "failline" }, [why]);
   }
   const list = h("ul", { class: "problems", "aria-label": "Problems in this call" });
   for (const g of groupFindings(c)) {
     const first = c.findings[g.items[0]];
-    const mark = h("span", { class: `sev ${g.severity}` }, [g.severity === "fail" ? "✕" : "▲"]);
+    const mark = h("span", { class: "sev" }, [icon(g.severity === "fail" ? "fail" : "warn", g.severity === "fail" ? "problem" : "warning")]);
     if (g.items.length === 1) {
       const i = g.items[0];
       list.append(h("li", {}, [h("button", { class: "prob", "data-i": String(i), onclick: () => jumpTo(i, true) }, [
-        h("span", { class: "when" }, [`▶ ${clock(first.t_s)}`]), mark, h("span", { class: "kind" }, [g.label]), h("span", {}, [first.message]),
+        h("span", { class: "when" }, [clock(first.t_s)]), mark, h("span", { class: "kind" }, [g.label]), h("span", {}, [first.message]),
       ])]));
       continue;
     }
     list.append(h("li", {}, [
       h("button", { class: "prob", "data-group": g.key, onclick: () => jumpTo(g.items[0], true) }, [
-        h("span", { class: "when" }, [`▶ ${clock(first.t_s)}`]), mark,
+        h("span", { class: "when" }, [clock(first.t_s)]), mark,
         h("span", { class: "kind" }, [g.label, " ", h("span", { class: "count" }, [`×${g.items.length}`])]),
-        h("span", { class: "muted" }, [groupRange(c, g) || first.message]),
+        h("span", { class: "quiet" }, [groupRange(c, g) || first.message]),
       ]),
       h("div", { class: "times", role: "group", "aria-label": `${g.label}: each time` }, g.items.map((i) => h("button", {
         class: "chip", "data-i": String(i), onclick: () => jumpTo(i, true), title: c.findings[i].message,
@@ -686,7 +968,7 @@ function prepare(cv, height) {
   const g = /** @type {CanvasRenderingContext2D} */ (cv.getContext("2d"));
   g.setTransform(dpr, 0, 0, dpr, 0, 0);
   g.clearRect(0, 0, width, height);
-  g.font = "12px system-ui, -apple-system, Segoe UI, sans-serif";
+  g.font = `12px ${FONT}`;
   g.textBaseline = "middle";
   return { g, width };
 }
@@ -726,7 +1008,7 @@ function draw() {
   const sel = state.finding >= 0 ? c.findings[state.finding] : null;
   if (sel && sel.end_s !== null && sel.end_s > sel.t_s) {
     const a = Math.max(x0, X(sel.t_s)), b = Math.min(x1, X(sel.end_s));
-    if (b > a) { g.fillStyle = css("--pin-span"); g.fillRect(a, yCaller, b - a, yAgent + L.lane - yCaller); }
+    if (b > a) hatch(g, a, yCaller, b - a, yAgent + L.lane - yCaller, css("--fail"));
   }
 
   // speech blocks and waveforms
@@ -1059,17 +1341,19 @@ function tick() {
     state.raf = requestAnimationFrame(tick);
   } else state.raf = null;
 }
+/** @param {boolean} playing */
+function setPlayButton(playing) {
+  const b = document.getElementById("play");
+  if (!b) return;
+  b.replaceChildren(glyph(playing ? "pause" : "bigplay"));
+  b.setAttribute("aria-label", playing ? "Pause" : "Play");
+}
 audio.addEventListener("play", () => {
   if (hear !== "both" || graph) route();
-  const b = document.getElementById("play");
-  if (b) { b.textContent = "❚❚"; b.setAttribute("aria-label", "Pause"); }
+  setPlayButton(true);
   if (state.raf === null) state.raf = requestAnimationFrame(tick);
 });
-audio.addEventListener("pause", () => {
-  const b = document.getElementById("play");
-  if (b) { b.textContent = "▶"; b.setAttribute("aria-label", "Play"); }
-  draw();
-});
+audio.addEventListener("pause", () => { setPlayButton(false); draw(); });
 audio.addEventListener("seeked", () => draw());
 
 document.addEventListener("keydown", (e) => {
@@ -1097,91 +1381,115 @@ document.addEventListener("keydown", (e) => {
   else if (k === "?") { if (help.open) help.close(); else help.showModal(); }
 });
 
-// ---------- 4: details ----------
+// ---------- the numbers ----------
 
 /** @param {Scenario} s */
-function renderScenario(s) {
+function renderScenarioNumbers(s) {
   const regressed = s.baseline.some((d) => d.regressed);
   const ok = s.passed && !regressed;
   const diffs = new Map(s.baseline.map((d) => [d.metric, d]));
-  const rows = s.aggregates.map((a) => {
+  const hasBase = !!DATA.run.baseline_name;
+  const rows = s.aggregates.flatMap((a) => {
     const d = diffs.get(a.name);
     const term = METRIC_TERMS[a.name];
-    return h("tr", {}, [
-      h("td", {}, [METRIC_LABELS[a.name] || a.name, term ? " " : "", term ? info(term) : null]),
-      h("td", { class: "num" }, [h("b", {}, [fmt(a.value, a.unit)])]),
-      h("td", { class: "num muted" }, [a.ci_low !== null && a.ci_high !== null ? `${fmt(a.ci_low, a.unit)} – ${fmt(a.ci_high, a.unit)}` : ""]),
-      h("td", { class: "num muted" }, [a.threshold !== null ? `${a.comparator === "<=" ? "≤" : "≥"} ${fmt(a.threshold, a.unit)}` : ""]),
-      h("td", {}, [a.passed === null ? h("span", { class: "muted" }, ["–"]) : a.passed ? h("span", { class: "status pass" }, ["✓"]) : h("span", { class: "status fail" }, ["✕"])]),
-      DATA.run.baseline_name ? h("td", { class: "num" }, [d ? renderDiff(d, a.unit) : ""]) : null,
-    ]);
+    return [
+      h("div", { class: "mname" }, [METRIC_LABELS[a.name] || a.name, term ? info(term) : null]),
+      gauge(a),
+      h("div", { class: "mval num mlim" }, [
+        h("b", {}, [fmt(a.value, a.unit)]),
+        h("small", {}, [[
+          a.ci_low !== null && a.ci_high !== null ? `95% range ${fmt(a.ci_low, a.unit)} to ${fmt(a.ci_high, a.unit)}` : "",
+          a.threshold !== null ? `limit ${a.comparator === "<=" ? "≤" : "≥"} ${fmt(a.threshold, a.unit)}` : "",
+          hasBase && d ? diffText(d, a.unit) : "",
+        ].filter(Boolean).join(" · ")]),
+      ]),
+      a.passed === null ? h("span", { class: "quiet" }, ["–"]) : icon(a.passed ? "pass" : "fail", a.passed ? "within the limit" : "over the limit"),
+      h("span", {}, []),
+    ];
   });
-  return h("article", { class: "panel scen" }, [
-    h("header", {}, [
-      h("span", { class: `status ${ok ? "pass" : "fail"}` }, [ok ? "✓" : "✕"]),
-      h("b", {}, [s.scenario_id]),
-      h("span", { class: "muted" }, [`${s.agent} · ${s.calls.length} call${s.calls.length === 1 ? "" : "s"}`]),
-    ]),
-    h("p", {}, [s.sentence]),
-    rows.length ? h("table", { class: "aggs" }, [
-      h("thead", {}, [h("tr", {}, [
-        h("th", {}, ["Across all calls"]), h("th", {}, ["Value"]), h("th", {}, ["95% range ", info("range")]),
-        h("th", {}, ["Limit ", info("limit")]), h("th", {}, [""]), DATA.run.baseline_name ? h("th", {}, [`vs ${DATA.run.baseline_name}`]) : null,
-      ])]),
-      h("tbody", {}, rows),
-    ]) : h("p", { class: "muted" }, ["No across-call numbers: this run was made by an older Callback."]),
+  return h("details", { class: "nscn" }, [
+    h("summary", {}, [icon(ok ? "pass" : "fail", ok ? "passed" : "failed"), h("b", {}, [s.scenario_id]), h("span", { class: "s" }, [`${s.agent}, ${s.calls.length} call${s.calls.length === 1 ? "" : "s"}. ${s.sentence}`]), h("span", { class: "chev" }, [])]),
+    rows.length ? h("div", { class: "metrics" }, [
+      ...rows,
+    ]) : h("p", { class: "quiet", style: "padding:0 0 22px 38px" }, ["No across-call numbers: this run was made by an older Callback."]),
   ]);
 }
 /** @param {Diff} d @param {string} unit */
-function renderDiff(d, unit) {
-  if (d.delta === null) return h("span", { class: "muted" }, [d.direction]);
-  const arrow = d.direction === "same" ? "=" : d.delta > 0 ? "▲" : "▼";
-  const text = `${arrow} ${d.delta > 0 ? "+" : d.delta < 0 ? "−" : "±"}${fmt(Math.abs(d.delta), unit)}`;
-  if (d.regressed) return h("span", { class: "status fail", title: `was ${fmt(d.baseline, unit)}; beyond noise` }, [`${text} worse`]);
-  return h("span", { class: d.direction === "better" ? "status pass" : "muted", title: `was ${fmt(d.baseline, unit)}` }, [text + (d.direction === "worse" ? " (noise)" : "")]);
+function diffText(d, unit) {
+  if (d.delta === null) return d.direction;
+  const arrow = d.direction === "same" ? "=" : d.delta > 0 ? "up" : "down";
+  const mag = fmt(Math.abs(d.delta), unit);
+  return d.regressed ? `${arrow} ${mag} vs baseline: worse, beyond noise` : `${arrow} ${mag} vs baseline${d.direction === "worse" ? " (noise)" : ""}`;
 }
-function renderDetails() {
+/** A value on a line with its 95% range and its limit. @param {Aggregate} a */
+function gauge(a) {
+  const hi = Math.max(a.threshold !== null ? a.threshold * 1.6 : 0, a.value ?? 0, a.ci_high ?? 0, a.unit === "ratio" ? 0.1 : 0.5);
+  const top = a.unit === "ratio" && a.comparator === ">=" ? 1 : hi * 1.08;
+  /** @param {number} v */
+  const pos = (v) => `${Math.min(100, Math.max(0, (v / top) * 100))}%`;
+  const kids = [h("div", { class: "track" })];
+  if (a.ci_low !== null && a.ci_high !== null) kids.push(h("div", { class: "whisker", style: `left:${pos(a.ci_low)};width:calc(${pos(a.ci_high)} - ${pos(a.ci_low)})` }));
+  if (a.threshold !== null) kids.push(h("div", { class: "limit", style: `left:${pos(a.threshold)}` }));
+  if (a.value !== null) kids.push(h("div", { class: `val ${a.passed === false ? "bad" : a.passed ? "good" : ""}`, style: `left:${pos(a.value)}` }));
+  return h("div", { class: "gauge", role: "img", "aria-label": `${fmt(a.value, a.unit)}${a.threshold !== null ? `, limit ${fmt(a.threshold, a.unit)}` : ""}` }, kids);
+}
+function renderNumbers() {
   const terms = ["p95", "p50", "range", "limit", "wait", "unanswered", "yield", "talkover", "falseyield", "silence", "passed", "events"];
-  return h("details", { class: "more" }, [
-    h("summary", {}, ["Details: every number across calls, and what the terms mean"]),
-    ...DATA.scenarios.map(renderScenario),
-    h("article", { class: "panel scen" }, [
-      h("b", {}, ["How to read this"]),
+  return section("numbers", "The numbers", "Across the calls of each scenario. The dot is the value, the whisker its 95% range, the dashed line the limit.", [
+    h("div", {}, DATA.scenarios.map(renderScenarioNumbers)),
+    h("details", { class: "howto" }, [
+      h("summary", {}, ["How to read this page"]),
       h("dl", { class: "glossary" }, terms.flatMap((k) => [h("dt", {}, [GLOSSARY[k][0]]), h("dd", {}, [GLOSSARY[k][1]])])),
       h("p", { class: "note" }, ["Everything is measured from the recording, not from the agent's logs. Only hard checks with a limit can fail a run; AI-judged scores are informational."]),
     ]),
   ]);
 }
 
-// ---------- theme ----------
+// ---------- theme and redraw ----------
 
+function redrawAll() {
+  for (const m of momentCanvases) drawMoment(m.cv, m.c, m.f);
+  for (const t of tapeCanvases) drawTape(t.cv, t.c);
+  renderCall();
+}
 function toggleTheme() {
   const root = document.documentElement;
   const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
   root.dataset.theme = dark ? "light" : "dark";
   try { localStorage.setItem("callback-report-theme", root.dataset.theme); } catch { /* storage may be blocked */ }
-  renderCall();
+  redrawAll();
 }
 try {
   const saved = localStorage.getItem("callback-report-theme");
   if (saved === "light" || saved === "dark") document.documentElement.dataset.theme = saved;
 } catch { /* storage may be blocked */ }
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => renderCall());
-window.addEventListener("resize", () => draw());
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => redrawAll());
+let resizeTimer = 0;
+window.addEventListener("resize", () => {
+  draw();
+  clearTimeout(resizeTimer);
+  resizeTimer = window.setTimeout(() => { for (const m of momentCanvases) drawMoment(m.cv, m.c, m.f); for (const t of tapeCanvases) drawTape(t.cv, t.c); }, 80);
+});
 
 // ---------- start ----------
 
-document.title = `${DATA.run.exit_code === 0 ? "PASS" : DATA.run.exit_code === 1 ? "FAIL" : "ERROR"} · Callback run ${DATA.run.run_id}`;
+document.title = `${DATA.run.exit_code === 0 ? "Passed" : DATA.run.exit_code === 1 ? "Failed" : "Error"}: Callback run ${DATA.run.run_id}`;
 app.append(
-  renderTop(),
-  h("h2", {}, [CALLS.length > 1 ? "Listen to a call" : "The call"]),
-  CALLS.length > 1 ? renderTabs() : "",
-  callEl,
-  renderDetails(),
+  ...[renderMasthead(), renderVerdict(), renderFindings(), renderWall()].filter((n) => n !== null),
+  h("section", { class: "section", id: "open" }, [
+    h("div", { class: "sechead" }, [h("h2", {}, [CALLS.length > 1 ? "Listen to a call" : "The call"]), h("p", { class: "sub" }, ["The two sides of the recording on one timeline. Problems are pinned; select one to hear it."])]),
+    callEl,
+  ]),
+  renderNumbers(),
+  h("p", { class: "foot" }, [`Callback ${DATA.run.callback_version}. Measured from the recordings, not from the agent's logs.`]),
 );
+for (const m of momentCanvases) drawMoment(m.cv, m.c, m.f);
+for (const t of tapeCanvases) drawTape(t.cv, t.c);
 const linked = CALLS.find((c) => `#${c.call_id}` === decodeURIComponent(location.hash));
-const first = linked || CALLS.find((c) => c.error || !c.passed) || CALLS[0];
+const worst = DATA.summary.tiles.length ? CALLS.find((c) => c.call_id === DATA.summary.tiles[0].call_id) : undefined;
+const first = linked || worst || CALLS.find((c) => c.error || !c.passed) || CALLS[0];
 if (first) selectCall(first);
+requestAnimationFrame(() => { for (const m of momentCanvases) drawMoment(m.cv, m.c, m.f); for (const t of tapeCanvases) drawTape(t.cv, t.c); });
 </script>
 </body>
 </html>

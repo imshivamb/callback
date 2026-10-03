@@ -169,3 +169,26 @@ def test_ci_limit_is_shown_so_nobody_mistakes_it_for_the_target(run_cli, tmp_pat
     assert "CI limit in use." in page
     results = json.loads((run_dir / "results.json").read_text())
     assert results["limit_overrides"][0]["source"] == "CALLBACK_CI_LATENCY_LIMIT_S"
+
+
+def test_many_scenarios_with_one_problem_read_as_one_problem(tmp_path) -> None:
+    """Twelve slow scenarios are one problem with its worst number, not twelve clauses."""
+    from callback_voice.report.summarize import summarize_run
+
+    make_run(tmp_path, older=False)
+    result = RunResult.model_validate_json((tmp_path / "results.json").read_text())
+    [first] = result.scenarios
+    slower = [
+        a.model_copy(update={"value": (a.value or 0) + 1.0}) if a.name.startswith("response") else a
+        for a in first.aggregates
+    ]
+    result.scenarios.append(
+        first.model_copy(update={"scenario_id": "second", "aggregates": slower})
+    )
+
+    summary = summarize_run(result)
+    assert summary["sentence"].count("replies too slowly") == 1
+    assert "(3.01 s vs a 1.5 s limit)" in summary["sentence"]  # the worst of the two
+    assert summary["sentence"].endswith("(in 2 of 2 scenarios).")
+    [tile] = summary["tiles"]
+    assert tile["scenarios"] == 2 and tile["scenario_id"] == "second"

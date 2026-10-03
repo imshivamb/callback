@@ -9,6 +9,10 @@ Silero VAD (src/callback_voice/scoring/vad/assets/silero_vad.onnx)
   Copyright (c) 2020-present Silero Team
   Licensed under the MIT License: https://github.com/snakers4/silero-vad/blob/master/LICENSE
 
+Bricolage Grotesque (src/callback_voice/report/assets/display.woff2, a subset)
+  Copyright 2022 The Bricolage Grotesque Project Authors
+  Licensed under the SIL Open Font License 1.1: src/callback_voice/report/assets/display-font-OFL.txt
+
 Optional dependencies installed separately (for example with the "local" extra) keep
 their own licenses. Notably, Kokoro TTS phonemises text with espeak-ng (GPL-3.0) and
 piper-tts is GPL-3.0; neither is bundled with Callback.
