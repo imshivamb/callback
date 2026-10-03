@@ -42,6 +42,7 @@ targets:
     url: ws://127.0.0.1:7880        # the LiveKit server
     room_prefix: callback           # rooms are named <room_prefix>-<call id>
     # agent_identity: my-agent      # listen only to this participant (default: the first with audio)
+    # agent_name: my-agent          # dispatch this agent into each room (for workers with explicit dispatch)
     # api_key_env: LIVEKIT_API_KEY  # env vars holding the server's API key and secret
     # api_secret_env: LIVEKIT_API_SECRET
 ```
@@ -53,9 +54,17 @@ and publish audio. If none does, the run stops with exit code 2. Hanging up dele
 the room, which disconnects the agent; the agent hangs up by leaving the room.
 
 Your agent has to be sent into these rooms. LiveKit Agents' automatic dispatch (its
-default) sends an agent into every new room; otherwise have your agent join rooms
-with your prefix. So far this transport has been tested with the bundled reference
-agent only, not with a LiveKit Agents worker.
+default) sends an agent into every new room. A worker registered with an `agent_name`
+uses explicit dispatch instead and ignores new rooms: set `agent_name` on the target
+and Callback requests that agent in every room it creates. Otherwise have your agent
+join rooms with your prefix. The transport has been tested with the bundled reference
+agent and with LiveKit's own agent starter, running on a laptop and deployed to LiveKit
+Cloud ([RESULTS.md](../RESULTS.md)).
+
+Callback waits 20 s for an agent to join with audio, and that wait is fixed. LiveKit
+Cloud's free plan scales an agent to zero between sessions and adds a 10–20 s cold start,
+so the first call after an idle spell could time out (exit 2, never a pass). I made a
+short warm-up call before each scenario and none of the counted calls timed out.
 
 `expect.state` with a path (`webhook: /verify`) resolves against a WebSocket agent's
 URL only. A LiveKit URL belongs to the media server, so give the full URL of your

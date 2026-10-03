@@ -82,6 +82,11 @@ class LiveKitTransport(Transport):
                 metadata=room_metadata(call_id),
                 empty_timeout=30,
                 departure_timeout=5,
+                agents=(
+                    [api.RoomAgentDispatch(agent_name=self._target.agent_name)]
+                    if self._target.agent_name
+                    else []
+                ),
             )
         )
         await self._room.connect(

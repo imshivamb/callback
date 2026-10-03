@@ -24,6 +24,10 @@ class LiveKitTarget(StrictModel):
     url: str = Field(pattern=r"^wss?://")
     room_prefix: str = "callback"
     agent_identity: str | None = None
+    agent_name: str | None = Field(
+        default=None,
+        description="Agent to dispatch into each room; needed when the worker uses explicit dispatch",
+    )
     api_key_env: str = "LIVEKIT_API_KEY"
     api_secret_env: str = "LIVEKIT_API_SECRET"
 
