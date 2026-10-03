@@ -1,0 +1,15 @@
+# Callback against the LiveKit Agents Python starter, run unmodified.
+# Credentials come from .env (LIVEKIT_API_KEY, LIVEKIT_API_SECRET); the URL is the Cloud project's.
+targets:
+  livekit-starter:
+    transport: livekit
+    url: wss://<your-project>.livekit.cloud
+    room_prefix: callback
+    agent_name: my-agent
+
+providers:
+  stt: {name: faster-whisper, model: base}
+  tts: {name: kokoro, voice: af_heart}
+
+concurrency: 1
+cost_cap_usd: 1.0

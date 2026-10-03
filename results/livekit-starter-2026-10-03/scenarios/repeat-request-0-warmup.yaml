@@ -1,0 +1,14 @@
+# Warm-up before the first repeat-request call: wakes the hosted agent after it scaled to zero.
+# Excluded from every statistic.
+id: warmup-repeat-request
+agent: livekit-starter
+trials: 1
+max_duration_s: 90
+caller:
+  persona: "Arjun, warming up"
+  goal: "Plan a quick vegetarian dinner for four"
+  voice: male_us_1
+  speaks_first: true
+  script:
+    - "Hi, can you help me plan a simple dinner for four people tonight?"
+    - "That sounds good. Thanks, that's all. Bye."

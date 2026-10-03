@@ -1,0 +1,2354 @@
+{
+ "run_id": "20261003-052029",
+ "callback_version": "0.1.1",
+ "created_at": "2026-10-03T05:40:02.051765Z",
+ "provider_models": {
+  "stt": "base",
+  "scoring_stt": "small",
+  "tts": "af_heart",
+  "llm": "gemini-flash-lite-latest"
+ },
+ "note": "Warm-up calls: excluded from every statistic",
+ "scenarios": [
+  {
+   "scenario_id": "warmup-backchannel",
+   "agent": "livekit-starter",
+   "source": "scenarios/backchannel-0-warmup.yaml",
+   "passed": false,
+   "trials": [
+    {
+     "call_id": "warmup-backchannel--t1",
+     "scenario_id": "warmup-backchannel",
+     "trial": 1,
+     "seed": 9154863011822866945,
+     "passed": false,
+     "metrics": [
+      {
+       "name": "response_latency_p50_s",
+       "value": 3.035,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [
+        2.98,
+        3.09
+       ],
+       "sample_times_s": [
+        4.34,
+        16.28
+       ]
+      },
+      {
+       "name": "response_latency_p95_s",
+       "value": 3.084,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 1.5,
+       "comparator": "<=",
+       "passed": false,
+       "detail": null,
+       "samples": [
+        2.98,
+        3.09
+       ],
+       "sample_times_s": [
+        4.34,
+        16.28
+       ]
+      },
+      {
+       "name": "unanswered_turns",
+       "value": 0.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": 0.0,
+       "comparator": "<=",
+       "passed": true,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "time_to_yield_p95_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 0.6,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "talk_over_ratio",
+       "value": 0.0,
+       "unit": "ratio",
+       "method": "deterministic",
+       "threshold": 0.05,
+       "comparator": "<=",
+       "passed": true,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "false_yields",
+       "value": null,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": 0.0,
+       "comparator": "<=",
+       "passed": null,
+       "detail": "0 backchannel(s) said while the agent was talking",
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "silence_reprompt_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 8.0,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "chaos_drift_max_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 0.1,
+       "comparator": "<=",
+       "passed": null,
+       "detail": "Callback self-check; informational",
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "call_duration_s",
+       "value": 20.34,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "caller_turns",
+       "value": 2.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "agent_turns",
+       "value": 2.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      }
+     ],
+     "verifier_results": [],
+     "findings": [
+      {
+       "metric": "response_latency",
+       "t_s": 4.34,
+       "end_s": 7.32,
+       "message": "The agent took 2.98 s to respond (limit 1.50 s).",
+       "severity": "fail",
+       "chaos_id": null
+      },
+      {
+       "metric": "response_latency",
+       "t_s": 16.28,
+       "end_s": 19.37,
+       "message": "The agent took 3.09 s to respond (limit 1.50 s).",
+       "severity": "fail",
+       "chaos_id": null
+      }
+     ],
+     "failure_reasons": [
+      "response_latency_p95_s 3.084 s > 1.5 s"
+     ],
+     "review": [],
+     "error": null,
+     "call": {
+      "call_id": "warmup-backchannel--t1",
+      "scenario_id": "warmup-backchannel",
+      "trial": 1,
+      "seed": 9154863011822866945,
+      "transport": "livekit",
+      "started_at": "2026-10-03T05:20:31.005263Z",
+      "duration_s": 20.34,
+      "end_reason": "caller_hangup",
+      "wav_path": "calls/warmup-backchannel--t1/call.wav",
+      "events": [
+       {
+        "t_s": 0.0,
+        "kind": "call_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "transport": "livekit"
+        }
+       },
+       {
+        "t_s": 0.78,
+        "kind": "caller_utterance",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": 4.44,
+        "text": "Hi, can you help me plan a simple dinner for four people tonight?",
+        "data": {
+         "tag": "line",
+         "caller_timing": {
+          "brain_s": 0.0,
+          "tts_s": 0.781
+         }
+        }
+       },
+       {
+        "t_s": 7.392,
+        "kind": "agent_turn_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "turn": 1
+        }
+       },
+       {
+        "t_s": 13.84,
+        "kind": "caller_utterance",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": 16.34,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "data": {
+         "tag": "line",
+         "caller_timing": {
+          "brain_s": 0.0,
+          "tts_s": 0.568
+         }
+        }
+       },
+       {
+        "t_s": 19.424,
+        "kind": "agent_turn_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "turn": 2
+        }
+       },
+       {
+        "t_s": 20.34,
+        "kind": "call_end",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": "caller_hangup",
+        "data": {}
+       }
+      ],
+      "transcript": [],
+      "speech": [
+       {
+        "speaker": "caller",
+        "start_s": 0.81,
+        "end_s": 4.34,
+        "text": "Hi, can you help me plan a simple dinner for four people tonight?",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "agent",
+        "start_s": 7.32,
+        "end_s": 12.54,
+        "text": "",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "caller",
+        "start_s": 13.87,
+        "end_s": 14.78,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "caller",
+        "start_s": 15.11,
+        "end_s": 16.28,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "agent",
+        "start_s": 19.37,
+        "end_s": 20.31,
+        "text": "",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       }
+      ]
+     },
+     "llm_usage": {}
+    }
+   ],
+   "aggregates": [
+    {
+     "name": "response_latency_p95_s",
+     "value": 3.0845,
+     "ci_low": 2.98,
+     "ci_high": 3.09,
+     "n": 2,
+     "unit": "s",
+     "method": "deterministic",
+     "threshold": 1.5,
+     "comparator": "<=",
+     "passed": false
+    },
+    {
+     "name": "response_latency_p50_s",
+     "value": 3.035,
+     "ci_low": 2.98,
+     "ci_high": 3.09,
+     "n": 2,
+     "unit": "s",
+     "method": "deterministic",
+     "threshold": null,
+     "comparator": "<=",
+     "passed": null
+    },
+    {
+     "name": "talk_over_ratio",
+     "value": 0.0,
+     "ci_low": null,
+     "ci_high": null,
+     "n": 1,
+     "unit": "ratio",
+     "method": "deterministic",
+     "threshold": 0.05,
+     "comparator": "<=",
+     "passed": true
+    },
+    {
+     "name": "unanswered_turns",
+     "value": 0.0,
+     "ci_low": null,
+     "ci_high": null,
+     "n": 1,
+     "unit": "count",
+     "method": "deterministic",
+     "threshold": 0.0,
+     "comparator": "<=",
+     "passed": true
+    },
+    {
+     "name": "call_pass_rate",
+     "value": 0.0,
+     "ci_low": 0.0,
+     "ci_high": 0.7935,
+     "n": 1,
+     "unit": "ratio",
+     "method": "deterministic",
+     "threshold": null,
+     "comparator": ">=",
+     "passed": null
+    }
+   ],
+   "failure_reasons": [
+    "response_latency_p95_s 3.0845 s > 1.5 s (95% CI 2.98\u20133.09, n=2)"
+   ]
+  },
+  {
+   "scenario_id": "warmup-barge-in",
+   "agent": "livekit-starter",
+   "source": "scenarios/barge-in-0-warmup.yaml",
+   "passed": false,
+   "trials": [
+    {
+     "call_id": "warmup-barge-in--t1",
+     "scenario_id": "warmup-barge-in",
+     "trial": 1,
+     "seed": 1442532989333513321,
+     "passed": false,
+     "metrics": [
+      {
+       "name": "response_latency_p50_s",
+       "value": 2.515,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [
+        2.24,
+        2.79
+       ],
+       "sample_times_s": [
+        3.58,
+        13.72
+       ]
+      },
+      {
+       "name": "response_latency_p95_s",
+       "value": 2.763,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 1.5,
+       "comparator": "<=",
+       "passed": false,
+       "detail": null,
+       "samples": [
+        2.24,
+        2.79
+       ],
+       "sample_times_s": [
+        3.58,
+        13.72
+       ]
+      },
+      {
+       "name": "unanswered_turns",
+       "value": 0.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": 0.0,
+       "comparator": "<=",
+       "passed": true,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "time_to_yield_p95_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 0.6,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "talk_over_ratio",
+       "value": 0.0,
+       "unit": "ratio",
+       "method": "deterministic",
+       "threshold": 0.05,
+       "comparator": "<=",
+       "passed": true,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "false_yields",
+       "value": null,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": 0.0,
+       "comparator": "<=",
+       "passed": null,
+       "detail": "0 backchannel(s) said while the agent was talking",
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "silence_reprompt_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 8.0,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "chaos_drift_max_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 0.1,
+       "comparator": "<=",
+       "passed": null,
+       "detail": "Callback self-check; informational",
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "call_duration_s",
+       "value": 17.78,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "caller_turns",
+       "value": 2.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "agent_turns",
+       "value": 2.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      }
+     ],
+     "verifier_results": [],
+     "findings": [
+      {
+       "metric": "response_latency",
+       "t_s": 3.58,
+       "end_s": 5.82,
+       "message": "The agent took 2.24 s to respond (limit 1.50 s).",
+       "severity": "fail",
+       "chaos_id": null
+      },
+      {
+       "metric": "response_latency",
+       "t_s": 13.72,
+       "end_s": 16.51,
+       "message": "The agent took 2.79 s to respond (limit 1.50 s).",
+       "severity": "fail",
+       "chaos_id": null
+      }
+     ],
+     "failure_reasons": [
+      "response_latency_p95_s 2.763 s > 1.5 s"
+     ],
+     "review": [],
+     "error": null,
+     "call": {
+      "call_id": "warmup-barge-in--t1",
+      "scenario_id": "warmup-barge-in",
+      "trial": 1,
+      "seed": 1442532989333513321,
+      "transport": "livekit",
+      "started_at": "2026-10-03T05:23:32.772497Z",
+      "duration_s": 17.78,
+      "end_reason": "caller_hangup",
+      "wav_path": "calls/warmup-barge-in--t1/call.wav",
+      "events": [
+       {
+        "t_s": 0.0,
+        "kind": "call_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "transport": "livekit"
+        }
+       },
+       {
+        "t_s": 0.02,
+        "kind": "caller_utterance",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": 3.68,
+        "text": "Hi, can you help me plan a simple dinner for four people tonight?",
+        "data": {
+         "tag": "line",
+         "caller_timing": {
+          "brain_s": 0.0,
+          "tts_s": 0.002
+         }
+        }
+       },
+       {
+        "t_s": 5.824,
+        "kind": "agent_turn_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "turn": 1
+        }
+       },
+       {
+        "t_s": 11.28,
+        "kind": "caller_utterance",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": 13.78,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "data": {
+         "tag": "line",
+         "caller_timing": {
+          "brain_s": 0.0,
+          "tts_s": 0.001
+         }
+        }
+       },
+       {
+        "t_s": 16.512,
+        "kind": "agent_turn_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "turn": 2
+        }
+       },
+       {
+        "t_s": 17.78,
+        "kind": "call_end",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": "caller_hangup",
+        "data": {}
+       }
+      ],
+      "transcript": [],
+      "speech": [
+       {
+        "speaker": "caller",
+        "start_s": 0.05,
+        "end_s": 3.58,
+        "text": "Hi, can you help me plan a simple dinner for four people tonight?",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "agent",
+        "start_s": 5.82,
+        "end_s": 10.54,
+        "text": "",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "caller",
+        "start_s": 11.31,
+        "end_s": 12.22,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "caller",
+        "start_s": 12.55,
+        "end_s": 13.72,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "agent",
+        "start_s": 16.51,
+        "end_s": 17.78,
+        "text": "",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       }
+      ]
+     },
+     "llm_usage": {}
+    }
+   ],
+   "aggregates": [
+    {
+     "name": "response_latency_p95_s",
+     "value": 2.7625,
+     "ci_low": 2.24,
+     "ci_high": 2.79,
+     "n": 2,
+     "unit": "s",
+     "method": "deterministic",
+     "threshold": 1.5,
+     "comparator": "<=",
+     "passed": false
+    },
+    {
+     "name": "response_latency_p50_s",
+     "value": 2.515,
+     "ci_low": 2.24,
+     "ci_high": 2.79,
+     "n": 2,
+     "unit": "s",
+     "method": "deterministic",
+     "threshold": null,
+     "comparator": "<=",
+     "passed": null
+    },
+    {
+     "name": "talk_over_ratio",
+     "value": 0.0,
+     "ci_low": null,
+     "ci_high": null,
+     "n": 1,
+     "unit": "ratio",
+     "method": "deterministic",
+     "threshold": 0.05,
+     "comparator": "<=",
+     "passed": true
+    },
+    {
+     "name": "unanswered_turns",
+     "value": 0.0,
+     "ci_low": null,
+     "ci_high": null,
+     "n": 1,
+     "unit": "count",
+     "method": "deterministic",
+     "threshold": 0.0,
+     "comparator": "<=",
+     "passed": true
+    },
+    {
+     "name": "call_pass_rate",
+     "value": 0.0,
+     "ci_low": 0.0,
+     "ci_high": 0.7935,
+     "n": 1,
+     "unit": "ratio",
+     "method": "deterministic",
+     "threshold": null,
+     "comparator": ">=",
+     "passed": null
+    }
+   ],
+   "failure_reasons": [
+    "response_latency_p95_s 2.7625 s > 1.5 s (95% CI 2.24\u20132.79, n=2)"
+   ]
+  },
+  {
+   "scenario_id": "warmup-change-mind",
+   "agent": "livekit-starter",
+   "source": "scenarios/change-mind-0-warmup.yaml",
+   "passed": false,
+   "trials": [
+    {
+     "call_id": "warmup-change-mind--t1",
+     "scenario_id": "warmup-change-mind",
+     "trial": 1,
+     "seed": 5385260663679532832,
+     "passed": false,
+     "metrics": [
+      {
+       "name": "response_latency_p50_s",
+       "value": 2.26,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [
+        2.14,
+        2.38
+       ],
+       "sample_times_s": [
+        3.58,
+        14.54
+       ]
+      },
+      {
+       "name": "response_latency_p95_s",
+       "value": 2.368,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 1.5,
+       "comparator": "<=",
+       "passed": false,
+       "detail": null,
+       "samples": [
+        2.14,
+        2.38
+       ],
+       "sample_times_s": [
+        3.58,
+        14.54
+       ]
+      },
+      {
+       "name": "unanswered_turns",
+       "value": 0.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": 0.0,
+       "comparator": "<=",
+       "passed": true,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "time_to_yield_p95_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 0.6,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "talk_over_ratio",
+       "value": 0.0,
+       "unit": "ratio",
+       "method": "deterministic",
+       "threshold": 0.05,
+       "comparator": "<=",
+       "passed": true,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "false_yields",
+       "value": null,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": 0.0,
+       "comparator": "<=",
+       "passed": null,
+       "detail": "0 backchannel(s) said while the agent was talking",
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "silence_reprompt_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 8.0,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "chaos_drift_max_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 0.1,
+       "comparator": "<=",
+       "passed": null,
+       "detail": "Callback self-check; informational",
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "call_duration_s",
+       "value": 18.6,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "caller_turns",
+       "value": 2.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "agent_turns",
+       "value": 2.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      }
+     ],
+     "verifier_results": [],
+     "findings": [
+      {
+       "metric": "response_latency",
+       "t_s": 3.58,
+       "end_s": 5.72,
+       "message": "The agent took 2.14 s to respond (limit 1.50 s).",
+       "severity": "fail",
+       "chaos_id": null
+      },
+      {
+       "metric": "response_latency",
+       "t_s": 14.540000000000001,
+       "end_s": 16.92,
+       "message": "The agent took 2.38 s to respond (limit 1.50 s).",
+       "severity": "fail",
+       "chaos_id": null
+      }
+     ],
+     "failure_reasons": [
+      "response_latency_p95_s 2.368 s > 1.5 s"
+     ],
+     "review": [],
+     "error": null,
+     "call": {
+      "call_id": "warmup-change-mind--t1",
+      "scenario_id": "warmup-change-mind",
+      "trial": 1,
+      "seed": 5385260663679532832,
+      "transport": "livekit",
+      "started_at": "2026-10-03T05:26:50.445826Z",
+      "duration_s": 18.6,
+      "end_reason": "caller_hangup",
+      "wav_path": "calls/warmup-change-mind--t1/call.wav",
+      "events": [
+       {
+        "t_s": 0.0,
+        "kind": "call_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "transport": "livekit"
+        }
+       },
+       {
+        "t_s": 0.02,
+        "kind": "caller_utterance",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": 3.68,
+        "text": "Hi, can you help me plan a simple dinner for four people tonight?",
+        "data": {
+         "tag": "line",
+         "caller_timing": {
+          "brain_s": 0.0,
+          "tts_s": 0.004
+         }
+        }
+       },
+       {
+        "t_s": 5.76,
+        "kind": "agent_turn_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "turn": 1
+        }
+       },
+       {
+        "t_s": 12.1,
+        "kind": "caller_utterance",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": 14.6,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "data": {
+         "tag": "line",
+         "caller_timing": {
+          "brain_s": 0.0,
+          "tts_s": 0.002
+         }
+        }
+       },
+       {
+        "t_s": 16.96,
+        "kind": "agent_turn_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "turn": 2
+        }
+       },
+       {
+        "t_s": 18.6,
+        "kind": "call_end",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": "caller_hangup",
+        "data": {}
+       }
+      ],
+      "transcript": [],
+      "speech": [
+       {
+        "speaker": "caller",
+        "start_s": 0.05,
+        "end_s": 3.58,
+        "text": "Hi, can you help me plan a simple dinner for four people tonight?",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "agent",
+        "start_s": 5.72,
+        "end_s": 11.37,
+        "text": "",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "caller",
+        "start_s": 12.13,
+        "end_s": 13.04,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "caller",
+        "start_s": 13.37,
+        "end_s": 14.54,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "agent",
+        "start_s": 16.92,
+        "end_s": 18.58,
+        "text": "",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       }
+      ]
+     },
+     "llm_usage": {}
+    }
+   ],
+   "aggregates": [
+    {
+     "name": "response_latency_p95_s",
+     "value": 2.368,
+     "ci_low": 2.14,
+     "ci_high": 2.38,
+     "n": 2,
+     "unit": "s",
+     "method": "deterministic",
+     "threshold": 1.5,
+     "comparator": "<=",
+     "passed": false
+    },
+    {
+     "name": "response_latency_p50_s",
+     "value": 2.26,
+     "ci_low": 2.14,
+     "ci_high": 2.38,
+     "n": 2,
+     "unit": "s",
+     "method": "deterministic",
+     "threshold": null,
+     "comparator": "<=",
+     "passed": null
+    },
+    {
+     "name": "talk_over_ratio",
+     "value": 0.0,
+     "ci_low": null,
+     "ci_high": null,
+     "n": 1,
+     "unit": "ratio",
+     "method": "deterministic",
+     "threshold": 0.05,
+     "comparator": "<=",
+     "passed": true
+    },
+    {
+     "name": "unanswered_turns",
+     "value": 0.0,
+     "ci_low": null,
+     "ci_high": null,
+     "n": 1,
+     "unit": "count",
+     "method": "deterministic",
+     "threshold": 0.0,
+     "comparator": "<=",
+     "passed": true
+    },
+    {
+     "name": "call_pass_rate",
+     "value": 0.0,
+     "ci_low": 0.0,
+     "ci_high": 0.7935,
+     "n": 1,
+     "unit": "ratio",
+     "method": "deterministic",
+     "threshold": null,
+     "comparator": ">=",
+     "passed": null
+    }
+   ],
+   "failure_reasons": [
+    "response_latency_p95_s 2.368 s > 1.5 s (95% CI 2.14\u20132.38, n=2)"
+   ]
+  },
+  {
+   "scenario_id": "warmup-repeat-request",
+   "agent": "livekit-starter",
+   "source": "scenarios/repeat-request-0-warmup.yaml",
+   "passed": false,
+   "trials": [
+    {
+     "call_id": "warmup-repeat-request--t1",
+     "scenario_id": "warmup-repeat-request",
+     "trial": 1,
+     "seed": 309243814030598165,
+     "passed": false,
+     "metrics": [
+      {
+       "name": "response_latency_p50_s",
+       "value": 2.265,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [
+        2.11,
+        2.42
+       ],
+       "sample_times_s": [
+        3.58,
+        14.22
+       ]
+      },
+      {
+       "name": "response_latency_p95_s",
+       "value": 2.405,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 1.5,
+       "comparator": "<=",
+       "passed": false,
+       "detail": null,
+       "samples": [
+        2.11,
+        2.42
+       ],
+       "sample_times_s": [
+        3.58,
+        14.22
+       ]
+      },
+      {
+       "name": "unanswered_turns",
+       "value": 0.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": 0.0,
+       "comparator": "<=",
+       "passed": true,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "time_to_yield_p95_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 0.6,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "talk_over_ratio",
+       "value": 0.0,
+       "unit": "ratio",
+       "method": "deterministic",
+       "threshold": 0.05,
+       "comparator": "<=",
+       "passed": true,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "false_yields",
+       "value": null,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": 0.0,
+       "comparator": "<=",
+       "passed": null,
+       "detail": "0 backchannel(s) said while the agent was talking",
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "silence_reprompt_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 8.0,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "chaos_drift_max_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 0.1,
+       "comparator": "<=",
+       "passed": null,
+       "detail": "Callback self-check; informational",
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "call_duration_s",
+       "value": 18.28,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "caller_turns",
+       "value": 2.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "agent_turns",
+       "value": 2.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      }
+     ],
+     "verifier_results": [],
+     "findings": [
+      {
+       "metric": "response_latency",
+       "t_s": 3.58,
+       "end_s": 5.69,
+       "message": "The agent took 2.11 s to respond (limit 1.50 s).",
+       "severity": "fail",
+       "chaos_id": null
+      },
+      {
+       "metric": "response_latency",
+       "t_s": 14.22,
+       "end_s": 16.64,
+       "message": "The agent took 2.42 s to respond (limit 1.50 s).",
+       "severity": "fail",
+       "chaos_id": null
+      }
+     ],
+     "failure_reasons": [
+      "response_latency_p95_s 2.405 s > 1.5 s"
+     ],
+     "review": [],
+     "error": null,
+     "call": {
+      "call_id": "warmup-repeat-request--t1",
+      "scenario_id": "warmup-repeat-request",
+      "trial": 1,
+      "seed": 309243814030598165,
+      "transport": "livekit",
+      "started_at": "2026-10-03T05:29:53.994249Z",
+      "duration_s": 18.28,
+      "end_reason": "caller_hangup",
+      "wav_path": "calls/warmup-repeat-request--t1/call.wav",
+      "events": [
+       {
+        "t_s": 0.0,
+        "kind": "call_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "transport": "livekit"
+        }
+       },
+       {
+        "t_s": 0.02,
+        "kind": "caller_utterance",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": 3.68,
+        "text": "Hi, can you help me plan a simple dinner for four people tonight?",
+        "data": {
+         "tag": "line",
+         "caller_timing": {
+          "brain_s": 0.0,
+          "tts_s": 0.003
+         }
+        }
+       },
+       {
+        "t_s": 5.696,
+        "kind": "agent_turn_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "turn": 1
+        }
+       },
+       {
+        "t_s": 11.78,
+        "kind": "caller_utterance",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": 14.28,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "data": {
+         "tag": "line",
+         "caller_timing": {
+          "brain_s": 0.0,
+          "tts_s": 0.001
+         }
+        }
+       },
+       {
+        "t_s": 16.672,
+        "kind": "agent_turn_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "turn": 2
+        }
+       },
+       {
+        "t_s": 18.28,
+        "kind": "call_end",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": "caller_hangup",
+        "data": {}
+       }
+      ],
+      "transcript": [],
+      "speech": [
+       {
+        "speaker": "caller",
+        "start_s": 0.05,
+        "end_s": 3.58,
+        "text": "Hi, can you help me plan a simple dinner for four people tonight?",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "agent",
+        "start_s": 5.69,
+        "end_s": 11.02,
+        "text": "",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "caller",
+        "start_s": 11.81,
+        "end_s": 12.72,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "caller",
+        "start_s": 13.05,
+        "end_s": 14.22,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "agent",
+        "start_s": 16.64,
+        "end_s": 18.28,
+        "text": "",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       }
+      ]
+     },
+     "llm_usage": {}
+    }
+   ],
+   "aggregates": [
+    {
+     "name": "response_latency_p95_s",
+     "value": 2.4045,
+     "ci_low": 2.11,
+     "ci_high": 2.42,
+     "n": 2,
+     "unit": "s",
+     "method": "deterministic",
+     "threshold": 1.5,
+     "comparator": "<=",
+     "passed": false
+    },
+    {
+     "name": "response_latency_p50_s",
+     "value": 2.265,
+     "ci_low": 2.11,
+     "ci_high": 2.42,
+     "n": 2,
+     "unit": "s",
+     "method": "deterministic",
+     "threshold": null,
+     "comparator": "<=",
+     "passed": null
+    },
+    {
+     "name": "talk_over_ratio",
+     "value": 0.0,
+     "ci_low": null,
+     "ci_high": null,
+     "n": 1,
+     "unit": "ratio",
+     "method": "deterministic",
+     "threshold": 0.05,
+     "comparator": "<=",
+     "passed": true
+    },
+    {
+     "name": "unanswered_turns",
+     "value": 0.0,
+     "ci_low": null,
+     "ci_high": null,
+     "n": 1,
+     "unit": "count",
+     "method": "deterministic",
+     "threshold": 0.0,
+     "comparator": "<=",
+     "passed": true
+    },
+    {
+     "name": "call_pass_rate",
+     "value": 0.0,
+     "ci_low": 0.0,
+     "ci_high": 0.7935,
+     "n": 1,
+     "unit": "ratio",
+     "method": "deterministic",
+     "threshold": null,
+     "comparator": ">=",
+     "passed": null
+    }
+   ],
+   "failure_reasons": [
+    "response_latency_p95_s 2.4045 s > 1.5 s (95% CI 2.11\u20132.42, n=2)"
+   ]
+  },
+  {
+   "scenario_id": "warmup-rough-line",
+   "agent": "livekit-starter",
+   "source": "scenarios/rough-line-0-warmup.yaml",
+   "passed": false,
+   "trials": [
+    {
+     "call_id": "warmup-rough-line--t1",
+     "scenario_id": "warmup-rough-line",
+     "trial": 1,
+     "seed": 5839614694368763736,
+     "passed": false,
+     "metrics": [
+      {
+       "name": "response_latency_p50_s",
+       "value": 2.79,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [
+        2.69,
+        2.89
+       ],
+       "sample_times_s": [
+        3.58,
+        14.26
+       ]
+      },
+      {
+       "name": "response_latency_p95_s",
+       "value": 2.88,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 1.5,
+       "comparator": "<=",
+       "passed": false,
+       "detail": null,
+       "samples": [
+        2.69,
+        2.89
+       ],
+       "sample_times_s": [
+        3.58,
+        14.26
+       ]
+      },
+      {
+       "name": "unanswered_turns",
+       "value": 0.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": 0.0,
+       "comparator": "<=",
+       "passed": true,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "time_to_yield_p95_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 0.6,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "talk_over_ratio",
+       "value": 0.0,
+       "unit": "ratio",
+       "method": "deterministic",
+       "threshold": 0.05,
+       "comparator": "<=",
+       "passed": true,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "false_yields",
+       "value": null,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": 0.0,
+       "comparator": "<=",
+       "passed": null,
+       "detail": "0 backchannel(s) said while the agent was talking",
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "silence_reprompt_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 8.0,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "chaos_drift_max_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 0.1,
+       "comparator": "<=",
+       "passed": null,
+       "detail": "Callback self-check; informational",
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "call_duration_s",
+       "value": 18.32,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "caller_turns",
+       "value": 2.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "agent_turns",
+       "value": 2.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      }
+     ],
+     "verifier_results": [],
+     "findings": [
+      {
+       "metric": "response_latency",
+       "t_s": 3.58,
+       "end_s": 6.2700000000000005,
+       "message": "The agent took 2.69 s to respond (limit 1.50 s).",
+       "severity": "fail",
+       "chaos_id": null
+      },
+      {
+       "metric": "response_latency",
+       "t_s": 14.26,
+       "end_s": 17.150000000000002,
+       "message": "The agent took 2.89 s to respond (limit 1.50 s).",
+       "severity": "fail",
+       "chaos_id": null
+      }
+     ],
+     "failure_reasons": [
+      "response_latency_p95_s 2.88 s > 1.5 s"
+     ],
+     "review": [],
+     "error": null,
+     "call": {
+      "call_id": "warmup-rough-line--t1",
+      "scenario_id": "warmup-rough-line",
+      "trial": 1,
+      "seed": 5839614694368763736,
+      "transport": "livekit",
+      "started_at": "2026-10-03T05:32:59.105454Z",
+      "duration_s": 18.32,
+      "end_reason": "caller_hangup",
+      "wav_path": "calls/warmup-rough-line--t1/call.wav",
+      "events": [
+       {
+        "t_s": 0.0,
+        "kind": "call_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "transport": "livekit"
+        }
+       },
+       {
+        "t_s": 0.02,
+        "kind": "caller_utterance",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": 3.68,
+        "text": "Hi, can you help me plan a simple dinner for four people tonight?",
+        "data": {
+         "tag": "line",
+         "caller_timing": {
+          "brain_s": 0.0,
+          "tts_s": 0.003
+         }
+        }
+       },
+       {
+        "t_s": 6.304,
+        "kind": "agent_turn_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "turn": 1
+        }
+       },
+       {
+        "t_s": 11.82,
+        "kind": "caller_utterance",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": 14.32,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "data": {
+         "tag": "line",
+         "caller_timing": {
+          "brain_s": 0.0,
+          "tts_s": 0.001
+         }
+        }
+       },
+       {
+        "t_s": 17.152,
+        "kind": "agent_turn_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "turn": 2
+        }
+       },
+       {
+        "t_s": 18.32,
+        "kind": "call_end",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": "caller_hangup",
+        "data": {}
+       }
+      ],
+      "transcript": [],
+      "speech": [
+       {
+        "speaker": "caller",
+        "start_s": 0.05,
+        "end_s": 3.58,
+        "text": "Hi, can you help me plan a simple dinner for four people tonight?",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "agent",
+        "start_s": 6.27,
+        "end_s": 11.07,
+        "text": "",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "caller",
+        "start_s": 11.85,
+        "end_s": 12.76,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "caller",
+        "start_s": 13.09,
+        "end_s": 14.26,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "agent",
+        "start_s": 17.15,
+        "end_s": 18.31,
+        "text": "",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       }
+      ]
+     },
+     "llm_usage": {}
+    }
+   ],
+   "aggregates": [
+    {
+     "name": "response_latency_p95_s",
+     "value": 2.88,
+     "ci_low": 2.69,
+     "ci_high": 2.89,
+     "n": 2,
+     "unit": "s",
+     "method": "deterministic",
+     "threshold": 1.5,
+     "comparator": "<=",
+     "passed": false
+    },
+    {
+     "name": "response_latency_p50_s",
+     "value": 2.79,
+     "ci_low": 2.69,
+     "ci_high": 2.89,
+     "n": 2,
+     "unit": "s",
+     "method": "deterministic",
+     "threshold": null,
+     "comparator": "<=",
+     "passed": null
+    },
+    {
+     "name": "talk_over_ratio",
+     "value": 0.0,
+     "ci_low": null,
+     "ci_high": null,
+     "n": 1,
+     "unit": "ratio",
+     "method": "deterministic",
+     "threshold": 0.05,
+     "comparator": "<=",
+     "passed": true
+    },
+    {
+     "name": "unanswered_turns",
+     "value": 0.0,
+     "ci_low": null,
+     "ci_high": null,
+     "n": 1,
+     "unit": "count",
+     "method": "deterministic",
+     "threshold": 0.0,
+     "comparator": "<=",
+     "passed": true
+    },
+    {
+     "name": "call_pass_rate",
+     "value": 0.0,
+     "ci_low": 0.0,
+     "ci_high": 0.7935,
+     "n": 1,
+     "unit": "ratio",
+     "method": "deterministic",
+     "threshold": null,
+     "comparator": ">=",
+     "passed": null
+    }
+   ],
+   "failure_reasons": [
+    "response_latency_p95_s 2.88 s > 1.5 s (95% CI 2.69\u20132.89, n=2)"
+   ]
+  },
+  {
+   "scenario_id": "warmup-silent-caller",
+   "agent": "livekit-starter",
+   "source": "scenarios/silent-caller-0-warmup.yaml",
+   "passed": false,
+   "trials": [
+    {
+     "call_id": "warmup-silent-caller--t1",
+     "scenario_id": "warmup-silent-caller",
+     "trial": 1,
+     "seed": 430343122676877237,
+     "passed": false,
+     "metrics": [
+      {
+       "name": "response_latency_p50_s",
+       "value": 2.465,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [
+        2.16,
+        2.77
+       ],
+       "sample_times_s": [
+        3.58,
+        13.56
+       ]
+      },
+      {
+       "name": "response_latency_p95_s",
+       "value": 2.74,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 1.5,
+       "comparator": "<=",
+       "passed": false,
+       "detail": null,
+       "samples": [
+        2.16,
+        2.77
+       ],
+       "sample_times_s": [
+        3.58,
+        13.56
+       ]
+      },
+      {
+       "name": "unanswered_turns",
+       "value": 0.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": 0.0,
+       "comparator": "<=",
+       "passed": true,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "time_to_yield_p95_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 0.6,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "talk_over_ratio",
+       "value": 0.0,
+       "unit": "ratio",
+       "method": "deterministic",
+       "threshold": 0.05,
+       "comparator": "<=",
+       "passed": true,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "false_yields",
+       "value": null,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": 0.0,
+       "comparator": "<=",
+       "passed": null,
+       "detail": "0 backchannel(s) said while the agent was talking",
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "silence_reprompt_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 8.0,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "chaos_drift_max_s",
+       "value": null,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": 0.1,
+       "comparator": "<=",
+       "passed": null,
+       "detail": "Callback self-check; informational",
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "call_duration_s",
+       "value": 17.62,
+       "unit": "s",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "caller_turns",
+       "value": 2.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      },
+      {
+       "name": "agent_turns",
+       "value": 2.0,
+       "unit": "count",
+       "method": "deterministic",
+       "threshold": null,
+       "comparator": "<=",
+       "passed": null,
+       "detail": null,
+       "samples": [],
+       "sample_times_s": []
+      }
+     ],
+     "verifier_results": [],
+     "findings": [
+      {
+       "metric": "response_latency",
+       "t_s": 3.58,
+       "end_s": 5.74,
+       "message": "The agent took 2.16 s to respond (limit 1.50 s).",
+       "severity": "fail",
+       "chaos_id": null
+      },
+      {
+       "metric": "response_latency",
+       "t_s": 13.56,
+       "end_s": 16.330000000000002,
+       "message": "The agent took 2.77 s to respond (limit 1.50 s).",
+       "severity": "fail",
+       "chaos_id": null
+      }
+     ],
+     "failure_reasons": [
+      "response_latency_p95_s 2.74 s > 1.5 s"
+     ],
+     "review": [],
+     "error": null,
+     "call": {
+      "call_id": "warmup-silent-caller--t1",
+      "scenario_id": "warmup-silent-caller",
+      "trial": 1,
+      "seed": 430343122676877237,
+      "transport": "livekit",
+      "started_at": "2026-10-03T05:36:12.434014Z",
+      "duration_s": 17.62,
+      "end_reason": "caller_hangup",
+      "wav_path": "calls/warmup-silent-caller--t1/call.wav",
+      "events": [
+       {
+        "t_s": 0.0,
+        "kind": "call_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "transport": "livekit"
+        }
+       },
+       {
+        "t_s": 0.02,
+        "kind": "caller_utterance",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": 3.68,
+        "text": "Hi, can you help me plan a simple dinner for four people tonight?",
+        "data": {
+         "tag": "line",
+         "caller_timing": {
+          "brain_s": 0.0,
+          "tts_s": 0.003
+         }
+        }
+       },
+       {
+        "t_s": 5.76,
+        "kind": "agent_turn_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "turn": 1
+        }
+       },
+       {
+        "t_s": 11.12,
+        "kind": "caller_utterance",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": 13.62,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "data": {
+         "tag": "line",
+         "caller_timing": {
+          "brain_s": 0.0,
+          "tts_s": 0.002
+         }
+        }
+       },
+       {
+        "t_s": 16.352,
+        "kind": "agent_turn_start",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": null,
+        "data": {
+         "turn": 2
+        }
+       },
+       {
+        "t_s": 17.62,
+        "kind": "call_end",
+        "chaos_id": null,
+        "chaos_type": null,
+        "intended_s": null,
+        "end_s": null,
+        "text": "caller_hangup",
+        "data": {}
+       }
+      ],
+      "transcript": [],
+      "speech": [
+       {
+        "speaker": "caller",
+        "start_s": 0.05,
+        "end_s": 3.58,
+        "text": "Hi, can you help me plan a simple dinner for four people tonight?",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "agent",
+        "start_s": 5.74,
+        "end_s": 10.32,
+        "text": "",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "caller",
+        "start_s": 11.15,
+        "end_s": 12.06,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "caller",
+        "start_s": 12.39,
+        "end_s": 13.56,
+        "text": "That sounds good. Thanks, that's all. Bye.",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       },
+       {
+        "speaker": "agent",
+        "start_s": 16.33,
+        "end_s": 17.6,
+        "text": "",
+        "interrupted_by": null,
+        "chaos_ids": [],
+        "words": []
+       }
+      ]
+     },
+     "llm_usage": {}
+    }
+   ],
+   "aggregates": [
+    {
+     "name": "response_latency_p95_s",
+     "value": 2.7395,
+     "ci_low": 2.16,
+     "ci_high": 2.77,
+     "n": 2,
+     "unit": "s",
+     "method": "deterministic",
+     "threshold": 1.5,
+     "comparator": "<=",
+     "passed": false
+    },
+    {
+     "name": "response_latency_p50_s",
+     "value": 2.465,
+     "ci_low": 2.16,
+     "ci_high": 2.77,
+     "n": 2,
+     "unit": "s",
+     "method": "deterministic",
+     "threshold": null,
+     "comparator": "<=",
+     "passed": null
+    },
+    {
+     "name": "talk_over_ratio",
+     "value": 0.0,
+     "ci_low": null,
+     "ci_high": null,
+     "n": 1,
+     "unit": "ratio",
+     "method": "deterministic",
+     "threshold": 0.05,
+     "comparator": "<=",
+     "passed": true
+    },
+    {
+     "name": "unanswered_turns",
+     "value": 0.0,
+     "ci_low": null,
+     "ci_high": null,
+     "n": 1,
+     "unit": "count",
+     "method": "deterministic",
+     "threshold": 0.0,
+     "comparator": "<=",
+     "passed": true
+    },
+    {
+     "name": "call_pass_rate",
+     "value": 0.0,
+     "ci_low": 0.0,
+     "ci_high": 0.7935,
+     "n": 1,
+     "unit": "ratio",
+     "method": "deterministic",
+     "threshold": null,
+     "comparator": ">=",
+     "passed": null
+    }
+   ],
+   "failure_reasons": [
+    "response_latency_p95_s 2.7395 s > 1.5 s (95% CI 2.16\u20132.77, n=2)"
+   ]
+  }
+ ]
+}

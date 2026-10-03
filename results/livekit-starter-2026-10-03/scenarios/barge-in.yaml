@@ -1,0 +1,18 @@
+# The caller cuts in 0.3 s into the agent's 2nd turn.
+id: barge-in
+agent: livekit-starter
+trials: 3
+max_duration_s: 150
+caller:
+  persona: "Arjun, in a hurry"
+  goal: "Plan a quick vegetarian dinner for four"
+  voice: male_us_1
+  speaks_first: true
+  script:
+    - "Hi, can you help me plan a simple dinner for four people tonight?"
+    - "I would like something vegetarian that takes under thirty minutes."
+    - "Okay, and what do I need to buy from the shop?"
+    - "That sounds good. Thanks, that's all. Bye."
+chaos:
+  events:
+    - barge_in: {on: agent_turn, turn: 2, after_s: 0.3, say: "Sorry, make that for six people."}

@@ -1,0 +1,635 @@
+{
+ "local": {
+  "scenarios": {
+   "backchannel": {
+    "calls": 5,
+    "errors": 0,
+    "passed": 0,
+    "turns": 19,
+    "lat_p50": 3.47,
+    "lat_p95_pooled": 4.02,
+    "lat_call_p95": [
+     3.9,
+     3.89,
+     3.86,
+     3.95,
+     3.94
+    ],
+    "lat_ok": 0,
+    "yield": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "yield_ok": 0,
+    "talkover": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "talkover_ok": 5,
+    "false_yields": [
+     0.0,
+     1.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "backchannels_spoken": 15,
+    "silence_ok": 0,
+    "unanswered": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "folded": []
+   },
+   "barge-in": {
+    "calls": 5,
+    "errors": 0,
+    "passed": 0,
+    "turns": 20,
+    "lat_p50": 3.77,
+    "lat_p95_pooled": 4.0,
+    "lat_call_p95": [
+     3.96,
+     3.99,
+     3.97,
+     3.9,
+     4.05
+    ],
+    "lat_ok": 0,
+    "yield": [
+     1.0,
+     1.15,
+     1.04,
+     1.17,
+     1.01
+    ],
+    "yield_ok": 0,
+    "talkover": [
+     0.0678,
+     0.0934,
+     0.0351,
+     0.1014,
+     0.0862
+    ],
+    "talkover_ok": 1,
+    "false_yields": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "backchannels_spoken": 0,
+    "silence_ok": 0,
+    "unanswered": [
+     1.0,
+     1.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "folded": [
+     1.0
+    ]
+   },
+   "change-mind": {
+    "calls": 5,
+    "errors": 0,
+    "passed": 0,
+    "turns": 19,
+    "lat_p50": 3.88,
+    "lat_p95_pooled": 5.73,
+    "lat_call_p95": [
+     4.0,
+     5.61,
+     4.07,
+     4.2,
+     4.1
+    ],
+    "lat_ok": 0,
+    "yield": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "yield_ok": 0,
+    "talkover": [
+     0.0,
+     0.0873,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "talkover_ok": 4,
+    "false_yields": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "backchannels_spoken": 0,
+    "silence_ok": 0,
+    "unanswered": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "folded": []
+   },
+   "repeat-request": {
+    "calls": 5,
+    "errors": 0,
+    "passed": 0,
+    "turns": 20,
+    "lat_p50": 3.83,
+    "lat_p95_pooled": 4.08,
+    "lat_call_p95": [
+     3.95,
+     3.97,
+     4.0,
+     4.06,
+     4.07
+    ],
+    "lat_ok": 0,
+    "yield": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "yield_ok": 0,
+    "talkover": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "talkover_ok": 5,
+    "false_yields": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "backchannels_spoken": 0,
+    "silence_ok": 0,
+    "unanswered": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "folded": []
+   },
+   "rough-line": {
+    "calls": 5,
+    "errors": 0,
+    "passed": 0,
+    "turns": 17,
+    "lat_p50": 3.38,
+    "lat_p95_pooled": 4.08,
+    "lat_call_p95": [
+     3.94,
+     3.97,
+     3.96,
+     3.94,
+     4.01
+    ],
+    "lat_ok": 0,
+    "yield": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "yield_ok": 0,
+    "talkover": [
+     0.029,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "talkover_ok": 5,
+    "false_yields": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "backchannels_spoken": 0,
+    "silence_ok": 0,
+    "unanswered": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "folded": []
+   },
+   "silent-caller": {
+    "calls": 5,
+    "errors": 0,
+    "passed": 0,
+    "turns": 18,
+    "lat_p50": 3.44,
+    "lat_p95_pooled": 4.09,
+    "lat_call_p95": [
+     3.88,
+     3.97,
+     3.98,
+     3.97,
+     4.05
+    ],
+    "lat_ok": 0,
+    "yield": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "yield_ok": 0,
+    "talkover": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "talkover_ok": 5,
+    "false_yields": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "backchannels_spoken": 0,
+    "silence_ok": 0,
+    "unanswered": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "folded": []
+   }
+  },
+  "warmups": [],
+  "all_turns": 113,
+  "lat_p50": 3.67,
+  "lat_p50_ci": [
+   3.47,
+   3.81
+  ],
+  "lat_p95": 4.09,
+  "first_turn_median": 2.82,
+  "calls": 30,
+  "duration_s": 1827.76
+ },
+ "hosted": {
+  "scenarios": {
+   "backchannel": {
+    "calls": 3,
+    "errors": 0,
+    "passed": 0,
+    "turns": 12,
+    "lat_p50": 2.56,
+    "lat_p95_pooled": 3.7,
+    "lat_call_p95": [
+     3.53,
+     3.59,
+     3.54
+    ],
+    "lat_ok": 0,
+    "yield": [
+     null,
+     null,
+     null
+    ],
+    "yield_ok": 0,
+    "talkover": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "talkover_ok": 3,
+    "false_yields": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "backchannels_spoken": 9,
+    "silence_ok": 0,
+    "unanswered": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "folded": []
+   },
+   "barge-in": {
+    "calls": 3,
+    "errors": 0,
+    "passed": 0,
+    "turns": 15,
+    "lat_p50": 2.35,
+    "lat_p95_pooled": 3.62,
+    "lat_call_p95": [
+     3.35,
+     3.45,
+     3.37
+    ],
+    "lat_ok": 0,
+    "yield": [
+     1.04,
+     1.05,
+     1.03
+    ],
+    "yield_ok": 0,
+    "talkover": [
+     0.1123,
+     0.052,
+     0.0343
+    ],
+    "talkover_ok": 1,
+    "false_yields": [
+     null,
+     null,
+     null
+    ],
+    "backchannels_spoken": 0,
+    "silence_ok": 0,
+    "unanswered": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "folded": []
+   },
+   "change-mind": {
+    "calls": 3,
+    "errors": 0,
+    "passed": 0,
+    "turns": 12,
+    "lat_p50": 3.26,
+    "lat_p95_pooled": 3.74,
+    "lat_call_p95": [
+     3.62,
+     3.73,
+     3.65
+    ],
+    "lat_ok": 0,
+    "yield": [
+     null,
+     null,
+     null
+    ],
+    "yield_ok": 0,
+    "talkover": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "talkover_ok": 3,
+    "false_yields": [
+     null,
+     null,
+     null
+    ],
+    "backchannels_spoken": 0,
+    "silence_ok": 0,
+    "unanswered": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "folded": []
+   },
+   "repeat-request": {
+    "calls": 3,
+    "errors": 0,
+    "passed": 0,
+    "turns": 12,
+    "lat_p50": 2.64,
+    "lat_p95_pooled": 3.68,
+    "lat_call_p95": [
+     3.5,
+     3.54,
+     3.43
+    ],
+    "lat_ok": 0,
+    "yield": [
+     null,
+     null,
+     null
+    ],
+    "yield_ok": 0,
+    "talkover": [
+     0.0,
+     0.0092,
+     0.0
+    ],
+    "talkover_ok": 3,
+    "false_yields": [
+     null,
+     null,
+     null
+    ],
+    "backchannels_spoken": 0,
+    "silence_ok": 0,
+    "unanswered": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "folded": []
+   },
+   "rough-line": {
+    "calls": 3,
+    "errors": 0,
+    "passed": 0,
+    "turns": 12,
+    "lat_p50": 2.45,
+    "lat_p95_pooled": 3.64,
+    "lat_call_p95": [
+     3.52,
+     3.43,
+     3.51
+    ],
+    "lat_ok": 0,
+    "yield": [
+     null,
+     null,
+     null
+    ],
+    "yield_ok": 0,
+    "talkover": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "talkover_ok": 3,
+    "false_yields": [
+     null,
+     null,
+     null
+    ],
+    "backchannels_spoken": 0,
+    "silence_ok": 0,
+    "unanswered": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "folded": []
+   },
+   "silent-caller": {
+    "calls": 3,
+    "errors": 0,
+    "passed": 0,
+    "turns": 12,
+    "lat_p50": 2.41,
+    "lat_p95_pooled": 3.69,
+    "lat_call_p95": [
+     3.53,
+     3.38,
+     3.49
+    ],
+    "lat_ok": 0,
+    "yield": [
+     null,
+     null,
+     null
+    ],
+    "yield_ok": 0,
+    "talkover": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "talkover_ok": 3,
+    "false_yields": [
+     null,
+     null,
+     null
+    ],
+    "backchannels_spoken": 0,
+    "silence_ok": 0,
+    "unanswered": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "folded": []
+   }
+  },
+  "warmups": [
+   {
+    "id": "warmup-backchannel",
+    "error": [
+     null
+    ],
+    "end": [
+     "caller_hangup"
+    ],
+    "first_turn_s": [
+     2.98
+    ]
+   },
+   {
+    "id": "warmup-barge-in",
+    "error": [
+     null
+    ],
+    "end": [
+     "caller_hangup"
+    ],
+    "first_turn_s": [
+     2.24
+    ]
+   },
+   {
+    "id": "warmup-change-mind",
+    "error": [
+     null
+    ],
+    "end": [
+     "caller_hangup"
+    ],
+    "first_turn_s": [
+     2.14
+    ]
+   },
+   {
+    "id": "warmup-repeat-request",
+    "error": [
+     null
+    ],
+    "end": [
+     "caller_hangup"
+    ],
+    "first_turn_s": [
+     2.11
+    ]
+   },
+   {
+    "id": "warmup-rough-line",
+    "error": [
+     null
+    ],
+    "end": [
+     "caller_hangup"
+    ],
+    "first_turn_s": [
+     2.69
+    ]
+   },
+   {
+    "id": "warmup-silent-caller",
+    "error": [
+     null
+    ],
+    "end": [
+     "caller_hangup"
+    ],
+    "first_turn_s": [
+     2.16
+    ]
+   }
+  ],
+  "all_turns": 75,
+  "lat_p50": 2.47,
+  "lat_p50_ci": [
+   2.39,
+   2.76
+  ],
+  "lat_p95": 3.69,
+  "first_turn_median": 2.23,
+  "calls": 18,
+  "duration_s": 1172.99
+ }
+}

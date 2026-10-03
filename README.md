@@ -149,6 +149,16 @@ The chaos suite against both example agents, from the quickstart above
 
 The audio clips are described in [docs/assets/README.md](docs/assets/README.md).
 
+## Real-world results
+
+I ran Callback against the agent LiveKit's own starter template builds, unmodified, in
+48 calls (30 with the agent on my laptop, 18 hosted on LiveKit Cloud). It kept talking
+1.0–1.2 s after being interrupted (limit 0.6 s) in all 8 interrupted calls, replied in
+2.5–3.7 s at the median (limit 1.5 s), and ignored "mm-hmm" 21 times out of 24. The write-up
+is in [RESULTS.md](RESULTS.md); the full reports are the
+[laptop run](https://imshivamb.github.io/callback/livekit-starter/local.html) and the
+[hosted run](https://imshivamb.github.io/callback/livekit-starter/hosted.html).
+
 ## How it decides pass or fail
 
 - **Measured from the audio.** Timing comes from voice activity detection on the
@@ -190,6 +200,8 @@ The audio clips are described in [docs/assets/README.md](docs/assets/README.md).
 - [docs/ci-example.md](docs/ci-example.md): running Callback in your own CI, with a
   baseline and a copy-paste GitHub Actions workflow.
 - [docs/assets/README.md](docs/assets/README.md): what each recording and figure shows.
+- [RESULTS.md](RESULTS.md): Callback against LiveKit's agent starter, laptop and hosted, with
+  the clips, the chart and the bugs it found in Callback.
 - [results/README.md](results/README.md): Callback tested against its own reference
   agents, 100 calls before and 18 after a round of fixes, with the numbers and caveats.
 

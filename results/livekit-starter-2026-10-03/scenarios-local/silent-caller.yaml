@@ -1,0 +1,18 @@
+# The caller goes quiet for 12 s instead of answering the 1st question.
+id: silent-caller
+agent: livekit-starter
+trials: 5
+max_duration_s: 150
+caller:
+  persona: "Arjun, distracted by something on his desk"
+  goal: "Plan a quick vegetarian dinner for four"
+  voice: male_us_1
+  speaks_first: true
+  script:
+    - "Hi, can you help me plan a simple dinner for four people tonight?"
+    - "I would like something vegetarian that takes under thirty minutes."
+    - "Okay, and what do I need to buy from the shop?"
+    - "That sounds good. Thanks, that's all. Bye."
+chaos:
+  events:
+    - silence: {on: caller_turn, turn: 2, duration_s: 12}

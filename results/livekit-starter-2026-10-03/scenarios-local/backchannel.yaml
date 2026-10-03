@@ -1,0 +1,18 @@
+# The caller says "mm-hmm" and "okay" while the agent talks; a good agent keeps going.
+id: backchannel
+agent: livekit-starter
+trials: 5
+max_duration_s: 150
+caller:
+  persona: "Arjun, an attentive listener"
+  goal: "Plan a quick vegetarian dinner for four"
+  voice: male_us_1
+  speaks_first: true
+  script:
+    - "Hi, can you help me plan a simple dinner for four people tonight?"
+    - "I would like something vegetarian that takes under thirty minutes."
+    - "Okay, and what do I need to buy from the shop?"
+    - "That sounds good. Thanks, that's all. Bye."
+chaos:
+  events:
+    - backchannel: {on: agent_turn, every: 1, after_s: 2.0, say: ["mm-hmm", "okay"]}

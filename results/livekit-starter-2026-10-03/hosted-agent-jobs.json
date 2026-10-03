@@ -1,0 +1,110 @@
+{
+ "agent_id": "CA_iH9pEBuukPvC",
+ "agent_name": "my-agent",
+ "deploy_region": "ap-south",
+ "worker": [
+  [
+   "CAW_Dyw9W36VxQao",
+   "India South"
+  ]
+ ],
+ "jobs": [
+  {
+   "room": "callback-warmup-backchannel--t1",
+   "received_at": "2026-10-03T05:20:33.401144+00:00"
+  },
+  {
+   "room": "callback-backchannel--t1",
+   "received_at": "2026-10-03T05:20:58.958827+00:00"
+  },
+  {
+   "room": "callback-backchannel--t2",
+   "received_at": "2026-10-03T05:21:49.416155+00:00"
+  },
+  {
+   "room": "callback-backchannel--t3",
+   "received_at": "2026-10-03T05:22:38.183704+00:00"
+  },
+  {
+   "room": "callback-warmup-barge-in--t1",
+   "received_at": "2026-10-03T05:23:34.562382+00:00"
+  },
+  {
+   "room": "callback-barge-in--t1",
+   "received_at": "2026-10-03T05:23:57.250030+00:00"
+  },
+  {
+   "room": "callback-barge-in--t2",
+   "received_at": "2026-10-03T05:24:50.460429+00:00"
+  },
+  {
+   "room": "callback-barge-in--t3",
+   "received_at": "2026-10-03T05:25:48.034918+00:00"
+  },
+  {
+   "room": "callback-warmup-change-mind--t1",
+   "received_at": "2026-10-03T05:26:51.967576+00:00"
+  },
+  {
+   "room": "callback-change-mind--t1",
+   "received_at": "2026-10-03T05:27:15.524480+00:00"
+  },
+  {
+   "room": "callback-change-mind--t2",
+   "received_at": "2026-10-03T05:28:08.330574+00:00"
+  },
+  {
+   "room": "callback-change-mind--t3",
+   "received_at": "2026-10-03T05:29:03.497451+00:00"
+  },
+  {
+   "room": "callback-warmup-repeat-request--t1",
+   "received_at": "2026-10-03T05:29:55.678240+00:00"
+  },
+  {
+   "room": "callback-repeat-request--t1",
+   "received_at": "2026-10-03T05:30:18.892519+00:00"
+  },
+  {
+   "room": "callback-repeat-request--t2",
+   "received_at": "2026-10-03T05:31:17.211892+00:00"
+  },
+  {
+   "room": "callback-repeat-request--t3",
+   "received_at": "2026-10-03T05:32:05.377524+00:00"
+  },
+  {
+   "room": "callback-warmup-rough-line--t1",
+   "received_at": "2026-10-03T05:33:00.747093+00:00"
+  },
+  {
+   "room": "callback-rough-line--t1",
+   "received_at": "2026-10-03T05:33:23.339649+00:00"
+  },
+  {
+   "room": "callback-rough-line--t2",
+   "received_at": "2026-10-03T05:34:21.960045+00:00"
+  },
+  {
+   "room": "callback-rough-line--t3",
+   "received_at": "2026-10-03T05:35:18.373598+00:00"
+  },
+  {
+   "room": "callback-warmup-silent-caller--t1",
+   "received_at": "2026-10-03T05:36:14.579317+00:00"
+  },
+  {
+   "room": "callback-silent-caller--t1",
+   "received_at": "2026-10-03T05:36:36.687415+00:00"
+  },
+  {
+   "room": "callback-silent-caller--t2",
+   "received_at": "2026-10-03T05:37:40.691134+00:00"
+  },
+  {
+   "room": "callback-silent-caller--t3",
+   "received_at": "2026-10-03T05:38:52.209217+00:00"
+  }
+ ],
+ "local_agent_processes_during_run": 0
+}

@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="callback" time="243.88" tests="40" failures="20" errors="0">
+  <testsuite name="pause-a-1" tests="4" failures="2" errors="0">
+    <testcase classname="pause-a-1" name="trial 1 (pause-a-1--t1)" time="19.84">
+      <failure message="response_latency_p95_s 3.7 s &gt; 1.5 s">response_latency_p95_s 3.7 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="pause-a-1" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 3.7005 (95% CI 2.76–3.75), limit &lt;= 1.5">response_latency_p95_s 3.7005 (95% CI 2.76–3.75), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="pause-a-1" name="aggregate talk_over_ratio" />
+    <testcase classname="pause-a-1" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="pause-b-1" tests="4" failures="2" errors="0">
+    <testcase classname="pause-b-1" name="trial 1 (pause-b-1--t1)" time="20.86">
+      <failure message="response_latency_p95_s 2.19 s &gt; 1.5 s">response_latency_p95_s 2.19 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="pause-b-1" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 2.19, limit &lt;= 1.5">response_latency_p95_s 2.19, limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="pause-b-1" name="aggregate talk_over_ratio" />
+    <testcase classname="pause-b-1" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="pause-a-2" tests="4" failures="2" errors="0">
+    <testcase classname="pause-a-2" name="trial 1 (pause-a-2--t1)" time="19.90">
+      <failure message="response_latency_p95_s 3.555 s &gt; 1.5 s">response_latency_p95_s 3.555 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="pause-a-2" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 3.5555 (95% CI 2.71–3.6), limit &lt;= 1.5">response_latency_p95_s 3.5555 (95% CI 2.71–3.6), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="pause-a-2" name="aggregate talk_over_ratio" />
+    <testcase classname="pause-a-2" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="pause-b-2" tests="4" failures="2" errors="0">
+    <testcase classname="pause-b-2" name="trial 1 (pause-b-2--t1)" time="20.46">
+      <failure message="response_latency_p95_s 3.667 s &gt; 1.5 s">response_latency_p95_s 3.667 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="pause-b-2" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 3.667 (95% CI 2.85–3.71), limit &lt;= 1.5">response_latency_p95_s 3.667 (95% CI 2.85–3.71), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="pause-b-2" name="aggregate talk_over_ratio" />
+    <testcase classname="pause-b-2" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="pause-a-3" tests="4" failures="2" errors="0">
+    <testcase classname="pause-a-3" name="trial 1 (pause-a-3--t1)" time="18.96">
+      <failure message="response_latency_p95_s 3.431 s &gt; 1.5 s">response_latency_p95_s 3.431 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="pause-a-3" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 3.4315 (95% CI 2.13–3.5), limit &lt;= 1.5">response_latency_p95_s 3.4315 (95% CI 2.13–3.5), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="pause-a-3" name="aggregate talk_over_ratio" />
+    <testcase classname="pause-a-3" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="pause-b-3" tests="4" failures="2" errors="0">
+    <testcase classname="pause-b-3" name="trial 1 (pause-b-3--t1)" time="19.84">
+      <failure message="response_latency_p95_s 3.589 s &gt; 1.5 s">response_latency_p95_s 3.589 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="pause-b-3" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 3.5895 (95% CI 2.06–3.67), limit &lt;= 1.5">response_latency_p95_s 3.5895 (95% CI 2.06–3.67), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="pause-b-3" name="aggregate talk_over_ratio" />
+    <testcase classname="pause-b-3" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="pause-a-4" tests="4" failures="2" errors="0">
+    <testcase classname="pause-a-4" name="trial 1 (pause-a-4--t1)" time="19.08">
+      <failure message="response_latency_p95_s 3.498 s &gt; 1.5 s">response_latency_p95_s 3.498 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="pause-a-4" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 3.498 (95% CI 2.32–3.56), limit &lt;= 1.5">response_latency_p95_s 3.498 (95% CI 2.32–3.56), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="pause-a-4" name="aggregate talk_over_ratio" />
+    <testcase classname="pause-a-4" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="pause-b-4" tests="4" failures="2" errors="0">
+    <testcase classname="pause-b-4" name="trial 1 (pause-b-4--t1)" time="18.60">
+      <failure message="response_latency_p95_s 3.446 s &gt; 1.5 s">response_latency_p95_s 3.446 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="pause-b-4" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 3.4465 (95% CI 2.05–3.52), limit &lt;= 1.5">response_latency_p95_s 3.4465 (95% CI 2.05–3.52), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="pause-b-4" name="aggregate talk_over_ratio" />
+    <testcase classname="pause-b-4" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="pause-a-5" tests="4" failures="2" errors="0">
+    <testcase classname="pause-a-5" name="trial 1 (pause-a-5--t1)" time="19.16">
+      <failure message="response_latency_p95_s 3.443 s &gt; 1.5 s">response_latency_p95_s 3.443 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="pause-a-5" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 3.443 (95% CI 2.17–3.51), limit &lt;= 1.5">response_latency_p95_s 3.443 (95% CI 2.17–3.51), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="pause-a-5" name="aggregate talk_over_ratio" />
+    <testcase classname="pause-a-5" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="pause-b-5" tests="4" failures="2" errors="0">
+    <testcase classname="pause-b-5" name="trial 1 (pause-b-5--t1)" time="19.72">
+      <failure message="response_latency_p95_s 3.575 s &gt; 1.5 s">response_latency_p95_s 3.575 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="pause-b-5" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 3.575 (95% CI 2.53–3.63), limit &lt;= 1.5">response_latency_p95_s 3.575 (95% CI 2.53–3.63), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="pause-b-5" name="aggregate talk_over_ratio" />
+    <testcase classname="pause-b-5" name="aggregate unanswered_turns" />
+  </testsuite>
+</testsuites>

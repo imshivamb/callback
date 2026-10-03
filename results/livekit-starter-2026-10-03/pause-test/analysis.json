@@ -1,0 +1,252 @@
+[
+ {
+  "call": "pause-a-1--t1",
+  "variant": "A",
+  "error": null,
+  "caller_vad_pieces": 2,
+  "l2_commits": 1,
+  "wait_s": [
+   2.5
+  ],
+  "eot_prob": [
+   0.042
+  ],
+  "commit_source": [
+   "stt"
+  ],
+  "l2_text": [
+   "I would like something vegetarian, that takes under 30 minutes."
+  ],
+  "l1_wait": [
+   0.48
+  ],
+  "reply_l1": 2.76,
+  "reply_l2": 3.75,
+  "excess": 0.99
+ },
+ {
+  "call": "pause-b-1--t1",
+  "variant": "B",
+  "error": null,
+  "caller_vad_pieces": 1,
+  "l2_commits": 1,
+  "wait_s": [
+   2.5
+  ],
+  "eot_prob": [
+   0.237
+  ],
+  "commit_source": [
+   "stt"
+  ],
+  "l2_text": [
+   "I would like something vegetarian that takes under 30 minutes."
+  ],
+  "l1_wait": [
+   0.53
+  ],
+  "reply_l1": 2.19,
+  "reply_l2": null,
+  "excess": null
+ },
+ {
+  "call": "pause-a-2--t1",
+  "variant": "A",
+  "error": null,
+  "caller_vad_pieces": 2,
+  "l2_commits": 1,
+  "wait_s": [
+   2.5
+  ],
+  "eot_prob": [
+   0.124
+  ],
+  "commit_source": [
+   "stt"
+  ],
+  "l2_text": [
+   "I would like something vegetarian, that takes under 30 minutes."
+  ],
+  "l1_wait": [
+   0.47
+  ],
+  "reply_l1": 2.71,
+  "reply_l2": 3.6,
+  "excess": 0.89
+ },
+ {
+  "call": "pause-b-2--t1",
+  "variant": "B",
+  "error": null,
+  "caller_vad_pieces": 1,
+  "l2_commits": 1,
+  "wait_s": [
+   2.5
+  ],
+  "eot_prob": [
+   0.322
+  ],
+  "commit_source": [
+   "stt"
+  ],
+  "l2_text": [
+   "I would like something vegetarian that takes under 30 minutes."
+  ],
+  "l1_wait": [
+   0.52
+  ],
+  "reply_l1": 2.85,
+  "reply_l2": 3.71,
+  "excess": 0.86
+ },
+ {
+  "call": "pause-a-3--t1",
+  "variant": "A",
+  "error": null,
+  "caller_vad_pieces": 2,
+  "l2_commits": 1,
+  "wait_s": [
+   2.5
+  ],
+  "eot_prob": [
+   0.038
+  ],
+  "commit_source": [
+   "stt"
+  ],
+  "l2_text": [
+   "I would like something vegetarian, that takes under 30 minutes."
+  ],
+  "l1_wait": [
+   0.49
+  ],
+  "reply_l1": 2.13,
+  "reply_l2": 3.5,
+  "excess": 1.37
+ },
+ {
+  "call": "pause-b-3--t1",
+  "variant": "B",
+  "error": null,
+  "caller_vad_pieces": 1,
+  "l2_commits": 1,
+  "wait_s": [
+   2.5
+  ],
+  "eot_prob": [
+   0.211
+  ],
+  "commit_source": [
+   "stt"
+  ],
+  "l2_text": [
+   "I would like something vegetarian that takes under 30 minutes."
+  ],
+  "l1_wait": [
+   0.48
+  ],
+  "reply_l1": 2.06,
+  "reply_l2": 3.67,
+  "excess": 1.61
+ },
+ {
+  "call": "pause-a-4--t1",
+  "variant": "A",
+  "error": null,
+  "caller_vad_pieces": 2,
+  "l2_commits": 1,
+  "wait_s": [
+   2.5
+  ],
+  "eot_prob": [
+   0.057
+  ],
+  "commit_source": [
+   "stt"
+  ],
+  "l2_text": [
+   "I would like something vegetarian, that takes under 30 minutes."
+  ],
+  "l1_wait": [
+   0.57
+  ],
+  "reply_l1": 2.32,
+  "reply_l2": 3.56,
+  "excess": 1.24
+ },
+ {
+  "call": "pause-b-4--t1",
+  "variant": "B",
+  "error": null,
+  "caller_vad_pieces": 1,
+  "l2_commits": 1,
+  "wait_s": [
+   2.5
+  ],
+  "eot_prob": [
+   0.285
+  ],
+  "commit_source": [
+   "stt"
+  ],
+  "l2_text": [
+   "I would like something vegetarian that takes under 30 minutes."
+  ],
+  "l1_wait": [
+   0.47
+  ],
+  "reply_l1": 2.05,
+  "reply_l2": 3.52,
+  "excess": 1.47
+ },
+ {
+  "call": "pause-a-5--t1",
+  "variant": "A",
+  "error": null,
+  "caller_vad_pieces": 2,
+  "l2_commits": 1,
+  "wait_s": [
+   2.5
+  ],
+  "eot_prob": [
+   0.068
+  ],
+  "commit_source": [
+   "stt"
+  ],
+  "l2_text": [
+   "I would like something vegetarian, that takes under 30 minutes."
+  ],
+  "l1_wait": [
+   0.51
+  ],
+  "reply_l1": 2.17,
+  "reply_l2": 3.51,
+  "excess": 1.34
+ },
+ {
+  "call": "pause-b-5--t1",
+  "variant": "B",
+  "error": null,
+  "caller_vad_pieces": 1,
+  "l2_commits": 1,
+  "wait_s": [
+   2.5
+  ],
+  "eot_prob": [
+   0.286
+  ],
+  "commit_source": [
+   "stt"
+  ],
+  "l2_text": [
+   "I would like something vegetarian that takes under 30 minutes."
+  ],
+  "l1_wait": [
+   0.31
+  ],
+  "reply_l1": 2.53,
+  "reply_l2": 3.63,
+  "excess": 1.1
+ }
+]

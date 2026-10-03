@@ -1,0 +1,18 @@
+{
+ "local": {
+  "calls": 30,
+  "metrics_identical": 30,
+  "findings_identical": 30,
+  "transcripts_identical": 30,
+  "speech_view_changed": 5,
+  "diffs": []
+ },
+ "hosted": {
+  "calls": 24,
+  "metrics_identical": 24,
+  "findings_identical": 24,
+  "transcripts_identical": 24,
+  "speech_view_changed": 0,
+  "diffs": []
+ }
+}

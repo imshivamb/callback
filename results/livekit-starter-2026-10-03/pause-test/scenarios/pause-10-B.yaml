@@ -1,0 +1,13 @@
+# B: the same words with the mid-line pause removed (a hyphen between "vegetarian" and "that").
+id: pause-b-5
+agent: livekit-starter
+trials: 1
+max_duration_s: 60
+caller:
+  persona: "Arjun, planning dinner"
+  goal: "Plan a quick vegetarian dinner for four"
+  voice: male_us_1
+  speaks_first: true
+  script:
+    - "Hi, can you help me plan a simple dinner for four people tonight?"
+    - "I would like something vegetarian-that takes under thirty minutes."

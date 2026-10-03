@@ -1,0 +1,18 @@
+# The caller changes the number of guests after the agent has started planning.
+id: change-mind
+agent: livekit-starter
+trials: 3
+max_duration_s: 150
+caller:
+  persona: "Priya, reorganising a family dinner"
+  goal: "Plan a quick vegetarian dinner for four"
+  voice: male_us_1
+  speaks_first: true
+  script:
+    - "Hi, can you help me plan a simple dinner for four people tonight?"
+    - "I would like something vegetarian that takes under thirty minutes."
+    - "Okay, and what do I need to buy from the shop?"
+    - "That sounds good. Thanks, that's all. Bye."
+chaos:
+  events:
+    - change_mind: {on: caller_turn, turn: 3, say: "Actually, make that for six people instead.", updates: {guests: six}}

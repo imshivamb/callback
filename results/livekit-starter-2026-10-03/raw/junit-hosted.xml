@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="callback" time="1172.99" tests="62" failures="39" errors="0">
+  <testsuite name="warmup-backchannel" tests="4" failures="2" errors="0">
+    <testcase classname="warmup-backchannel" name="trial 1 (warmup-backchannel--t1)" time="20.34">
+      <failure message="response_latency_p95_s 3.084 s &gt; 1.5 s">response_latency_p95_s 3.084 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="warmup-backchannel" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 3.0845 (95% CI 2.98–3.09), limit &lt;= 1.5">response_latency_p95_s 3.0845 (95% CI 2.98–3.09), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="warmup-backchannel" name="aggregate talk_over_ratio" />
+    <testcase classname="warmup-backchannel" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="backchannel" tests="7" failures="5" errors="0">
+    <testcase classname="backchannel" name="trial 1 (backchannel--t1)" time="45.56">
+      <failure message="response_latency_p95_s 3.532 s &gt; 1.5 s">response_latency_p95_s 3.532 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="backchannel" name="trial 2 (backchannel--t2)" time="43.60">
+      <failure message="response_latency_p95_s 3.589 s &gt; 1.5 s">response_latency_p95_s 3.589 s &gt; 1.5 s
+false_yields 1 &gt; 0</failure>
+    </testcase>
+    <testcase classname="backchannel" name="trial 3 (backchannel--t3)" time="51.24">
+      <failure message="response_latency_p95_s 3.535 s &gt; 1.5 s">response_latency_p95_s 3.535 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="backchannel" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 3.6945 (95% CI 3.67–3.7), limit &lt;= 1.5">response_latency_p95_s 3.6945 (95% CI 3.67–3.7), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="backchannel" name="aggregate talk_over_ratio" />
+    <testcase classname="backchannel" name="aggregate false_yields">
+      <failure message="false_yields 1 (95% CI 0–1), limit &lt;= 0">false_yields 1 (95% CI 0–1), limit &lt;= 0</failure>
+    </testcase>
+    <testcase classname="backchannel" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="warmup-barge-in" tests="4" failures="2" errors="0">
+    <testcase classname="warmup-barge-in" name="trial 1 (warmup-barge-in--t1)" time="17.78">
+      <failure message="response_latency_p95_s 2.763 s &gt; 1.5 s">response_latency_p95_s 2.763 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="warmup-barge-in" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 2.7625 (95% CI 2.24–2.79), limit &lt;= 1.5">response_latency_p95_s 2.7625 (95% CI 2.24–2.79), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="warmup-barge-in" name="aggregate talk_over_ratio" />
+    <testcase classname="warmup-barge-in" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="barge-in" tests="7" failures="6" errors="0">
+    <testcase classname="barge-in" name="trial 1 (barge-in--t1)" time="48.34">
+      <failure message="response_latency_p95_s 3.348 s &gt; 1.5 s">response_latency_p95_s 3.348 s &gt; 1.5 s
+time_to_yield_p95_s 1.04 s &gt; 0.6 s
+talk_over_ratio 0.1123 &gt; 0.05</failure>
+    </testcase>
+    <testcase classname="barge-in" name="trial 2 (barge-in--t2)" time="52.52">
+      <failure message="response_latency_p95_s 3.448 s &gt; 1.5 s">response_latency_p95_s 3.448 s &gt; 1.5 s
+time_to_yield_p95_s 1.05 s &gt; 0.6 s
+talk_over_ratio 0.052 &gt; 0.05</failure>
+    </testcase>
+    <testcase classname="barge-in" name="trial 3 (barge-in--t3)" time="59.02">
+      <failure message="response_latency_p95_s 3.37 s &gt; 1.5 s">response_latency_p95_s 3.37 s &gt; 1.5 s
+time_to_yield_p95_s 1.03 s &gt; 0.6 s</failure>
+    </testcase>
+    <testcase classname="barge-in" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 3.62 (95% CI 3.59–3.62), limit &lt;= 1.5">response_latency_p95_s 3.62 (95% CI 3.59–3.62), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="barge-in" name="aggregate time_to_yield_p95_s">
+      <failure message="time_to_yield_p95_s 1.049 (95% CI 1.03–1.05), limit &lt;= 0.6">time_to_yield_p95_s 1.049 (95% CI 1.03–1.05), limit &lt;= 0.6</failure>
+    </testcase>
+    <testcase classname="barge-in" name="aggregate talk_over_ratio">
+      <failure message="talk_over_ratio 0.0662 (95% CI 0.0343–0.1123), limit &lt;= 0.05">talk_over_ratio 0.0662 (95% CI 0.0343–0.1123), limit &lt;= 0.05</failure>
+    </testcase>
+    <testcase classname="barge-in" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="warmup-change-mind" tests="4" failures="2" errors="0">
+    <testcase classname="warmup-change-mind" name="trial 1 (warmup-change-mind--t1)" time="18.60">
+      <failure message="response_latency_p95_s 2.368 s &gt; 1.5 s">response_latency_p95_s 2.368 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="warmup-change-mind" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 2.368 (95% CI 2.14–2.38), limit &lt;= 1.5">response_latency_p95_s 2.368 (95% CI 2.14–2.38), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="warmup-change-mind" name="aggregate talk_over_ratio" />
+    <testcase classname="warmup-change-mind" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="change-mind" tests="6" failures="4" errors="0">
+    <testcase classname="change-mind" name="trial 1 (change-mind--t1)" time="47.66">
+      <failure message="response_latency_p95_s 3.625 s &gt; 1.5 s">response_latency_p95_s 3.625 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="change-mind" name="trial 2 (change-mind--t2)" time="50.48">
+      <failure message="response_latency_p95_s 3.727 s &gt; 1.5 s">response_latency_p95_s 3.727 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="change-mind" name="trial 3 (change-mind--t3)" time="47.52">
+      <failure message="response_latency_p95_s 3.651 s &gt; 1.5 s">response_latency_p95_s 3.651 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="change-mind" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 3.696 (95% CI 3.63–3.74), limit &lt;= 1.5">response_latency_p95_s 3.696 (95% CI 3.63–3.74), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="change-mind" name="aggregate talk_over_ratio" />
+    <testcase classname="change-mind" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="warmup-repeat-request" tests="4" failures="2" errors="0">
+    <testcase classname="warmup-repeat-request" name="trial 1 (warmup-repeat-request--t1)" time="18.28">
+      <failure message="response_latency_p95_s 2.405 s &gt; 1.5 s">response_latency_p95_s 2.405 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="warmup-repeat-request" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 2.4045 (95% CI 2.11–2.42), limit &lt;= 1.5">response_latency_p95_s 2.4045 (95% CI 2.11–2.42), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="warmup-repeat-request" name="aggregate talk_over_ratio" />
+    <testcase classname="warmup-repeat-request" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="repeat-request" tests="6" failures="4" errors="0">
+    <testcase classname="repeat-request" name="trial 1 (repeat-request--t1)" time="53.06">
+      <failure message="response_latency_p95_s 3.503 s &gt; 1.5 s">response_latency_p95_s 3.503 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="repeat-request" name="trial 2 (repeat-request--t2)" time="43.52">
+      <failure message="response_latency_p95_s 3.542 s &gt; 1.5 s">response_latency_p95_s 3.542 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="repeat-request" name="trial 3 (repeat-request--t3)" time="50.64">
+      <failure message="response_latency_p95_s 3.43 s &gt; 1.5 s">response_latency_p95_s 3.43 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="repeat-request" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 3.647 (95% CI 3.55–3.68), limit &lt;= 1.5">response_latency_p95_s 3.647 (95% CI 3.55–3.68), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="repeat-request" name="aggregate talk_over_ratio" />
+    <testcase classname="repeat-request" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="warmup-rough-line" tests="4" failures="2" errors="0">
+    <testcase classname="warmup-rough-line" name="trial 1 (warmup-rough-line--t1)" time="18.32">
+      <failure message="response_latency_p95_s 2.88 s &gt; 1.5 s">response_latency_p95_s 2.88 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="warmup-rough-line" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 2.88 (95% CI 2.69–2.89), limit &lt;= 1.5">response_latency_p95_s 2.88 (95% CI 2.69–2.89), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="warmup-rough-line" name="aggregate talk_over_ratio" />
+    <testcase classname="warmup-rough-line" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="rough-line" tests="6" failures="4" errors="0">
+    <testcase classname="rough-line" name="trial 1 (rough-line--t1)" time="53.96">
+      <failure message="response_latency_p95_s 3.518 s &gt; 1.5 s">response_latency_p95_s 3.518 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="rough-line" name="trial 2 (rough-line--t2)" time="51.42">
+      <failure message="response_latency_p95_s 3.432 s &gt; 1.5 s">response_latency_p95_s 3.432 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="rough-line" name="trial 3 (rough-line--t3)" time="50.52">
+      <failure message="response_latency_p95_s 3.514 s &gt; 1.5 s">response_latency_p95_s 3.514 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="rough-line" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 3.618 (95% CI 3.52–3.64), limit &lt;= 1.5">response_latency_p95_s 3.618 (95% CI 3.52–3.64), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="rough-line" name="aggregate talk_over_ratio" />
+    <testcase classname="rough-line" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="warmup-silent-caller" tests="4" failures="2" errors="0">
+    <testcase classname="warmup-silent-caller" name="trial 1 (warmup-silent-caller--t1)" time="17.62">
+      <failure message="response_latency_p95_s 2.74 s &gt; 1.5 s">response_latency_p95_s 2.74 s &gt; 1.5 s</failure>
+    </testcase>
+    <testcase classname="warmup-silent-caller" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 2.7395 (95% CI 2.16–2.77), limit &lt;= 1.5">response_latency_p95_s 2.7395 (95% CI 2.16–2.77), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="warmup-silent-caller" name="aggregate talk_over_ratio" />
+    <testcase classname="warmup-silent-caller" name="aggregate unanswered_turns" />
+  </testsuite>
+  <testsuite name="silent-caller" tests="6" failures="4" errors="0">
+    <testcase classname="silent-caller" name="trial 1 (silent-caller--t1)" time="58.92">
+      <failure message="response_latency_p95_s 3.528 s &gt; 1.5 s">response_latency_p95_s 3.528 s &gt; 1.5 s
+silence_reprompt_s: The caller went quiet for 12.8 s and the agent never checked in.</failure>
+    </testcase>
+    <testcase classname="silent-caller" name="trial 2 (silent-caller--t2)" time="66.98">
+      <failure message="response_latency_p95_s 3.376 s &gt; 1.5 s">response_latency_p95_s 3.376 s &gt; 1.5 s
+silence_reprompt_s: The caller went quiet for 12.8 s and the agent never checked in.</failure>
+    </testcase>
+    <testcase classname="silent-caller" name="trial 3 (silent-caller--t3)" time="65.78">
+      <failure message="response_latency_p95_s 3.486 s &gt; 1.5 s">response_latency_p95_s 3.486 s &gt; 1.5 s
+silence_reprompt_s: The caller went quiet for 12.8 s and the agent never checked in.</failure>
+    </testcase>
+    <testcase classname="silent-caller" name="aggregate response_latency_p95_s">
+      <failure message="response_latency_p95_s 3.668 (95% CI 3.55–3.69), limit &lt;= 1.5">response_latency_p95_s 3.668 (95% CI 3.55–3.69), limit &lt;= 1.5</failure>
+    </testcase>
+    <testcase classname="silent-caller" name="aggregate talk_over_ratio" />
+    <testcase classname="silent-caller" name="aggregate unanswered_turns" />
+  </testsuite>
+</testsuites>

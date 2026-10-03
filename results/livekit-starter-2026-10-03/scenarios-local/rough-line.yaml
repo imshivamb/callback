@@ -1,0 +1,20 @@
+# A noisy street and a bad mobile line: the conversation should still complete.
+id: rough-line
+agent: livekit-starter
+trials: 5
+max_duration_s: 150
+caller:
+  persona: "Arjun, walking down a busy street"
+  goal: "Plan a quick vegetarian dinner for four"
+  voice: male_us_1
+  speaks_first: true
+  script:
+    - "Hi, can you help me plan a simple dinner for four people tonight?"
+    - "I would like something vegetarian that takes under thirty minutes."
+    - "Okay, and what do I need to buy from the shop?"
+    - "That sounds good. Thanks, that's all. Bye."
+chaos:
+  noise: {bed: street, snr_db: 15}
+  events:
+    - packet_loss: {pct: 3, from_s: 10, to_s: 30}
+    - jitter: {ms: 60, from_s: 30, to_s: 40}
