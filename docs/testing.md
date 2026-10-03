@@ -115,14 +115,18 @@ From the top:
    scenario. It describes what was measured; it does not grade the agent.
 2. **Check by check**: for each limit, how many of the calls it applied to stayed within
    it, next to what was measured. What held sits beside what did not.
-3. **What stood out**: up to five behaviours that went above target, most serious first,
-   one kind per row however many scenarios have it (the worst case is shown). Each row has
-   the number and its limit, a small picture of the moment it happened (caller above,
-   agent below, the stretch that went over the limit hatched in red), and **Hear it**,
-   which opens the call at that moment and plays it.
-4. **Every call**: one row per call, grouped by scenario and drawn on the same clock, so
-   a pattern (the agent always answering late, say) shows at a glance. Red ticks are
-   limits passed; amber ◆ marks disturbances Callback caused. Select a call to open it.
+3. **What stood out**: the behaviours that went above target, most serious first, one row per
+   kind across all the calls. Each row says how many times it happened and in how many calls,
+   lists those calls by number (select one to open it), names the worst case, shows a typical
+   moment as a small picture (caller above, agent below, the stretch above target hatched in
+   amber) with the number that goes with it, and has **Hear a typical one**. A sentence above
+   the rows says how the calls differ: for example that slow replies are in all 24 calls and
+   seven calls also had something else.
+4. **Every call**: one row per call, numbered, grouped by scenario and drawn on the same
+   clock, so a pattern (the agent always answering late, say) shows at a glance. Under each
+   row is what went above target in that call. Amber ticks are targets passed; magenta ◆
+   marks disturbances Callback caused. Select a call to open it; the call picker above the
+   player moves between calls.
 5. **The call**: caller and agent waveforms on one time axis, an Events row, a "Wait
    before reply" bar per answer against the dashed limit, and a whole-call strip to move
    around. It opens on the call with the worst problem. Below it, the problems in that

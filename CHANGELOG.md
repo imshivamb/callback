@@ -23,7 +23,10 @@
   measured, so what held sits beside what did not. *What stood out* lists the behaviours
   that went above target, each with its number and limit, a small picture of the moment it
   happened and a **Hear it** button. *Every call* shows all calls as aligned tapes,
-  grouped by scenario, so a pattern shows at a glance. The summary and titles use
+  grouped by scenario and numbered, so a pattern shows at a glance, with what went above
+  target written under each row. Each problem row names every call it happened in, the worst
+  case, and a typical moment whose picture matches its number; a call picker sits above the
+  player. The summary and titles use
   observational wording ("Replies slower than the limit"). The call player and the numbers
   (now a dot, a 95% range and a limit on one line) keep everything they had: timeline,
   zoom, shortcuts, audio, baseline comparison. It opens on the call with the worst
@@ -32,7 +35,7 @@
 - **One clause per kind of problem.** When many scenarios had the same problem with
   different numbers, the summary sentence repeated it once per scenario ("replies too
   slowly (3.69 s…), replies too slowly (3.62 s…)"). It now says it once, with the worst
-  case, and the report lists up to five kinds instead of three.
+  case, and the report lists every kind of problem instead of the first three.
 
 ### Fixed
 

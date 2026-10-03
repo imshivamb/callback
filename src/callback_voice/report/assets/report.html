@@ -135,6 +135,11 @@ h2 { font: 650 clamp(24px, 3vw, 32px)/1.1 var(--display); letter-spacing: -0.03e
 .fbody h3 { font: 650 22px/1.2 var(--display); letter-spacing: -0.02em; margin: 0 0 6px; }
 .fbody p { margin: 0; color: var(--ink-2); max-width: 46ch; }
 .fscope { color: var(--quiet); font-size: 13.5px; margin-top: 6px !important; }
+.which { margin-top: 12px; }
+.which summary { cursor: pointer; color: var(--ink-2); font-size: 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.which.chips { margin-top: 12px; }
+.callchip { white-space: nowrap; }
 .hear { margin-top: 16px; display: inline-flex; align-items: center; gap: 9px; border: 0; border-radius: 999px; padding: 8px 16px 8px 10px; background: var(--ink); color: var(--paper); cursor: pointer; font-weight: 600; font-size: 14px; }
 .hear:hover { opacity: 0.88; }
 .hear svg { display: block; }
@@ -148,13 +153,14 @@ h2 { font: 650 clamp(24px, 3vw, 32px)/1.1 var(--display); letter-spacing: -0.03e
 .scn-name b { font: 650 17px/1.2 var(--display); letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; overflow-wrap: anywhere; }
 .scn-name span { color: var(--quiet); font-size: 13px; line-height: 1.4; }
 .tapes { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.tape { cursor: pointer; display: grid; grid-template-columns: 26px minmax(0, 1fr) 70px; align-items: center; gap: 10px; width: 100%; text-align: left; background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 4px 6px; cursor: pointer; }
+.tape { cursor: pointer; display: grid; grid-template-columns: 46px minmax(0, 1fr) 70px; align-items: center; gap: 10px; width: 100%; text-align: left; background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 4px 6px; cursor: pointer; }
 .tape:hover { background: var(--sunk); }
 .tape[aria-current="true"] { background: var(--card); border-color: var(--ink); box-shadow: var(--shadow); }
 .tape .n { color: var(--quiet); font-size: 13px; display: flex; align-items: center; gap: 4px; }
 .tape .t { color: var(--quiet); font-size: 12.5px; display: flex; align-items: center; justify-content: flex-end; gap: 5px; }
 .tape:hover .t { color: var(--ink); }
-.tape .strip { min-width: 0; }
+.tape .strip { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.tape .kinds { color: var(--quiet); font-size: 12px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tape canvas { display: block; height: 34px; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 14px 0 0; color: var(--quiet); font-size: 13px; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 7px; vertical-align: -1px; }
@@ -328,6 +334,23 @@ const help = /** @type {HTMLDialogElement} */ (document.getElementById("help"));
 const CALLS = DATA.scenarios.flatMap((s) => s.calls);
 const PRE_ROLL_S = 0.75;
 const FOCUS_SPAN_S = 14;
+
+/**
+ * A located problem counts as "above target" only when its call's own check was above target.
+ * Callback pins every overlap or slow reply it finds; a call whose check still passed (a short
+ * overlap inside the talk-over allowance, say) keeps the pin as a quiet note, so the lists below
+ * and the check-by-check counts always agree.
+ */
+const CALL_CHECK = /** @type {Object<string, string>} */ ({
+  response_latency: "response_latency_p95_s", time_to_yield: "time_to_yield_p95_s", talk_over: "talk_over_ratio",
+  false_yield: "false_yields", silence_reprompt: "silence_reprompt_s", unanswered_turns: "unanswered_turns",
+});
+for (const c of CALLS) {
+  for (const f of c.findings) {
+    const m = (c.metrics || []).find((x) => x.name === CALL_CHECK[f.metric]);
+    if (f.severity === "fail" && m && m.passed === true) f.severity = "warn";
+  }
+}
 
 const state = {
   /** @type {Call|null} */ call: null,
@@ -580,7 +603,14 @@ function ledeText(errored, failed) {
 /** The worst problem in a few words; the rest are listed below it. @param {Tile[]} tiles */
 function shortLede(tiles) {
   const t = tiles[0];
-  const worst = t.value ? `${t.title.toLowerCase()}: ${t.value}${t.limit ? `, ${limitText(t.limit)}` : ""}` : t.title.toLowerCase();
+  const inst = instancesOf(t.finding);
+  let worst = t.title.toLowerCase();
+  if (inst.length) {
+    const { calls, counted, typ } = describe(t, inst);
+    const where = `in ${calls.length} of ${CALLS.length} call${CALLS.length === 1 ? "" : "s"}`;
+    worst += counted ? `, ${inst.length} time${inst.length === 1 ? "" : "s"} ${where}`
+      : typ !== null ? `, typically ${seconds(typ)}${t.limit ? ` against a limit of ${t.limit.replace(/^[≤≥] /, "")}` : ""}, ${where}` : `, ${where}`;
+  }
   const none = CALLS.some((c) => c.error) ? "" : "No call errored out. ";
   return `${none}The one that stood out most: ${worst}.`;
 }
@@ -689,34 +719,150 @@ function findingFor(t) {
   return c.peaks && f ? { c, f } : null;
 }
 
+/** Where each kind of problem shows its size in the finding's own sentence. */
+const VALUE_RE = /** @type {Object<string, RegExp>} */ ({
+  response_latency: /took (\d+(?:\.\d+)?) s/,
+  time_to_yield: /talking for (\d+(?:\.\d+)?) s/,
+  talk_over: /for (\d+(?:\.\d+)?) s/,
+  false_yield: /(\d+(?:\.\d+)?) s after/,
+  silence_reprompt: /for (\d+(?:\.\d+)?) s/,
+  unanswered_turns: /waited (\d+(?:\.\d+)?) s/,
+});
+/** Problems counted as occurrences, not measured in seconds. */
+const COUNT_KINDS = ["false_yield", "unanswered_turns"];
+const NOUNS = /** @type {Object<string, [string, string]>} */ ({
+  response_latency: ["reply above target", "replies above target"],
+  time_to_yield: ["slow stop after an interruption", "slow stops after an interruption"],
+  talk_over: ["stretch of talk-over", "stretches of talk-over"],
+  false_yield: ["stop for an acknowledgement", "stops for an acknowledgement"],
+  silence_reprompt: ["silence with no check-in", "silences with no check-in"],
+  unanswered_turns: ["unanswered turn", "unanswered turns"],
+});
+const PLURAL = /** @type {Object<string, string>} */ ({
+  response_latency: "Replies above target", time_to_yield: "Slow stops after an interruption", talk_over: "Talk-over",
+  false_yield: "Stops for an acknowledgement", silence_reprompt: "Missing check-ins during silence", unanswered_turns: "Unanswered turns",
+});
+
+/** @param {Call} c */
+function callNo(c) { return CALLS.indexOf(c) + 1; }
+/** @param {Call} c */
+function callName(c) { return `${c.scenario_id}, trial ${c.trial}`; }
+/** @param {number[]} xs */
+function median(xs) {
+  const s = [...xs].sort((a, b) => a - b), m = s.length >> 1;
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+}
+/** @param {number} v */
+function seconds(v) { return `${v.toFixed(v >= 10 ? 1 : 2)} s`; }
+
+/** Every place a kind of problem happened, across all the calls. @param {string} kind */
+function instancesOf(kind) {
+  /** @type {{c: Call, f: Finding, value: number|null}[]} */
+  const out = [];
+  for (const c of CALLS) {
+    for (const f of c.findings) {
+      if (f.metric !== kind || f.severity !== "fail") continue;
+      const m = VALUE_RE[kind] ? f.message.match(VALUE_RE[kind]) : null;
+      const value = m ? Number(m[1]) : f.end_s !== null && f.end_s > f.t_s ? f.end_s - f.t_s : null;
+      out.push({ c, f, value });
+    }
+  }
+  return out;
+}
+
+/** A problem kind's size across all calls: how often, in how many calls, its typical and worst case. @param {Tile} t @param {{c: Call, f: Finding, value: number|null}[]} inst */
+function describe(t, inst) {
+  const calls = [...new Set(inst.map((x) => x.c))];
+  const counted = COUNT_KINDS.includes(t.finding);
+  const values = /** @type {number[]} */ (inst.map((x) => x.value).filter((v) => v !== null));
+  const typ = !counted && values.length ? median(values) : null;
+  return { calls, counted, typ };
+}
+
+/** One kind of problem: its number, which calls had it, and a typical moment you can hear. @param {Tile} t @param {{c: Call, f: Finding, value: number|null}[]} inst */
+function ledgerRow(t, inst) {
+  const calls = [...new Set(inst.map((x) => x.c))];
+  const counted = COUNT_KINDS.includes(t.finding);
+  const values = inst.map((x) => x.value).filter((v) => v !== null);
+  const typ = !counted && values.length ? median(/** @type {number[]} */ (values)) : null;
+  const dist = (/** @type {number|null} */ v) => (v === null || typ === null ? Infinity : Math.abs(v - typ));
+  const example = typ === null ? inst[0] : inst.reduce((best, x) => (dist(x.value) < dist(best.value) ? x : best), inst[0]);
+  const worst = typ === null ? null : inst.reduce((a, x) => ((x.value ?? -1) > (a.value ?? -1) ? x : a), inst[0]);
+  const [one, many] = NOUNS[t.finding] || ["occurrence", "occurrences"];
+  const total = CALLS.length;
+  const [num, unit] = counted ? [String(inst.length), inst.length === 1 ? "time" : "times"] : typ !== null ? [seconds(typ).replace(" s", ""), "s"] : [String(inst.length), ""];
+  const limitLine = t.finding === "silence_reprompt" ? "of silence, no check-in"
+    : t.finding === "talk_over" ? "typical stretch; limit 5% of their speech"
+    : counted ? (t.limit ? `${limitText(t.limit)} per call` : "")
+    : t.limit ? `typical of those above target; ${limitText(t.limit)}` : "typical of those above target";
+  const cv = example.c.peaks ? /** @type {HTMLCanvasElement} */ (h("canvas", { class: "moment", role: "img", "aria-label": `${t.title}: a ${typ !== null ? "typical " : ""}moment, caller above, agent below` })) : null;
+  if (cv) momentCanvases.push({ cv, c: example.c, f: example.f });
+  const chips = calls.map((c) => {
+    const first = /** @type {{f: Finding}} */ (inst.find((x) => x.c === c));
+    return h("button", { class: "chip callchip", type: "button", title: `Open call ${callNo(c)}: ${callName(c)}`, onclick: () => hearAt(c.call_id, first.f.t_s) }, [`${callNo(c)} · ${c.scenario_id} ${c.trial}`]);
+  });
+  const many_ = calls.length > 8;
+  const which = many_
+    ? h("details", { class: "which" }, [h("summary", {}, [calls.length === total ? `Show all ${total} calls` : `Show the ${calls.length} calls`]), h("div", { class: "chips" }, chips)])
+    : h("div", { class: "chips which" }, chips);
+  const sentence = `${inst.length} ${inst.length === 1 ? one : many} in ${calls.length === total && total > 1 ? `all ${total}` : `${calls.length} of ${total}`} call${calls.length === 1 && total === 1 ? "" : "s"}.`
+    + (worst && inst.length > 1 && worst.value !== null ? ` Worst: ${seconds(worst.value)}, call ${callNo(worst.c)}.` : "");
+  return h("article", { class: "finding" }, [
+    h("div", { class: "fvalue num" }, [num, unit ? h("small", {}, [unit]) : null, limitLine ? h("span", { class: "flimit" }, [limitLine]) : null]),
+    h("div", { class: "fbody" }, [
+      h("h3", {}, [t.title]),
+      h("p", {}, [sentence]),
+      total > 1 ? which : null,
+      h("button", { class: "hear", onclick: () => hearAt(example.c.call_id, example.f.t_s) }, [
+        glyph("bigplay"), `${typ !== null && inst.length > 1 ? "Hear a typical one" : "Hear it"}: call ${callNo(example.c)}, ${callName(example.c)}, at ${clock(example.f.t_s)}`,
+      ]),
+    ]),
+    cv,
+  ]);
+}
+
+/** A problem with no per-occurrence data (older runs): the number and the one place Callback pointed to. @param {Tile} t */
+function legacyRow(t) {
+  const moment = findingFor(t);
+  const parsed = t.value ? null : String(t.detail).match(/(\d+(?:\.\d+)?) s/);
+  const [num, unit0] = t.value ? splitValue(t.value) : parsed ? [parsed[1], "s"] : [null, ""];
+  const unit = unit0 || (num && COUNT_KINDS.includes(t.finding) ? "per call" : "");
+  const cv = moment ? /** @type {HTMLCanvasElement} */ (h("canvas", { class: "moment", role: "img", "aria-label": `${t.title}: the moment it happened, caller above, agent below` })) : null;
+  if (cv && moment) momentCanvases.push({ cv, c: moment.c, f: moment.f });
+  return h("article", { class: "finding" }, [
+    h("div", { class: "fvalue num" }, num ? [num, unit ? h("small", {}, [unit]) : null, t.limit ? h("span", { class: "flimit" }, [limitText(t.limit)]) : null] : [icon("fail", "problem")]),
+    h("div", { class: "fbody" }, [
+      h("h3", {}, [t.title]), h("p", {}, [t.detail]),
+      t.call_id !== null && t.t_s !== null ? h("button", { class: "hear", onclick: () => hearAt(/** @type {string} */ (t.call_id), /** @type {number} */ (t.t_s)) }, [glyph("bigplay"), `Hear it, trial ${t.trial} at ${clock(t.t_s)}`]) : null,
+    ]),
+    cv,
+  ]);
+}
+
+/** One sentence on how the calls differ from each other. @param {Tile[]} tiles */
+function howCallsDiffer(tiles) {
+  const kinds = tiles.map((t) => t.finding);
+  const perCall = CALLS.map((c) => new Set(c.findings.filter((f) => f.severity === "fail" && kinds.includes(f.metric)).map((f) => f.metric)));
+  const counts = kinds.map((k) => perCall.filter((s) => s.has(k)).length);
+  const top = Math.max(...counts), k1 = kinds[counts.indexOf(top)], N = CALLS.length;
+  if (N < 2 || top === 0) return "";
+  const more = perCall.filter((s) => [...s].some((k) => k !== k1)).length;
+  const only = perCall.filter((s) => s.size === 1 && s.has(k1)).length;
+  const none = perCall.filter((s) => s.size === 0).length;
+  return `${PLURAL[k1] || k1} appear in ${top === N ? `all ${N}` : `${top} of ${N}`} calls. `
+    + (more === 0 ? "Nothing else went above target in any call. " : `${only} call${only === 1 ? "" : "s"} had only that; ${more} had more than one kind above target, and the rows below name them. `)
+    + (none ? `${none} had nothing above target.` : "");
+}
+
 function renderFindings() {
   const tiles = DATA.summary.tiles;
   if (!tiles.length) {
     if (!CALLS.some((c) => c.error)) return null;
     return section("problems", "What stood out", "", [h("p", { class: "none" }, ["Some calls could not run. Their errors are in the calls below."])]);
   }
-  const rows = tiles.map((t) => {
-    const moment = findingFor(t);
-    const where = (t.scenarios || 1) > 1 ? `In ${t.scenarios} of ${DATA.scenarios.length} scenarios. Worst in ${t.scenario_id}.` : (DATA.scenarios.length > 1 ? `In ${t.scenario_id}.` : "");
-    const parsed = t.value ? null : String(t.detail).match(/(\d+(?:\.\d+)?) s/);
-    const [num, unit0] = t.value ? splitValue(t.value) : parsed ? [parsed[1], "s"] : [null, ""];
-    const unit = unit0 || (num && COUNTS.includes(t.finding) ? "per call" : "");
-    const cv = moment ? /** @type {HTMLCanvasElement} */ (h("canvas", { class: "moment", role: "img", "aria-label": `${t.title}: the moment it happened, caller above, agent below` })) : null;
-    if (cv && moment) momentCanvases.push({ cv, c: moment.c, f: moment.f });
-    return h("article", { class: "finding" }, [
-      h("div", { class: "fvalue num" }, num ? [num, unit ? h("small", {}, [unit]) : null, t.limit ? h("span", { class: "flimit" }, [limitText(t.limit)]) : parsed ? h("span", { class: "flimit" }, ["of silence, no check-in"]) : null] : [icon("fail", "problem")]),
-      h("div", { class: "fbody" }, [
-        h("h3", {}, [t.title]),
-        h("p", {}, [t.detail]),
-        where ? h("p", { class: "fscope" }, [where]) : null,
-        t.call_id !== null && t.t_s !== null ? h("button", {
-          class: "hear", onclick: () => hearAt(/** @type {string} */ (t.call_id), /** @type {number} */ (t.t_s)),
-        }, [glyph("bigplay"), `Hear it, trial ${t.trial} at ${clock(t.t_s)}`]) : null,
-      ]),
-      cv,
-    ]);
-  });
-  return section("problems", "What stood out", "The behaviours that went above target, most serious first. Each shows the moment it happened: the caller above, the agent below.", [
+  const rows = tiles.map((t) => { const inst = instancesOf(t.finding); return inst.length ? ledgerRow(t, inst) : legacyRow(t); });
+  const differ = howCallsDiffer(tiles);
+  return section("problems", "What stood out", `The behaviours that went above target, most serious first. Each shows a typical moment (caller above, agent below), the worst case, and every call it happened in. ${differ}`.trim(), [
     h("div", { class: "ledger" }, rows),
   ]);
 }
@@ -731,9 +877,6 @@ function splitValue(v) {
 function limitText(limit) {
   return limit.startsWith("was") ? limit : `limit ${limit.replace(/^[≤≥] /, "")}`;
 }
-
-/** Problems counted per call, not measured in seconds. */
-const COUNTS = ["false_yield", "unanswered_turns"];
 
 /** @type {{cv: HTMLCanvasElement, c: Call, f: Finding}[]} */
 const momentCanvases = [];
@@ -828,9 +971,10 @@ function renderWall() {
       const dur = c.audio_s || c.duration_s || 0;
       const cv = /** @type {HTMLCanvasElement} */ (h("canvas", { role: "img", "aria-hidden": "true", style: `width:${Math.max(8, (dur / longest) * 100)}%` }));
       tapeCanvases.push({ cv, c });
-      return h("button", { class: "tape", title: "Open and play this call", "data-call": c.call_id, onclick: () => selectCall(c, true), "aria-label": `${s.scenario_id} trial ${c.trial}, ${c.error ? "could not run" : c.passed ? "on target" : "above target"}` }, [
-        h("span", { class: "n num" }, [callMark(c), String(c.trial)]),
-        h("span", { class: "strip" }, [cv]),
+      const no = callNo(c);
+      return h("button", { class: "tape", title: `Call ${no}: ${s.scenario_id}, trial ${c.trial}. Open and play it.`, "data-call": c.call_id, onclick: () => selectCall(c, true), "aria-label": `Call ${no}, ${s.scenario_id} trial ${c.trial}, ${c.error ? "could not run" : c.passed ? "on target" : "above target"}` }, [
+        h("span", { class: "n num" }, [callMark(c), String(no)]),
+        h("span", { class: "strip" }, [cv, h("span", { class: "kinds" }, [callKinds(c)])]),
         h("span", { class: "t num" }, [glyph("play"), dur ? `${Math.round(dur)} s` : ""]),
       ]);
     });
@@ -848,9 +992,17 @@ function renderWall() {
     h("span", {}, [h("i", { style: "background:var(--over);border-radius:0;width:3px;height:12px" }), "Above target here"]),
     h("span", {}, [h("i", { style: "background:var(--chaos);transform:rotate(45deg);border-radius:1px;width:8px;height:8px" }), "A disturbance Callback caused"]),
   ]);
-  return section("calls", "Every call", "One row per call, all on the same clock, so a pattern shows at a glance. Select a call to open and play it.", [
+  return section("calls", "Every call", `One row per call, numbered 1 to ${CALLS.length}, all on the same clock so a pattern shows at a glance. Under each row is what went above target in that call. Select a call to open and play it.`, [
     h("div", { class: "wall" }, groups), legend,
   ]);
+}
+
+/** What went above target in one call, in a few words. @param {Call} c */
+function callKinds(c) {
+  if (c.error) return "Could not run";
+  const g = groupFindings(c).filter((x) => x.severity === "fail");
+  if (!g.length) return c.passed ? "On target" : "Above target";
+  return g.map((x) => `${x.label}${x.items.length > 1 ? ` ×${x.items.length}` : ""}`).join(", ");
 }
 
 /** "3 calls, all within their limits" for the wall's scenario column. @param {Scenario} s */
@@ -894,12 +1046,12 @@ function renderPicker(c) {
   const i = CALLS.indexOf(c);
   const pick = h("select", { id: "callpick", "aria-label": "Choose a call", onchange: (e) => selectCall(CALLS[Number(/** @type {HTMLSelectElement} */ (e.target).value)]) },
     DATA.scenarios.map((s) => h("optgroup", { label: s.scenario_id }, s.calls.map((cc) => h("option", { value: String(CALLS.indexOf(cc)), selected: cc === c },
-      [`Trial ${cc.trial}${cc.error ? " (could not run)" : cc.passed ? " (on target)" : " (above target)"}`])))));
+      [`Call ${callNo(cc)}, trial ${cc.trial}${cc.error ? " (could not run)" : cc.passed ? " (on target)" : " (above target)"}`])))));
   return h("div", { class: "picker" }, [
     h("button", { class: "tool", type: "button", onclick: () => nextCall(-1) }, ["‹ Previous call"]),
     pick,
     h("button", { class: "tool", type: "button", onclick: () => nextCall(1) }, ["Next call ›"]),
-    h("span", { class: "quiet num" }, [`${i + 1} of ${CALLS.length} calls`]),
+    h("span", { class: "quiet num" }, [`Call ${i + 1} of ${CALLS.length}`]),
   ]);
 }
 
@@ -979,6 +1131,7 @@ function renderCall() {
   const c = state.call;
   if (!c) return;
   const facts = [
+    CALLS.length > 1 ? `Call ${callNo(c)} of ${CALLS.length}` : null,
     c.duration_s !== undefined ? `${c.duration_s.toFixed(0)} s call` : null,
     c.end_reason ? `ended: ${c.end_reason.replace(/_/g, " ")}` : null,
     `seed ${c.seed}`,

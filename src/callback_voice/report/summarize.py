@@ -127,7 +127,7 @@ def summarize_run(result: RunResult) -> dict[str, Any]:
     )
     sentence = f"The agent {_join(phrases)}{where}."
     tiles = [{k: v for k, v in kind.items() if k != "phrase"} for kind in kinds]
-    return {"sentence": sentence, "tiles": tiles[:5]}
+    return {"sentence": sentence, "tiles": tiles}
 
 
 def _by_kind(problems: list[dict[str, Any]]) -> list[dict[str, Any]]:
