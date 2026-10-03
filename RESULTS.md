@@ -12,7 +12,7 @@ laptop and hosted alike. The agent's own log shows it deciding to stop about 0.4
 after the caller started speaking; the rest of the time is the audio path. Details are in
 [finding 1](#what-i-found) and [where the time goes](#stop-when-interrupted-where-the-time-goes).
 
-![Calls passing each check, local and hosted](results/livekit-starter-2026-10-03/chart-checks.png)
+![Calls within each limit, laptop and hosted](results/livekit-starter-2026-10-03/chart-checks.png)
 
 ## What I found
 
@@ -118,10 +118,38 @@ Six scenarios, each a scripted caller planning a vegetarian dinner and speaking 
   talk-over ≤ 5% of the caller's speech, no stop for an acknowledgement, a check-in within
   8 s of silence, no unanswered turn.
 
+## Where the limits come from
+
+I chose them, and they are not an industry standard; I don't know of one. Callback's
+defaults are a reply delay of 1.5 s (the slowest typical reply in a call), a stop within
+0.6 s of being interrupted, talk-over under 5% of the caller's speech, no stop for an
+acknowledgement, and a check-in within 8 s of silence. I set the reply limit from the idea
+that a pause of 1.5 to 2 s after the caller stops talking feels broken, and the rest to go
+with it.
+
+I looked for outside reference points:
+
+- **Human conversation.** The median gap between speakers is about 200 ms across ten
+  languages, and a two-second reply is heard as an awkward silence, according to
+  [Picovoice's guide to voice latency](https://picovoice.ai/guide/voice-agents/voice-ux-latency-turn-taking/)
+  (it cites Stivers et al., 2009).
+- **Other platforms' defaults.** [Cekura's benchmark](https://www.cekura.ai/blogs/p99-latency-voice-ai-agents)
+  of six voice platforms run with their defaults reports median replies from 1.73 s
+  (ElevenLabs) to 3.16 s (Synthflow), with LiveKit at 2.46 s and 3.87 s at the 95th
+  percentile. It measures from the end of the caller's speech to the start of the agent's,
+  as Callback does. It fixes the model, prompt and voice across platforms, which my run did
+  not, and I could not confirm its publication date, so I read it as a rough comparison
+  from one source, not a standard.
+
+So my 1.5 s limit is stricter than what any default setup reached in that benchmark (the
+fastest median there is 1.73 s) and looser than the human rhythm. The starter's hosted
+median in my run, 2.47 s, and its 95th percentile, 3.69 s, are in the same range as that
+benchmark's figures for LiveKit.
+
 ## Results
 
-Calls passing each check, with 95% ranges. A pass count of 0 out of 3 is consistent with
-a true rate anywhere up to 56%, so read the hosted column as direction, not as a rate.
+Calls within each limit, with 95% ranges. A count of 0 out of 3 is consistent with a true
+rate anywhere up to 56%, so read the hosted column as direction, not as a rate.
 
 | Check | Laptop | Hosted |
 |---|---|---|
@@ -132,8 +160,8 @@ a true rate anywhere up to 56%, so read the hosted column as direction, not as a
 | Talk-over ≤ 5% of the caller's speech | 25/30 (66–93%) | 16/18 (67–97%) |
 | Checks in on a silent caller within 8 s | 0/5 (0–43%) | 0/3 (0–56%) |
 
-I am not reporting an overall pass rate as a headline. It is 0 of 48, because every call
-fails the reply-delay limit, and that number hides everything in the table above.
+I am not reporting an overall pass rate as a headline. It would be 0 of 48, because every
+call went over the reply-delay limit, and that number hides everything in the table above.
 
 ### Stop when interrupted: where the time goes
 
@@ -264,7 +292,7 @@ agent.
 How much the vegetarian sentence matters: leaving it out, the median reply delay is 3.37 s
 on my laptop and 2.39 s hosted; leaving out every line with a pause, 3.04 s and 2.29 s. The
 1.5 s limit is still missed by a wide margin, so this sentence inflates the median by about
-0.1–0.5 s without explaining the failure.
+0.1–0.5 s without explaining the delay.
 
 ### Agent-side cross-check
 
@@ -307,7 +335,7 @@ speech-to-text delay of 249 ms and end of turn of 450 ms, against 499 ms and 600
 tails view; and the 2.0 s end-of-turn tail on the hosted agent against the 2.5 s waits in
 the laptop log.
 
-## Top 3 failures
+## Three moments to hear
 
 Each clip is 11–13 s: an MP4 with a caption and a moving marker, plus the original audio
 as a WAV (caller left channel, agent right). Times are seconds into the call. I checked
@@ -332,7 +360,7 @@ arrives at 31.7 s and includes "For six people".
 "mm-hmm" at 36.8 s as an acknowledgement. The agent stops 0.94 s later and says nothing
 more until its last word at 44.7 s. One hosted call did the same, 0.79 s after "mm-hmm".
 
-The full reports have every call with both waveforms and a pin on each failure:
+The full reports have every call with both waveforms and a mark where each limit was passed:
 [laptop run](https://imshivamb.github.io/callback/livekit-starter/local.html) (without
 audio) and [hosted run](https://imshivamb.github.io/callback/livekit-starter/hosted.html)
 (with audio). Each is a single file that opens offline.
@@ -343,7 +371,7 @@ Before the full run I fixed one scoring rule, and I did not change it afterwards
 caller interrupts and the agent does not answer on its own, Callback now counts the turn
 as handled but flags it as *folded* if the agent's next reply repeats a content word the
 interruption introduced (digits and number words count as the same word). Otherwise it is
-an unanswered turn and fails the call.
+an unanswered turn, which counts as over its limit.
 
 Under that rule, 4 of 5 laptop interruption calls were unanswered and 1 was folded. The
 rule has a weakness, and the second reading below shows its effect:
@@ -466,8 +494,9 @@ unsplit originals are in `raw/`.
   figures do not reconcile (see the cross-check).
 - **I could read the agent's own log for the laptop run and the pause test only.** The
   stop-when-interrupted breakdown rests on 3 laptop calls.
-- **Limits are Callback's defaults.** A failure here means "worse than 1.5 s", not "broken".
-  Other limits would give other pass counts.
+- **Limits are my choice, not a standard.** Going over one means "slower than the bar I
+  picked", not "broken" ([where they come from](#where-the-limits-come-from)). Other limits
+  would give other counts.
 - **The folded rule is a word-overlap heuristic** on speech-recognition output. It does not
   judge whether the agent really handled an interruption.
 - **Timing only for some claims.** I checked what the agent said only where noted.
