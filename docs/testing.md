@@ -110,22 +110,24 @@ under `calls/` with:
 a minute) are inside it, so it opens offline and can be attached to a pull request.
 From the top:
 
-1. **The verdict in plain words**, e.g. "The agent failed 18 of 24 calls", then the worst
-   problem and how many others there are. It is written from the numbers, the same way
-   every time.
-2. **What went wrong**: up to five problems, most serious first, one kind per row however
-   many scenarios have it (the worst case is shown). Each row has the number and its
-   limit, a small picture of the moment it happened (caller above, agent below, the
-   problem hatched in red), and **Hear it**, which opens the call at that moment and
-   plays it.
-3. **Every call**: one row per call, grouped by scenario and drawn on the same clock, so
-   a pattern (the agent always answering late, say) shows at a glance. Red marks are
-   failed checks; amber ◆ marks disturbances Callback caused. Select a call to open it.
-4. **The call**: caller and agent waveforms on one time axis, an Events row, a "Wait
+1. **What ran, in plain words**, e.g. "24 calls ran. 5 of 6 checks went over a limit at
+   least once", with the exit code and a note that the limits are the ones set in each
+   scenario. It describes what was measured; it does not grade the agent.
+2. **Check by check**: for each limit, how many of the calls it applied to stayed within
+   it, next to what was measured. What held sits beside what did not.
+3. **What stood out**: up to five behaviours that went over a limit, most serious first,
+   one kind per row however many scenarios have it (the worst case is shown). Each row has
+   the number and its limit, a small picture of the moment it happened (caller above,
+   agent below, the stretch that went over the limit hatched in red), and **Hear it**,
+   which opens the call at that moment and plays it.
+4. **Every call**: one row per call, grouped by scenario and drawn on the same clock, so
+   a pattern (the agent always answering late, say) shows at a glance. Red ticks are
+   limits passed; amber ◆ marks disturbances Callback caused. Select a call to open it.
+5. **The call**: caller and agent waveforms on one time axis, an Events row, a "Wait
    before reply" bar per answer against the dashed limit, and a whole-call strip to move
    around. It opens on the call with the worst problem. Below it, the problems in that
    call; repeats are grouped ("Slow reply ×6") with a chip per occurrence.
-5. **The numbers** (folded, one section per scenario): every number across calls as a dot
+6. **The numbers** (folded, one section per scenario): every number across calls as a dot
    on a line, with its 95% range as a whisker and its limit as a dashed line. The ⓘ next
    to a term explains it on hover or keyboard focus.
 
@@ -249,7 +251,7 @@ uv run callback run scenarios/restaurant/ignored-interruption.yaml   # FAIL, exi
 The agent talks straight over "Sorry, it's for Saturday evening." and never answers it.
 The caller waits 2.5 s for a reply (noted in the event log as "no reply to the
 interruption; caller goes on"), then carries on. The report's
-worst problem is "Ignores the caller".
+worst problem is "Left the caller unanswered".
 
 What you should see for the buggy agent, each with a one-line reason:
 "kept talking for 1.x s" (barge-in), "stopped talking 0.1 s after the caller said

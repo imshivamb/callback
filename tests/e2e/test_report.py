@@ -144,10 +144,13 @@ def test_summary_sentence_and_tiles_say_what_went_wrong(run_cli, tmp_path) -> No
         assert done.returncode == 0, done.stderr
 
     data = embedded((failing / "report.html").read_text())
-    assert data["summary"]["sentence"] == "The agent replies too slowly (2.01 s vs a 1.5 s limit)."
+    assert (
+        data["summary"]["sentence"] == "The agent replies slower than the limit (2.01 s vs 1.5 s)."
+    )
     [tile] = data["summary"]["tiles"]
     assert (
-        tile["title"] == "Replies too slowly" and tile["detail"] == "1 of 3 replies over the limit"
+        tile["title"] == "Replies slower than the limit"
+        and tile["detail"] == "1 of 3 replies over the limit"
     )
     assert tile["call_id"] == "turn-taking--t1" and tile["t_s"] is not None  # "Hear it" target
     assert data["scenarios"][0]["sentence"] == data["summary"]["sentence"]
@@ -187,8 +190,8 @@ def test_many_scenarios_with_one_problem_read_as_one_problem(tmp_path) -> None:
     )
 
     summary = summarize_run(result)
-    assert summary["sentence"].count("replies too slowly") == 1
-    assert "(3.01 s vs a 1.5 s limit)" in summary["sentence"]  # the worst of the two
+    assert summary["sentence"].count("replies slower than the limit") == 1
+    assert "(3.01 s vs 1.5 s)" in summary["sentence"]  # the worst of the two
     assert summary["sentence"].endswith("(in 2 of 2 scenarios).")
     [tile] = summary["tiles"]
     assert tile["scenarios"] == 2 and tile["scenario_id"] == "second"

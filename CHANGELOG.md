@@ -17,10 +17,14 @@
 
 ### Changed
 
-- **A redesigned report.** The report now leads with the verdict in plain words, then
-  *What went wrong*: each problem with its number and limit, a small picture of the moment
-  it happened and a **Hear it** button. *Every call* shows all calls as aligned tapes,
-  grouped by scenario, so a pattern shows at a glance. The call player and the numbers
+- **A redesigned report.** The report now leads with what ran and what was measured ("24
+  calls ran. 5 of 6 checks went over a limit at least once"), not a verdict on the agent.
+  *Check by check* shows, for each limit, how many calls stayed within it and what was
+  measured, so what held sits beside what did not. *What stood out* lists the behaviours
+  that went over a limit, each with its number and limit, a small picture of the moment it
+  happened and a **Hear it** button. *Every call* shows all calls as aligned tapes,
+  grouped by scenario, so a pattern shows at a glance. The summary and titles use
+  observational wording ("Replies slower than the limit"). The call player and the numbers
   (now a dot, a 95% range and a limit on one line) keep everything they had: timeline,
   zoom, shortcuts, audio, baseline comparison. It opens on the call with the worst
   problem, and is still one file that opens offline (it embeds a 22 KB subset of the

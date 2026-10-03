@@ -90,6 +90,24 @@ button { font: inherit; color: inherit; -webkit-appearance: none; appearance: no
 .stamp { display: inline-flex; align-items: center; gap: 8px; font-weight: 650; font-size: 14px; padding: 5px 12px 5px 8px; border-radius: 999px; margin: 0; }
 .stamp.fail, .stamp.error { background: var(--fail-soft); color: var(--fail-ink); }
 .stamp.pass { background: rgba(18, 161, 80, 0.12); color: var(--pass-ink); }
+.pip { display: inline-block; flex: none; width: 10px; height: 10px; border-radius: 50%; }
+.pip.pass { background: var(--pass); }
+.pip.fail, .pip.error { background: var(--fail); }
+.stamp .pip { width: 9px; height: 9px; }
+
+/* check by check */
+.checks { border-top: 1px solid var(--line-2); }
+.check { display: grid; grid-template-columns: minmax(200px, 330px) minmax(120px, 1fr) minmax(190px, 240px); gap: 8px 28px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.cname { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.cname b { font-weight: 600; }
+.cname span { color: var(--quiet); font-size: 13px; }
+.cbar { display: flex; gap: 3px; height: 12px; }
+.cbar span { display: block; min-width: 0; border-radius: 3px; }
+.cbar .in { background: var(--pass); }
+.cbar .out { background: var(--fail); }
+.ccount { color: var(--quiet); font-size: 14px; }
+.ccount b { color: var(--ink); font: 650 17px var(--display); letter-spacing: -0.01em; }
+.ccount.held b { color: var(--pass-ink); }
 h1 { font: 650 clamp(34px, 5.2vw, 60px)/1.02 var(--display); letter-spacing: -0.035em; margin: 18px 0 0; max-width: 20ch; text-wrap: balance; }
 .lede { font-size: clamp(17px, 2vw, 21px); line-height: 1.45; color: var(--ink-2); max-width: 56ch; margin: 16px 0 0; }
 .facts { color: var(--quiet); font-size: 14px; margin: 14px 0 0; }
@@ -223,6 +241,7 @@ dialog td { padding: 5px 16px 5px 0; vertical-align: baseline; }
 kbd { font: 12px ui-monospace, Menlo, monospace; border: 1px solid var(--line-2); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; background: var(--sunk); }
 
 @media (max-width: 980px) {
+  .check { grid-template-columns: 1fr; gap: 6px; }
   .finding { grid-template-columns: 1fr; gap: 14px; }
   .scn { grid-template-columns: 1fr; }
   .metrics { grid-template-columns: minmax(0, 1fr) 28px; }
@@ -424,10 +443,14 @@ function css(name) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
+/** A quiet status dot for lists. @param {boolean} ok @param {string} label */
+function pip(ok, label) {
+  return h("span", { class: `pip ${ok ? "pass" : "fail"}`, role: "img", "aria-label": label });
+}
 /** @param {Call} c */
 function callMark(c) {
-  if (c.error) return icon("fail", "could not run");
-  return c.passed ? icon("pass", "passed") : icon("fail", "failed");
+  if (c.error) return pip(false, "could not run");
+  return pip(c.passed, c.passed ? "within every limit" : "over a limit");
 }
 
 /** @param {Finding} f */
@@ -514,20 +537,22 @@ function renderVerdict() {
   const run = DATA.run;
   const { calls, failed, errored } = totals();
   const cls = run.exit_code === 0 ? "pass" : run.exit_code === 1 ? "fail" : "error";
-  const word = cls === "pass" ? "Passed" : cls === "fail" ? "Failed" : "Could not run";
+  const word = cls === "pass" ? "Within every limit" : cls === "fail" ? "Over a limit" : "Could not run";
   const calls_ = `${calls} call${calls === 1 ? "" : "s"}`;
+  const rows = checkRows();
+  const over = rows.filter((r) => r.over > 0).length;
   const headline = errored
     ? `${errored} of ${calls_} could not run.`
-    : failed === 0 ? `Every check passed in ${calls_}.`
-    : calls === 1 ? "The agent failed this call." : `The agent failed ${failed} of ${calls} calls.`;
+    : failed === 0 || !rows.length ? `${calls_} ran. Every check stayed within its limit.`
+    : `${calls_} ran. ${over} of ${rows.length} check${rows.length === 1 ? "" : "s"} went over a limit at least once.`;
   const scen = DATA.scenarios;
   const mins = run.duration_s >= 90 ? `${Math.round(run.duration_s / 60)} minutes` : `${Math.round(run.duration_s)} seconds`;
   return h("section", { class: "verdict" }, [
-    h("p", { class: `stamp ${cls}`, role: "status" }, [icon(cls === "pass" ? "pass" : "fail", word), word]),
+    h("p", { class: `stamp ${cls}`, role: "status" }, [h("span", { class: `pip ${cls}`, "aria-hidden": "true" }), word]),
     h("h1", {}, [headline]),
     h("p", { class: "lede" }, [ledeText(errored, failed)]),
     h("p", { class: "facts num" }, [
-      `${calls_} across ${scen.length} scenario${scen.length === 1 ? "" : "s"}, ${mins}. Exit code ${run.exit_code}.`,
+      `${calls_} across ${scen.length} scenario${scen.length === 1 ? "" : "s"}, ${mins}. The limits are the ones set in each scenario. Exit code ${run.exit_code}.`,
       run.baseline_name ? ` Compared with baseline ${run.baseline_name}.` : "",
     ]),
     ciLimitBanner(),
@@ -539,15 +564,15 @@ function renderVerdict() {
 function ledeText(errored, failed) {
   if (errored) return DATA.summary.sentence;
   if (failed > 0 && DATA.summary.tiles.length) return shortLede(DATA.summary.tiles);
-  return DATA.run.baseline_name ? DATA.summary.sentence : "Every limit held. Open any call below to listen to it.";
+  return DATA.run.baseline_name ? DATA.summary.sentence : "Open any call below to listen to it.";
 }
 
 /** The worst problem in a few words; the rest are listed below it. @param {Tile[]} tiles */
 function shortLede(tiles) {
   const t = tiles[0];
-  const lead = t.value ? `${t.title}: ${t.value}${t.limit ? `, ${limitText(t.limit)}` : ""}.` : `${t.title}.`;
-  const more = tiles.length > 1 ? ` ${tiles.length - 1} more problem${tiles.length > 2 ? "s" : ""} below, worst first.` : "";
-  return lead + more;
+  const worst = t.value ? `${t.title.toLowerCase()}: ${t.value}${t.limit ? `, ${limitText(t.limit)}` : ""}` : t.title.toLowerCase();
+  const none = CALLS.some((c) => c.error) ? "" : "No call errored out. ";
+  return `${none}The one that stood out most: ${worst}.`;
 }
 
 /** Rules nobody checked must never look like rules that passed: say so up top. */
@@ -588,7 +613,63 @@ function section(id, title, sub, body) {
   ]);
 }
 
-// ---------- what went wrong: each problem beside the moment it happened ----------
+// ---------- check by check: how each limit fared ----------
+
+/** @type {{name: string, label: string, limit: (m: {threshold: number|null, unit: string}) => string}[]} */
+const CHECKS = [
+  { name: "response_latency_p95_s", label: "Replies within the limit", limit: (m) => `slowest typical reply ≤ ${fmt(m.threshold, m.unit)}` },
+  { name: "time_to_yield_p95_s", label: "Stops promptly when interrupted", limit: (m) => `≤ ${fmt(m.threshold, m.unit)}` },
+  { name: "talk_over_ratio", label: "Lets the caller finish", limit: (m) => `talk-over ≤ ${fmt(m.threshold, m.unit)} of their speech` },
+  { name: "false_yields", label: "Keeps going through “mm-hmm”", limit: () => "no stops" },
+  { name: "silence_reprompt_s", label: "Checks in when the caller goes quiet", limit: (m) => `within ${fmt(m.threshold, m.unit)}` },
+  { name: "unanswered_turns", label: "Answers every turn", limit: () => "no unanswered turns" },
+  { name: "task_success_rate", label: "Finishes the task", limit: () => "end state matches" },
+  { name: "entity_fidelity", label: "Reads facts back correctly", limit: () => "every fact right" },
+  { name: "policy_violations", label: "Stays within its rules", limit: () => "no breaches" },
+];
+
+/** For each check: in how many of the calls it applied to did it stay within its limit. */
+function checkRows() {
+  /** @type {{label: string, within: number, over: number, limit: string, measured: string}[]} */
+  const rows = [];
+  for (const spec of CHECKS) {
+    let within = 0, over = 0, sample = null;
+    /** @type {number[]} */
+    const values = [];
+    for (const c of CALLS) {
+      const m = (c.metrics || []).find((x) => x.name === spec.name);
+      if (!m || m.passed === null || m.passed === undefined) continue;
+      if (m.passed) within += 1; else over += 1;
+      if (m.value !== null && m.value !== undefined) values.push(m.value);
+      sample = sample || m;
+    }
+    if (!sample || within + over === 0) continue;
+    const lo = Math.min(...values), hi = Math.max(...values);
+    const unit = sample.unit === "count" ? " per call" : "";
+    const measured = !values.length ? "" : lo === hi ? `${fmt(lo, sample.unit)}${unit}` : `${fmt(lo, sample.unit)} to ${fmt(hi, sample.unit)}${unit}`;
+    rows.push({ label: spec.label, within, over, limit: spec.limit(sample), measured });
+  }
+  return rows;
+}
+
+function renderChecks() {
+  const rows = checkRows();
+  if (!rows.length) return null;
+  return section("checks", "Check by check", "How many calls stayed within each limit, and what was measured. A check only counts in the calls where it applies. The limits are set in the scenario files, so a different limit would give a different count.", [
+    h("div", { class: "checks" }, rows.map((r) => {
+      const n = r.within + r.over;
+      return h("div", { class: "check" }, [
+        h("div", { class: "cname" }, [h("b", {}, [r.label]), h("span", {}, [`Limit: ${r.limit}.${r.measured ? ` Measured: ${r.measured}.` : ""}`])]),
+        h("div", { class: "cbar", role: "img", "aria-label": `${r.within} of ${n} calls within the limit` }, [
+          h("span", { class: "in", style: `flex:${r.within}` }), h("span", { class: "out", style: `flex:${r.over}` }),
+        ]),
+        h("div", { class: `ccount num${r.over === 0 ? " held" : ""}` }, [h("b", {}, [`${r.within} of ${n}`]), " calls within the limit"]),
+      ]);
+    })),
+  ]);
+}
+
+// ---------- what stood out: each problem beside the moment it happened ----------
 
 /** @param {Tile} t */
 function findingFor(t) {
@@ -602,7 +683,7 @@ function renderFindings() {
   const tiles = DATA.summary.tiles;
   if (!tiles.length) {
     if (!CALLS.some((c) => c.error)) return null;
-    return section("problems", "What went wrong", "", [h("p", { class: "none" }, ["Some calls could not run. Their errors are in the calls below."])]);
+    return section("problems", "What stood out", "", [h("p", { class: "none" }, ["Some calls could not run. Their errors are in the calls below."])]);
   }
   const rows = tiles.map((t) => {
     const moment = findingFor(t);
@@ -625,7 +706,7 @@ function renderFindings() {
       cv,
     ]);
   });
-  return section("problems", "What went wrong", "The problems that matter most, worst first. Each shows the moment it happened: the caller above, the agent below.", [
+  return section("problems", "What stood out", "The behaviours that went over a limit, most serious first. Each shows the moment it happened: the caller above, the agent below.", [
     h("div", { class: "ledger" }, rows),
   ]);
 }
@@ -737,7 +818,7 @@ function renderWall() {
       const dur = c.audio_s || c.duration_s || 0;
       const cv = /** @type {HTMLCanvasElement} */ (h("canvas", { role: "img", "aria-hidden": "true", style: `width:${Math.max(8, (dur / longest) * 100)}%` }));
       tapeCanvases.push({ cv, c });
-      return h("button", { class: "tape", "data-call": c.call_id, onclick: () => selectCall(c, true), "aria-label": `${s.scenario_id} trial ${c.trial}, ${c.error ? "could not run" : c.passed ? "passed" : "failed"}` }, [
+      return h("button", { class: "tape", "data-call": c.call_id, onclick: () => selectCall(c, true), "aria-label": `${s.scenario_id} trial ${c.trial}, ${c.error ? "could not run" : c.passed ? "within every limit" : "over a limit"}` }, [
         h("span", { class: "n num" }, [callMark(c), String(c.trial)]),
         h("span", { class: "strip" }, [cv]),
         h("span", { class: "t num" }, [dur ? `${Math.round(dur)} s` : ""]),
@@ -745,7 +826,7 @@ function renderWall() {
     });
     return h("div", { class: "scn" }, [
       h("div", { class: "scn-name" }, [
-        h("b", {}, [icon(ok ? "pass" : "fail", ok ? "passed" : "failed"), s.scenario_id]),
+        h("b", {}, [pip(ok, ok ? "within every limit" : "over a limit"), s.scenario_id]),
         h("span", {}, [wallSummary(s)]),
       ]),
       h("div", { class: "tapes" }, tapes),
@@ -754,7 +835,7 @@ function renderWall() {
   const legend = h("p", { class: "legend" }, [
     h("span", {}, [h("i", { style: "background:var(--caller)" }), "Caller speaking"]),
     h("span", {}, [h("i", { style: "background:var(--agent)" }), "Agent speaking"]),
-    h("span", {}, [h("i", { style: "background:var(--fail);border-radius:0;width:3px;height:12px" }), "A check failed here"]),
+    h("span", {}, [h("i", { style: "background:var(--fail);border-radius:0;width:3px;height:12px" }), "A limit was passed here"]),
     h("span", {}, [h("i", { style: "background:var(--chaos);transform:rotate(45deg);border-radius:1px;width:8px;height:8px" }), "A disturbance Callback caused"]),
   ]);
   return section("calls", "Every call", "One row per call, all on the same clock, so a pattern shows at a glance. Select a call to open and play it.", [
@@ -762,11 +843,11 @@ function renderWall() {
   ]);
 }
 
-/** "3 calls, all failed" for the wall's scenario column. @param {Scenario} s */
+/** "3 calls, all within their limits" for the wall's scenario column. @param {Scenario} s */
 function wallSummary(s) {
   const n = s.calls.length, bad = s.calls.filter((c) => c.error || !c.passed).length;
   const calls = `${n} call${n === 1 ? "" : "s"}`;
-  return bad === 0 ? `${calls}, all passed` : bad === n ? (n === 1 ? "1 call, failed" : `${calls}, all failed`) : `${calls}, ${bad} failed`;
+  return bad === 0 ? `${calls}, within every limit` : bad === n ? `${calls}, over a limit` : `${calls}, ${bad} over a limit`;
 }
 
 /** @param {HTMLCanvasElement} cv @param {Call} c */
@@ -786,8 +867,7 @@ function drawTape(cv, c) {
   for (const f of c.findings) {
     if (f.severity !== "fail") continue;
     g.fillStyle = css("--fail");
-    if (f.end_s !== null && f.end_s > f.t_s) { g.globalAlpha = 0.11; g.fillRect(X(f.t_s), 0, Math.max(2, X(f.end_s) - X(f.t_s)), 34); g.globalAlpha = 1; }
-    g.fillRect(X(f.t_s) - 1, 0, 2, 34);
+    g.fillRect(X(f.t_s) - 0.75, 4, 1.5, 26);
   }
 }
 
@@ -907,10 +987,10 @@ function renderCall() {
 /** Problems in this call, with repeats grouped. @param {Call} c */
 function renderProblems(c) {
   if (!c.findings.length) {
-    const why = c.failure_reasons.length ? c.failure_reasons.join(" ") : "No problems in this call.";
+    const why = c.failure_reasons.length ? c.failure_reasons.join(" ") : "Nothing in this call went over a limit.";
     return h("p", { class: c.passed ? "okline" : "failline" }, [why]);
   }
-  const list = h("ul", { class: "problems", "aria-label": "Problems in this call" });
+  const list = h("ul", { class: "problems", "aria-label": "What went over a limit in this call" });
   for (const g of groupFindings(c)) {
     const first = c.findings[g.items[0]];
     const mark = h("span", { class: "sev" }, [icon(g.severity === "fail" ? "fail" : "warn", g.severity === "fail" ? "problem" : "warning")]);
@@ -1403,12 +1483,12 @@ function renderScenarioNumbers(s) {
           hasBase && d ? diffText(d, a.unit) : "",
         ].filter(Boolean).join(" · ")]),
       ]),
-      a.passed === null ? h("span", { class: "quiet" }, ["–"]) : icon(a.passed ? "pass" : "fail", a.passed ? "within the limit" : "over the limit"),
+      a.passed === null ? h("span", { class: "quiet" }, ["–"]) : h("span", { class: `quiet`, style: "font-size:13px" }, [a.passed ? "within" : "over"]),
       h("span", {}, []),
     ];
   });
   return h("details", { class: "nscn" }, [
-    h("summary", {}, [icon(ok ? "pass" : "fail", ok ? "passed" : "failed"), h("b", {}, [s.scenario_id]), h("span", { class: "s" }, [`${s.agent}, ${s.calls.length} call${s.calls.length === 1 ? "" : "s"}. ${s.sentence}`]), h("span", { class: "chev" }, [])]),
+    h("summary", {}, [pip(ok, ok ? "within every limit" : "over a limit"), h("b", {}, [s.scenario_id]), h("span", { class: "s" }, [`${s.agent}, ${s.calls.length} call${s.calls.length === 1 ? "" : "s"}. ${s.sentence}`]), h("span", { class: "chev" }, [])]),
     rows.length ? h("div", { class: "metrics" }, [
       ...rows,
     ]) : h("p", { class: "quiet", style: "padding:0 0 22px 38px" }, ["No across-call numbers: this run was made by an older Callback."]),
@@ -1475,9 +1555,9 @@ window.addEventListener("resize", () => {
 
 document.title = `${DATA.run.exit_code === 0 ? "Passed" : DATA.run.exit_code === 1 ? "Failed" : "Error"}: Callback run ${DATA.run.run_id}`;
 app.append(
-  ...[renderMasthead(), renderVerdict(), renderFindings(), renderWall()].filter((n) => n !== null),
+  ...[renderMasthead(), renderVerdict(), renderChecks(), renderFindings(), renderWall()].filter((n) => n !== null),
   h("section", { class: "section", id: "open" }, [
-    h("div", { class: "sechead" }, [h("h2", {}, [CALLS.length > 1 ? "Listen to a call" : "The call"]), h("p", { class: "sub" }, ["The two sides of the recording on one timeline. Problems are pinned; select one to hear it."])]),
+    h("div", { class: "sechead" }, [h("h2", {}, [CALLS.length > 1 ? "Listen to a call" : "The call"]), h("p", { class: "sub" }, ["The two sides of the recording on one timeline. Anything that went over a limit is pinned; select one to hear it."])]),
     callEl,
   ]),
   renderNumbers(),

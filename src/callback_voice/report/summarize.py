@@ -35,7 +35,7 @@ _KINDS: dict[str, _Kind] = {
     ),
     "unanswered_turns": _Kind(
         "unanswered_turns",
-        "Ignores the caller",
+        "Left the caller unanswered",
         "doesn't answer the caller at all ({times} in a call)",
         2.7,
     ),
@@ -62,8 +62,8 @@ _KINDS: dict[str, _Kind] = {
     ),
     "response_latency_p95_s": _Kind(
         "response_latency",
-        "Replies too slowly",
-        "replies too slowly ({v} vs a {limit} limit)",
+        "Replies slower than the limit",
+        "replies slower than the limit ({v} vs {limit})",
         7,
     ),
 }
@@ -86,9 +86,17 @@ _NAMES = {
 
 # Failures no across-call number carries, recognised in a scenario's reasons.
 _STRUCTURAL = (
-    ("silence_reprompt", "never checks in when the caller goes quiet"),
-    ("the call dropped", "drops the call"),
-    ("max_duration", "runs out of time before the call finishes"),
+    (
+        "silence_reprompt",
+        "never checks in when the caller goes quiet",
+        "No check-in when the caller goes quiet",
+    ),
+    ("the call dropped", "drops the call", "Drops the call"),
+    (
+        "max_duration",
+        "runs out of time before the call finishes",
+        "Runs out of time before the call finishes",
+    ),
 )
 
 
@@ -173,14 +181,14 @@ def _problems(scenario: ScenarioResult, result: RunResult) -> list[dict[str, Any
             out.append(_regression(scenario, moved, d, result.baseline_name or "baseline"))
     covered = {p["finding"] for p in out}
     for reason in scenario.failure_reasons:
-        for key, phrase in _STRUCTURAL:
+        for key, phrase, title in _STRUCTURAL:
             if key in reason and key not in covered:
                 covered.add(key)
                 out.append(
                     {
                         "metric": key,
                         "finding": key,
-                        "title": phrase[0].upper() + phrase[1:],
+                        "title": title,
                         "phrase": phrase,
                         "weight": 5,
                         "scenario_id": scenario.scenario_id,
