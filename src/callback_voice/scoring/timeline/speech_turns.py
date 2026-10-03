@@ -23,10 +23,25 @@ def speech_turns(timeline: CallTimeline, transcript: list[Turn]) -> list[Turn]:
             speaker="agent",
             start_s=round(seg.start_s, 3),
             end_s=round(seg.end_s, 3),
-            text=" ".join(
-                t.text for t in transcript if Segment(t.start_s, t.end_s).overlap(seg) > 0
-            ),
+            text=_agent_text(seg, transcript),
         )
         for seg in timeline.agent_speech
     ]
     return sorted(turns, key=lambda t: t.start_s)
+
+
+def _agent_text(seg: Segment, transcript: list[Turn]) -> str:
+    """The agent's own words inside ``seg``; never the caller's, and never a whole turn per piece."""
+    words: list[str] = []
+    for turn in transcript:
+        if turn.speaker != "agent" or Segment(turn.start_s, turn.end_s).overlap(seg) <= 0:
+            continue
+        if not turn.words:
+            words.append(turn.text)
+            continue
+        words += [w.text.strip() for w in turn.words if _midpoint_in(w.start_s, w.end_s, seg)]
+    return " ".join(w for w in words if w)
+
+
+def _midpoint_in(start_s: float, end_s: float, seg: Segment) -> bool:
+    return seg.contains((start_s + end_s) / 2)
