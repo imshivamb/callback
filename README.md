@@ -3,14 +3,27 @@
 Callback phones your voice agent with simulated callers, deliberately makes the call
 messy, and measures what happened from the recorded audio.
 
+![A caller cuts in, and the agent keeps talking for 1.04 s](docs/assets/callback-barge-in.gif)
+
+*A real test call against LiveKit's agent-starter-python, unmodified, default models. The
+caller cuts in at 18.4 s and the agent keeps talking for 1.04 s (Callback's default:
+0.6 s). You can hear it in [moments to hear](https://imshivamb.github.io/callback/livekit-starter/listen.html).*
+
 **Status:** Early release (0.1.2 on PyPI as `callback-voice`). Feedback welcome.
+**See it:** [reports and recordings](https://imshivamb.github.io/callback/) ·
+[what I found testing LiveKit's starter agent](RESULTS.md)
 
-![A caller says "mm-hmm" and the agent stops talking mid-sentence](docs/assets/false-yield-mm-hmm.png)
+## Try it
 
-*A real test call: the caller says "mm-hmm" (top) and the agent (bottom) stops talking
-and never finishes its greeting. Callback flags this as a false yield. Listen:
-[before](docs/assets/good-false-yield-amen-before-fix.mp3),
-[after the agent was fixed](docs/assets/good-same-seed-after-fix.mp3).*
+```bash
+brew install espeak-ng            # Debian/Ubuntu: sudo apt install espeak-ng
+pip install "callback-voice[local]"
+callback demo
+```
+
+Needs Python 3.12 or newer. `callback demo` needs no keys: it calls a bundled agent with
+planted bugs, makes the caller interrupt it, and opens the report. `callback doctor`
+checks your setup first if you want to.
 
 ## Why
 
@@ -49,17 +62,8 @@ LiveKit room ([docs/transports.md](docs/transports.md)).
 
 ## Install
 
-Needs Python 3.12 or newer and espeak-ng (used by the local voice).
-
-```bash
-brew install espeak-ng            # Debian/Ubuntu: sudo apt install espeak-ng
-pip install "callback-voice[local]"
-callback doctor
-callback demo
-```
-
-The rest of this page uses the source checkout (`uv run callback …`); with pip, drop
-the `uv run`.
+The commands under "Try it" are the install. The rest of this page uses the source
+checkout (`uv run callback …`); with pip, drop the `uv run`.
 
 ## Quickstart (from source)
 
@@ -85,8 +89,8 @@ uv run callback demo
 ```
 
 It starts the bundled buggy agent, calls it twice with chaos (the caller interrupts it,
-then says "mm-hmm" while it talks), fails with exit code 1 after about two and a half
-minutes, and opens the report on the moment it talked over the caller. `--good` calls
+then says "mm-hmm" while it talks), fails with exit code 1 after about 2 minutes 15 seconds (134 s on my
+laptop), and opens the report on the moment it talked over the caller. `--good` calls
 the good agent instead, which passes.
 
 To test your own agent, start a project in an empty folder:
@@ -126,10 +130,10 @@ caller's lines and every disturbance matched. Its exit code is the replayed call
 result.
 
 Each run writes `.callback/runs/<run id>/report.html`: one file that opens offline
-and shows the verdict, then every call as two waveforms (caller and agent) on one
-time axis, with red pins where something went wrong, chaos markers, a latency bar
-per answer, and the audio. It opens on the call with the worst problem; click a pin (or press
-`N`) to hear the moment. Next to it are `results.json`, `junit.xml`, and for every
+and shows what ran and how each limit fared, then every call as two waveforms (caller
+and agent) on one time axis, with amber marks where a limit was passed, chaos markers,
+a latency bar per answer, and the audio. Press `N` to jump to the next moment worth
+hearing. Next to it are `results.json`, `junit.xml`, and for every
 call a stereo recording (`call.wav`, caller on the left, agent on the right) and an
 event log. [docs/testing.md](docs/testing.md) walks through all of it.
 
@@ -147,14 +151,21 @@ The chaos suite against both example agents, from the quickstart above
 | `rough-line` | Street noise, dropped and delayed audio | completes | completes | completes |
 | all four | Time to answer, 95th percentile | 1.5 s | 0.90–0.98 s | 2.21–2.35 s |
 
+![A caller says "mm-hmm" and the agent stops talking mid-sentence](docs/assets/false-yield-mm-hmm.png)
+
+*A real test call from the bundled agents: the caller says "mm-hmm" (top) and the agent
+(bottom) stops talking and never finishes its greeting. Callback flags this as a false
+yield. Listen: [before](docs/assets/good-false-yield-amen-before-fix.mp3),
+[after the agent was fixed](docs/assets/good-same-seed-after-fix.mp3).*
+
 The audio clips are described in [docs/assets/README.md](docs/assets/README.md).
 
 ## Real-world results
 
 I ran Callback against the agent LiveKit's own starter template builds, unmodified, in
 48 calls (30 with the agent on my laptop, 18 hosted on LiveKit Cloud). It kept talking
-1.0–1.2 s after being interrupted (limit 0.6 s) in all 8 interrupted calls, replied in
-2.5–3.7 s at the median (limit 1.5 s), and ignored "mm-hmm" 21 times out of 24. The write-up
+1.0–1.2 s after being interrupted (Callback's default: 0.6 s) in all 8 interrupted calls, replied in
+2.5–3.7 s at the median (Callback's default: 1.5 s), and ignored "mm-hmm" 21 times out of 24. The write-up
 is in [RESULTS.md](RESULTS.md); the recordings are in
 [moments to hear](https://imshivamb.github.io/callback/livekit-starter/listen.html); the full reports are the
 [laptop run](https://imshivamb.github.io/callback/livekit-starter/local.html) and the

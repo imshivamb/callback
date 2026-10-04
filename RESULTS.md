@@ -7,7 +7,7 @@ calls). This page is what I found, what Callback got wrong along the way, and wh
 this cannot tell you.
 
 **The headline:** when the caller cut in mid-sentence, the agent kept talking for about
-1.1 s at the caller's ear (1.00–1.17 s, limit 0.6 s) in all 8 interrupted calls, on my
+1.1 s at the caller's ear (1.00–1.17 s; Callback's default is 0.6 s) in all 8 interrupted calls, on my
 laptop and hosted alike. The agent's own log shows it deciding to stop about 0.41–0.46 s
 after the caller started speaking; the rest of the time is the audio path. Details are in
 [finding 1](#what-i-found) and [where the time goes](#stop-when-interrupted-where-the-time-goes).
@@ -19,15 +19,15 @@ after the caller started speaking; the rest of the time is the audio path. Detai
 These are about how the agent behaves. The limits are Callback's defaults, set before
 I saw any result; they are not LiveKit's claims about the starter.
 
-1. **It is slow to stop when interrupted, and that is not the setup.** Measured at the
-   caller's ear, the agent kept talking for 1.00–1.17 s after the caller cut in (limit
-   0.6 s), in all 8 interrupted calls: 1.00–1.17 s on my laptop, 1.03–1.05 s hosted.
+1. **It is slow to stop when interrupted, and that is not caused by running on a laptop.** Measured at the
+   caller's ear, the agent kept talking for 1.00–1.17 s after the caller cut in
+   (Callback's default: 0.6 s), in all 8 interrupted calls: 1.00–1.17 s on my laptop, 1.03–1.05 s hosted.
    Where the time goes: in the 3 laptop calls where the agent's log recorded its
    decision, it decided to stop 0.41–0.46 s after the caller started speaking. The other
    0.55–0.6 s is the audio path in both directions, and not Callback's measurement,
    which agrees with the raw audio to within 0.01 s
    ([details](#stop-when-interrupted-where-the-time-goes)).
-2. **Median replies took 2.5–3.7 s, and 0 of 48 calls met the 1.5 s limit.**
+2. **Median replies took 2.5–3.7 s, and 0 of 48 calls met Callback's default of 1.5 s.**
    Median reply delay was 3.67 s on my laptop and 2.47 s hosted. Moving the agent to
    LiveKit Cloud cut about 1.2 s; the rest is the agent's own pipeline
    ([details](#reply-delay-and-how-much-of-it-was-my-setup)). One sentence
@@ -223,7 +223,7 @@ agent running slowly, not the network.
 
 The remaining 2.5 s is not the setup. Callback's own speech models still ran on my
 laptop in the hosted run, and every call still crossed my internet connection to India
-South; only the agent's compute moved. Even so, the hosted median is 1.6 times the limit,
+South; only the agent's compute moved. Even so, the hosted median is 1.6 times Callback's default,
 and the hosted p95 is 3.69 s.
 
 `change-mind` was slower than the others in both runs (3.88 s and 3.26 s medians). I did
@@ -291,7 +291,7 @@ agent.
 
 How much the vegetarian sentence matters: leaving it out, the median reply delay is 3.37 s
 on my laptop and 2.39 s hosted; leaving out every line with a pause, 3.04 s and 2.29 s. The
-1.5 s limit is still missed by a wide margin, so this sentence inflates the median by about
+Callback's default of 1.5 s is still missed by a wide margin, so this sentence inflates the median by about
 0.1–0.5 s without explaining the delay.
 
 ### Agent-side cross-check
@@ -366,7 +366,7 @@ each clip's timing against the recorded waveforms.
 **1. 4 s of silence before it answers.** In `repeat-request` call 1 on my laptop
 ([clip](results/livekit-starter-2026-10-03/clips/01-reply-delay.mp4),
 [audio](results/livekit-starter-2026-10-03/clips/01-reply-delay.wav)), the caller finishes
-a sentence at 15.4 s and the agent first speaks at 19.4 s: 3.97 s against a 1.5 s limit. The
+a sentence at 15.4 s and the agent first speaks at 19.4 s: 3.97 s against Callback's default of 1.5 s. The
 other turns in that call took 2.72, 3.78 and 3.83 s.
 
 **2. It talks on after being interrupted, then answers late.** In `barge-in` call 2 on my
@@ -460,7 +460,15 @@ published numbers.
 ## Reproduce
 
 Needs Python 3.12 for Callback, `uv`, the LiveKit CLI (`lk`), and a LiveKit Cloud project.
-Until these Callback changes are released, run from this repository's source:
+
+The Callback changes these runs needed are released in 0.1.2 on PyPI: LiveKit dispatch by
+`agent_name`, the folded-interruption rule (including the fix to which reply it matches) and
+the speech-view fix. I checked that the published package contains them. The runs themselves
+used 0.1.1 plus uncommitted changes, not 0.1.2, and I have not re-run them with 0.1.2, so a
+rerun may not give exactly these numbers. To use the released version, run
+`pip install "callback-voice[local,livekit]"`. To use the exact source of the runs, apply
+[`callback-as-run.patch`](results/livekit-starter-2026-10-03/callback-as-run.patch) to commit
+`54111a6`. The commands below work from a source checkout of this repository:
 
 ```bash
 git clone https://github.com/imshivamb/callback.git && cd callback

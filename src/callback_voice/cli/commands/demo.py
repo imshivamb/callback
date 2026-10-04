@@ -54,7 +54,7 @@ def demo(
     label = "good" if good else "buggy"
     console.print(
         f"[bold]Callback demo[/] · calling the {label} reference agent with two chaos "
-        "scenarios (barge-in, backchannel) · about 3 minutes\n"
+        "scenarios (barge-in, backchannel) · about 2 minutes 15 seconds\n"
     )
     agent = _start_agent(port, good, logs)
     try:
