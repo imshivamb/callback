@@ -3,11 +3,13 @@ name: ci
 # Fast checks on every push: lint, types, and the tests that need no speech models
 # and no API keys (CLI behaviour and scoring on the committed fixture calls). Tests
 # that need the local speech models skip themselves without the `local` extra. The
-# full end-to-end suite with real calls is the manual `e2e` workflow.
+# full end-to-end suite with real calls is the manual `e2e` workflow. The install check
+# below installs the built wheel with plain pip and no extras: it proves the package
+# installs and starts, without speech-model downloads. `callback demo` needs those
+# models, so it runs in `clean-install` (manual and on release).
 
 on:
   push:
-    branches: [main]
   pull_request:
 
 concurrency:
@@ -16,21 +18,30 @@ concurrency:
 
 jobs:
   python:
-    name: python (${{ matrix.os }})
+    name: python ${{ matrix.python }} (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
+        python: ["3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-      - run: uv sync --python 3.12 --locked
+      - run: uv sync --python ${{ matrix.python }} --locked
       - run: uv run ruff check src tests
       - run: uv run ruff format --check src tests
       - run: uv run mypy
       - name: Fast tests (no speech models, no API keys)
         run: uv run pytest -rs
+      - name: Install check (built wheel, plain pip, no extras, no keys)
+        run: |
+          uv build --wheel -o dist
+          uv venv --seed --python ${{ matrix.python }} "$RUNNER_TEMP/smoke"
+          "$RUNNER_TEMP/smoke/bin/pip" install dist/*.whl
+          "$RUNNER_TEMP/smoke/bin/python" -c "import callback_voice"
+          "$RUNNER_TEMP/smoke/bin/callback" --version
+          "$RUNNER_TEMP/smoke/bin/callback" doctor
