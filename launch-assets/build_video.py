@@ -24,23 +24,23 @@ FONT_BODY = "/System/Library/Fonts/Avenir Next.ttc"
 
 W, H, FPS = 1280, 720, 25
 MX, MY = round(W * 0.05), round(H * 0.05)  # safe margin: 5% on every side
-T0, T1 = 10.0, 32.0  # call-time window used for the video (played at normal speed)
+T0, T1 = 11.0, 25.0  # call-time window used for the video (played at normal speed)
 BG, PANEL, INK, MUTE = (17, 20, 24), (22, 27, 34), (240, 242, 245), (150, 158, 168)
 CALLER, AGENT, CHAOS, AMBER = (138, 140, 255), (43, 217, 190), (240, 110, 215), (245, 179, 66)
 
 # (start, end, speaker, text). Times: energy edges of each channel, call seconds.
 CAPTIONS = [
-    (10.72, 14.44, "Caller", "I would like something vegetarian that takes under thirty minutes."),
-    (17.98, 19.44, "Agent", "How about a creamy pesto pasta?"),
-    (18.38, 20.24, "Caller", "Sorry, make that for six people."),
-    (22.42, 23.52, "Agent", "No problem at all."),
-    (24.16, 25.78, "Agent", "We’ll just scale up the ingredients for six."),
-    (24.26, 26.64, "Caller", "Okay, and what do I need to buy from the shop?"),
-    (28.98, 32.0, "Agent", "You’ll need one pound and six ounces of pasta…"),
+    (11.64, 15.38, "Caller", "I would like something vegetarian that takes under thirty minutes."),
+    (18.96, 20.92, "Agent", "Oh, I’ve got a few great ideas for that."),
+    (21.36, 25.0, "Agent", "How about some creamy pesto pasta with cherry tomatoes…"),
 ]
-CUT_IN, AGENT_STOPS = 18.38, 19.44  # 1.06 s here; RESULTS.md reports 1.04 s (its own edge detection)
-LABEL = "Caller cuts in. The agent kept talking for 1.04 s (Callback’s default: 0.6 s)"
-LABEL_FROM, LABEL_TO = CUT_IN - 1.0, AGENT_STOPS + 2.0
+# Hosted repeat-request call 1: the caller's line ends at 15.38 s, the agent's reply starts
+# 3.62 s later (RESULTS.md, reply-delay section).
+CALLER_END, AGENT_START = 15.38, 15.38 + 3.62
+LABEL_LINES = ["On this sentence the agent took", "3.62 s to reply (Callback’s default: 1.5 s)"]
+LABEL_FROM, LABEL_TO = CALLER_END - 1.0, AGENT_START + 2.0
+# the repository preview image still shows the barge-in call
+BARGE_CUT_IN, BARGE_STOP = 18.38, 18.38 + 1.04
 
 
 def font(path, size):
@@ -106,7 +106,7 @@ def base_frame():
     im = Image.new("RGB", (W, H), BG)
     d = ImageDraw.Draw(im)
     text(d, (MX, MY), "LiveKit’s agent-starter-python, unmodified, default models", FB["head"], INK)
-    text(d, (MX, MY + 44), "Hosted run · barge-in · call 1", FB["sub"], MUTE)
+    text(d, (MX, MY + 44), "Hosted run · repeat-request · call 1", FB["sub"], MUTE)
     for ch, (y, name, col) in LANES.items():
         d.rounded_rectangle((MX, y - 4, R + 6, y + LANE_H + 4), 10, fill=PANEL)
         text(d, (MX + 12, y + LANE_H // 2 - 22), name, FB["tag"], col)
@@ -136,20 +136,20 @@ def frame(t):
             d.line((L + i, mid - h, L + i, mid + h), fill=col)
     # vertical lines with a small label each, placed above the lanes (cut-in label to the left
     # of its line, stop label to the right of its line, so they never meet or cover a waveform)
-    if t >= CUT_IN:
-        xc = tx(CUT_IN)
+    if t >= CALLER_END:
+        xc = tx(CALLER_END)
         d.line((xc, LABEL_ROW + 4, xc, LANE_BOTTOM + 4), fill=CHAOS, width=4)
-        s = "Caller cuts in"
+        s = "Caller finishes"
         text(d, (xc - 10 - d.textlength(s, font=FB["lab"]), LABEL_ROW - 6), s, FB["lab"], CHAOS)
-    if t >= AGENT_STOPS:
-        xs = tx(AGENT_STOPS)
+    if t >= AGENT_START:
+        xs = tx(AGENT_START)
         d.line((xs, LABEL_ROW + 4, xs, LANE_BOTTOM + 4), fill=AMBER, width=4)
-        text(d, (xs + 10, LABEL_ROW - 6), "Agent stops", FB["lab"], AMBER)
+        text(d, (xs + 10, LABEL_ROW - 6), "Agent starts", FB["lab"], AMBER)
     px = tx(min(t, T1))
     d.line((px, LANES[0][0] - 8, px, LANE_BOTTOM + 4), fill=(255, 255, 255), width=3)
     top = LANE_BOTTOM + 24
     if LABEL_FROM <= t <= LABEL_TO:
-        lines = wrap(d, LABEL, FB["card"], W - 2 * MX - 40)
+        lines = LABEL_LINES
         bh = 24 + 50 * len(lines)
         d.rounded_rectangle((MX, top, W - MX, top + bh), 14, fill=(40, 34, 20), outline=AMBER, width=3)
         for k, ln in enumerate(lines):
@@ -186,7 +186,7 @@ def card(hook_lines, sub, big=False):
 
 
 TITLE = card(
-    ["What a voice agent does", "when you interrupt it"],
+    ["How long a voice agent", "takes to reply"],
     [("LiveKit’s agent-starter-python, unmodified, default models", FB["card"], INK)],
 )
 END = card(
@@ -223,7 +223,7 @@ def write_video(path):
     wav.unlink()
 
 
-def write_gif(path, a=16.4, b=26.4, width=800, fps=12):
+def write_gif(path, a=13.0, b=23.0, width=800, fps=12):
     frames = [frame(a + i / fps).resize((width, int(H * width / W)), Image.LANCZOS) for i in range(int((b - a) * fps))]
     pal = [f.quantize(colors=96, method=Image.MEDIANCUT, dither=Image.NONE) for f in frames]
     pal[0].save(path, save_all=True, append_images=pal[1:], duration=int(1000 / fps), loop=0, optimize=True, disposal=1)
@@ -253,6 +253,7 @@ def write_sheet(path):
 
 def write_social(path):
     """1280x640 repository preview: name, one line, and the two-lane waveform of the same call."""
+    assert "barge-in" in str(RUN), "the preview image is drawn from the barge-in call"
     im = Image.new("RGB", (1280, 640), BG)
     d = ImageDraw.Draw(im)
     d.rectangle((70, 70, 190, 76), fill=CHAOS)
@@ -269,8 +270,8 @@ def write_social(path):
         for i, v in enumerate(pk):
             h = max(1, int(v * 48))
             d.line((x0 + i, y + 55 - h, x0 + i, y + 55 + h), fill=col)
-    xc = x0 + (CUT_IN - a) / (b - a) * (x1 - x0)
-    xs = x0 + (AGENT_STOPS - a) / (b - a) * (x1 - x0)
+    xc = x0 + (BARGE_CUT_IN - a) / (b - a) * (x1 - x0)
+    xs = x0 + (BARGE_STOP - a) / (b - a) * (x1 - x0)
     d.line((xc, 334, xc, 586), fill=CHAOS, width=3)
     d.line((xs, 334, xs, 586), fill=AMBER, width=3)
     d.text((x0, 598), "caller", font=FB["lab"], fill=CALLER)
@@ -279,18 +280,18 @@ def write_social(path):
 
 
 if __name__ == "__main__":
-    what = sys.argv[3:] or ["video", "gif", "still", "social", "sheet"]
+    what = sys.argv[3:] or ["video", "gif", "still", "sheet"]
     if "video" in what:
-        write_video(OUT / "callback-livekit-starter-barge-in.mp4")
+        write_video(OUT / "callback-livekit-starter-reply-delay.mp4")
     if "gif" in what:
-        write_gif(OUT / "callback-barge-in.gif")
+        write_gif(OUT / "callback-reply-delay.gif")
     if "still" in what:
-        frame(19.5).save(OUT / "callback-barge-in-still.png")
+        frame(19.6).save(OUT / "callback-reply-delay-still.png")
     if "social" in what:
         write_social(OUT / "social-preview-1280x640.png")
     if "sheet" in what:
         write_sheet(OUT / "_contact-sheet.png")
     print("text outside the 5% margin:", sorted(set(VIOLATIONS)) or "none")
-    for n in ("social-preview-1280x640.png", "callback-livekit-starter-barge-in.mp4", "callback-barge-in.gif", "callback-barge-in-still.png"):
+    for n in ("social-preview-1280x640.png", "callback-livekit-starter-reply-delay.mp4", "callback-reply-delay.gif", "callback-reply-delay-still.png"):
         if (OUT / n).exists():
             print(n, (OUT / n).stat().st_size // 1024, "KB")

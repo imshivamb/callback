@@ -294,6 +294,15 @@ on my laptop and 2.39 s hosted; leaving out every line with a pause, 3.04 s and 
 Callback's default of 1.5 s is still missed by a wide margin, so this sentence inflates the median by about
 0.1–0.5 s without explaining the delay.
 
+**One reply to this sentence, in numbers.** In hosted `repeat-request` call 1 the caller
+finishes "I would like something vegetarian that takes under thirty minutes." at 15.38 s and
+the agent starts replying 3.62 s later, against Callback's default of 1.5 s; the same call's
+first reply took 1.96 s. This is typical for this sentence, not an outlier: the reply to it,
+the second reply in each call, took 3.52–3.74 s (median 3.62 s) in all 18 counted hosted
+calls, and 3.50–3.75 s in the 9 pause-test calls that have a figure. It is one sentence. The
+median over all hosted replies is 2.47 s, and the delay may be about how this request ends,
+since a request like that often continues (see the pause test above).
+
 ### Agent-side cross-check
 
 Callback measures from the caller's side of the line. LiveKit's Observability dashboard
