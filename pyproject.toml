@@ -121,7 +121,7 @@ packages = ["callback_voice"]
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["soundfile", "onnxruntime", "faster_whisper", "huggingface_hub", "huggingface_hub.*", "kokoro_onnx", "kokoro_onnx.*", "anthropic", "livekit.*", "twilio.*", "piper.*"]
+module = ["soundfile", "onnxruntime", "faster_whisper", "huggingface_hub", "huggingface_hub.*", "kokoro_onnx", "kokoro_onnx.*", "espeakng_loader", "anthropic", "livekit.*", "twilio.*", "piper.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

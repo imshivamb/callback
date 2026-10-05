@@ -58,7 +58,7 @@ def _candidate_libraries() -> list[str]:
 
 def _espeakng_loader_library() -> str | None:
     try:
-        import espeakng_loader  # type: ignore[import-untyped,unused-ignore]
+        import espeakng_loader
     except ImportError:
         return None
     return str(espeakng_loader.get_library_path())
