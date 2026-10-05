@@ -29,7 +29,7 @@ def chaos_project(tmp_path: Path, good_agent, buggy_agent) -> Path:
 
 def latest_results(project: Path) -> dict:
     run_dir = max((project / ".callback" / "runs").iterdir())
-    return json.loads((run_dir / "results.json").read_text())
+    return json.loads((run_dir / "results.json").read_text(encoding="utf-8"))
 
 
 def metrics(results: dict, scenario_id: str) -> dict:
@@ -122,7 +122,7 @@ def test_ignored_interruption_is_an_unanswered_turn(run_cli, tmp_path, buggy_age
     notes = [e["text"] for e in trial["call"]["events"] if e["kind"] == "note"]
     assert "no reply to the interruption; caller goes on" in notes
 
-    report = (latest_results_dir(tmp_path) / "report.html").read_text()
+    report = (latest_results_dir(tmp_path) / "report.html").read_text(encoding="utf-8")
     assert "doesn't answer the caller at all" in report
 
 

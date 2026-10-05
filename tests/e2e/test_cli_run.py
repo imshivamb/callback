@@ -52,7 +52,7 @@ def project(write, agent_url: str, scenario: str) -> None:
 
 def results(tmp_path: Path) -> dict:
     [run_dir] = list((tmp_path / ".callback" / "runs").iterdir())
-    return json.loads((run_dir / "results.json").read_text())
+    return json.loads((run_dir / "results.json").read_text(encoding="utf-8"))
 
 
 @needs_local
@@ -105,6 +105,7 @@ def test_llm_caller_reaches_its_goal_then_replays_without_the_llm(
         env=env_without_key,
         capture_output=True,
         text=True,
+        encoding="utf-8",
         check=False,
     )
     assert replayed.returncode == 0, replayed.stdout + replayed.stderr

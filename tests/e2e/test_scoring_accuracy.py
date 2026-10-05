@@ -15,7 +15,7 @@ TOLERANCE_S = 0.05
 
 @pytest.mark.parametrize("name", sorted(p.name for p in CALLS.iterdir()))
 def test_scores_match_known_timings(name: str) -> None:
-    truth = json.loads((CALLS / name / "truth.json").read_text())
+    truth = json.loads((CALLS / name / "truth.json").read_text(encoding="utf-8"))
     score = score_call(CALLS / name, Thresholds(), SileroVad())
 
     latency = score.metric("response_latency_p95_s")
@@ -53,7 +53,7 @@ def test_failures_become_located_findings() -> None:
 
 
 def test_unanswered_turn_fails_only_when_the_caller_waited() -> None:
-    truth = json.loads((CALLS / "unanswered" / "truth.json").read_text())
+    truth = json.loads((CALLS / "unanswered" / "truth.json").read_text(encoding="utf-8"))
     [want] = truth["unanswered_turns"]
     score = score_call(CALLS / "unanswered", Thresholds(), SileroVad())
 

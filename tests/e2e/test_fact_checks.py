@@ -70,7 +70,7 @@ async def test_a_different_value_spoken_is_still_a_failure() -> None:
 
 @pytest.mark.parametrize("name", ["masked-code", "garbled-code"])
 async def test_party_size_time_and_phone_are_checked(name: str) -> None:
-    truth = json.loads((FIXTURES / name / "truth.json").read_text())
+    truth = json.loads((FIXTURES / name / "truth.json").read_text(encoding="utf-8"))
     result = await evaluate(name)
     bad = [f.message for f in result.findings if f.metric == "entity_fidelity"]
     for check in ("count 4 people", "time 7:30 PM", "phone 98100 12345"):

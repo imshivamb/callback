@@ -153,7 +153,7 @@ def test_call_through_a_livekit_room(
     assert "Exception ignored" not in done.stderr  # the SDK's shutdown noise stays hidden
 
     run_dir = max((tmp_path / ".callback" / "runs").iterdir())
-    results = json.loads((run_dir / "results.json").read_text())
+    results = json.loads((run_dir / "results.json").read_text(encoding="utf-8"))
     assert results["provider_models"]["llm"] == "gemini-flash-lite-latest"  # the default
     assert results["provider_models"]["scoring_stt"] == "small"
     [scenario] = results["scenarios"]

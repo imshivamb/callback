@@ -2,12 +2,17 @@
 
 import asyncio
 import json
+import sys
 import time
 from pathlib import Path
 from typing import Any
 
 from callback_voice.caller.brain.base import CallerLine
 from callback_voice.caller.brain.cassette_brain import CassetteBrain
+
+# Windows timer waits can end up to one timer tick (about 16 ms) early: a 0.3 s sleep
+# measured 0.297 s in CI on Python 3.12 and 3.13.
+SLACK_S = 0.02 if sys.platform == "win32" else 0.0
 
 
 class SlowLiveCaller:
@@ -38,17 +43,17 @@ async def test_replay_takes_as_long_as_the_recorded_caller(tmp_path: Path) -> No
     await recorder.next_line("hello")
     think_s = time.monotonic() - began
     recorder.note_timing(think_s, think_s + 0.2)  # rendering the voice took 0.2 s more
-    saved = json.loads(path.read_text())
+    saved = json.loads(path.read_text(encoding="utf-8"))
     assert saved["version"] == 2
-    assert saved["lines"][0]["think_s"] >= 0.3
-    assert saved["lines"][0]["ready_s"] >= 0.5
+    assert saved["lines"][0]["think_s"] >= 0.3 - SLACK_S
+    assert saved["lines"][0]["ready_s"] >= 0.5 - SLACK_S
 
     replayer = CassetteBrain(path, "replay")
     assert replayer.timing_missing is False
     began = time.monotonic()
     line = await replayer.next_line("")
     assert line is not None and line.text == "reply to hello"
-    assert time.monotonic() - began >= 0.3  # thought as long as it did live
+    assert time.monotonic() - began >= 0.3 - SLACK_S  # thought as long as it did live
     assert replayer.replay_ready_s() == saved["lines"][0]["ready_s"]
 
 

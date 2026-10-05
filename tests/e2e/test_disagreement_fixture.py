@@ -26,8 +26,8 @@ async def test_hard_check_still_calls_the_code_wrong(tmp_path: Path) -> None:
         tmp_path / "caller_clean.wav", np.ascontiguousarray(audio[:, 0]), rate, subtype="PCM_16"
     )
     (tmp_path / "events.jsonl").write_bytes((FIXTURE / "events.jsonl").read_bytes())
-    expected = json.loads((FIXTURE / "expected.json").read_text())
-    recorded = json.loads((FIXTURE / "recorded.json").read_text())
+    expected = json.loads((FIXTURE / "expected.json").read_text(encoding="utf-8"))
+    recorded = json.loads((FIXTURE / "recorded.json").read_text(encoding="utf-8"))
 
     result = await evaluate_call(
         tmp_path,

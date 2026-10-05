@@ -18,6 +18,7 @@ def run_cli(tmp_path: Path) -> RunCli:
             cwd=cwd or tmp_path,
             capture_output=True,
             text=True,
+            encoding="utf-8",
             check=False,
         )
 

@@ -44,7 +44,7 @@ def test_three_calls_at_once_keep_order_seeds_and_record_concurrency(
     done = run_cli("run", "scenarios", "--config", "parallel.yaml")
     assert done.returncode in (0, 1), done.stdout + done.stderr  # latency may inflate
     [run_dir] = list((tmp_path / ".callback" / "runs").iterdir())
-    results = json.loads((run_dir / "results.json").read_text())
+    results = json.loads((run_dir / "results.json").read_text(encoding="utf-8"))
     assert results["concurrency"] == 3
     trials = results["scenarios"][0]["trials"]
     assert [t["trial"] for t in trials] == [1, 2, 3]

@@ -50,7 +50,7 @@ def project(tmp_path: Path, agent_url: str, *, judge: bool = False) -> None:
 
 def trials(tmp_path: Path) -> dict[str, dict]:
     run_dir = max((tmp_path / ".callback" / "runs").iterdir())
-    result = json.loads((run_dir / "results.json").read_text())
+    result = json.loads((run_dir / "results.json").read_text(encoding="utf-8"))
     return {s["scenario_id"]: s["trials"][0] | {"_run": result} for s in result["scenarios"]}
 
 

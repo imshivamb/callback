@@ -62,14 +62,14 @@ def test_injected_latency_regression_fails_against_the_baseline(
 
     again = run_cli("run", "scenarios", "--baseline", "main")
     assert again.returncode == 0, again.stdout + again.stderr
-    same = json.loads((latest(tmp_path) / "results.json").read_text())
+    same = json.loads((latest(tmp_path) / "results.json").read_text(encoding="utf-8"))
     assert same["baseline_name"] == "main" and same["baseline_diff"]
     assert not [d for d in same["baseline_diff"] if d["regressed"]], same["baseline_diff"]
 
     slow = run_cli("run", "scenarios", "--agent", "slow", "--baseline", "main")
     assert slow.returncode == 1, slow.stdout + slow.stderr
     assert "REGRESSED" in slow.stdout
-    data = json.loads((latest(tmp_path) / "results.json").read_text())
+    data = json.loads((latest(tmp_path) / "results.json").read_text(encoding="utf-8"))
     [scenario] = data["scenarios"]
     p95 = next(a for a in scenario["aggregates"] if a["name"] == "response_latency_p95_s")
     if not os.environ.get("CALLBACK_CI_LATENCY_LIMIT_S"):

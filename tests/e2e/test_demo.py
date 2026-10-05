@@ -14,7 +14,7 @@ def test_demo_catches_the_buggy_agent_and_writes_a_report(run_cli, tmp_path) -> 
     assert done.returncode == 1, done.stdout + done.stderr
     [run_dir] = list((tmp_path / ".callback" / "runs").iterdir())
     assert (run_dir / "report.html").is_file() and (run_dir / "junit.xml").is_file()
-    results = json.loads((run_dir / "results.json").read_text())
+    results = json.loads((run_dir / "results.json").read_text(encoding="utf-8"))
     scenarios = {s["scenario_id"]: s for s in results["scenarios"]}
     assert set(scenarios) == {"barge-in", "backchannel"}
     barge = {a["name"]: a for a in scenarios["barge-in"]["aggregates"]}

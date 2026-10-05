@@ -5,8 +5,9 @@ timer, not model load. Two numbers:
 
 - ``max_lateness_s``: what Callback itself records. It counts ticks that start after
   their due time, and a call logs ``clock_drift`` when it passes 0.1 s.
-- wake lateness: how long after its due time each tick actually woke. Audio and chaos
-  are sent at wake time, so this is the drift a call would see.
+- wake offset: how far from its due time each tick actually woke, late (positive) or
+  early (negative; Windows timer waits can end early). Audio and chaos are sent at wake
+  time, so this is the drift a call would see. ``max_lateness_s`` cannot see early wakes.
 
 Usage: python scripts/measure_tick_lateness.py [--seconds 30] [--json out.json]
 """
@@ -35,7 +36,7 @@ async def measure(seconds: float) -> dict[str, object]:
         await clock.next()
         wake.append(time.monotonic() - (start + clock.tick * FRAME_S))
     wake.sort()
-    worst = max(wake[-1], clock.max_lateness_s)
+    worst = max(wake[-1], -wake[0], clock.max_lateness_s)
     return {
         "platform": f"{platform.system()} {platform.release()} {platform.machine()}",
         "python": platform.python_version(),
@@ -43,9 +44,11 @@ async def measure(seconds: float) -> dict[str, object]:
         "seconds": seconds,
         "ticks": ticks,
         "max_lateness_s": round(clock.max_lateness_s, 4),
-        "wake_lateness_p50_s": round(wake[len(wake) // 2], 4),
-        "wake_lateness_p99_s": round(wake[int(len(wake) * 0.99)], 4),
-        "wake_lateness_max_s": round(wake[-1], 4),
+        "wake_offset_min_s": round(wake[0], 4),
+        "wake_offset_p50_s": round(wake[len(wake) // 2], 4),
+        "wake_offset_p99_s": round(wake[int(len(wake) * 0.99)], 4),
+        "wake_offset_max_s": round(wake[-1], 4),
+        "worst_abs_s": round(worst, 4),
         "limit_s": LIMIT_S,
         "within_limit": worst <= LIMIT_S,
     }

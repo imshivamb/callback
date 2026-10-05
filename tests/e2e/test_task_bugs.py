@@ -37,7 +37,8 @@ def project(tmp_path: Path, good_agent, buggy_agent) -> Path:
 def run(run_cli, project: Path, agent: str) -> dict:
     done = run_cli("run", "move-and-resize.yaml", "--agent", agent, cwd=project)
     run_dir = max((project / ".callback" / "runs").iterdir())
-    trial = json.loads((run_dir / "results.json").read_text())["scenarios"][0]["trials"][0]
+    results = json.loads((run_dir / "results.json").read_text(encoding="utf-8"))
+    trial = results["scenarios"][0]["trials"][0]
     return trial | {"_exit": done.returncode, "_stdout": done.stdout}
 
 

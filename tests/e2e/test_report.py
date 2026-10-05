@@ -116,7 +116,7 @@ def test_report_is_self_contained_and_draws_what_was_measured(run_cli, tmp_path)
     assert call["audio"].startswith("data:audio/mpeg;base64,")
     assert call["peaks"]["caller"] and call["peaks"]["agent"]
     assert call["remeasured"] and {t["who"] for t in call["speech"]} == {"caller", "agent"}
-    truth = json.loads((CALL / "truth.json").read_text())["response_latencies_s"]
+    truth = json.loads((CALL / "truth.json").read_text(encoding="utf-8"))["response_latencies_s"]
     measured = [p["v"] for p in call["latency"]]
     assert len(measured) == len(truth)
     assert all(abs(m - t) <= 0.05 for m, t in zip(measured, truth, strict=True)), measured
@@ -127,7 +127,8 @@ def test_report_without_audio_and_missing_run(run_cli, tmp_path) -> None:
     make_run(run_dir)
     done = run_cli("report", str(run_dir), "--no-audio")
     assert done.returncode == 0, done.stderr
-    [call] = embedded((run_dir / "report.html").read_text())["scenarios"][0]["calls"]
+    page = (run_dir / "report.html").read_text(encoding="utf-8")
+    [call] = embedded(page)["scenarios"][0]["calls"]
     assert "audio" not in call and call["peaks"]["agent"]
 
     missing = run_cli("report", str(tmp_path / "nope"))
@@ -143,7 +144,7 @@ def test_summary_sentence_and_tiles_say_what_went_wrong(run_cli, tmp_path) -> No
         done = run_cli("report", str(run_dir), "--no-audio")
         assert done.returncode == 0, done.stderr
 
-    data = embedded((failing / "report.html").read_text())
+    data = embedded((failing / "report.html").read_text(encoding="utf-8"))
     assert (
         data["summary"]["sentence"] == "The agent replies slower than the limit (2.01 s vs 1.5 s)."
     )
@@ -155,10 +156,10 @@ def test_summary_sentence_and_tiles_say_what_went_wrong(run_cli, tmp_path) -> No
     assert tile["call_id"] == "turn-taking--t1" and tile["t_s"] is not None  # "Hear it" target
     assert data["scenarios"][0]["sentence"] == data["summary"]["sentence"]
 
-    ok = embedded((passing / "report.html").read_text())["summary"]
+    ok = embedded((passing / "report.html").read_text(encoding="utf-8"))["summary"]
     assert ok == {"sentence": "The agent passed every check in 1 call.", "tiles": []}
 
-    old = embedded((older / "report.html").read_text())["summary"]["sentence"]
+    old = embedded((older / "report.html").read_text(encoding="utf-8"))["summary"]["sentence"]
     assert "passed" not in old and "fails checks in 1 of 1 call (" in old, old
 
 
@@ -166,11 +167,11 @@ def test_ci_limit_is_shown_so_nobody_mistakes_it_for_the_target(run_cli, tmp_pat
     run_dir = tmp_path / "ci"
     make_run(run_dir, older=False, limit_s=2.5, ci_limit=True)
     assert run_cli("report", str(run_dir), "--no-audio").returncode == 0
-    page = (run_dir / "report.html").read_text()
+    page = (run_dir / "report.html").read_text(encoding="utf-8")
     [override] = embedded(page)["run"]["limit_overrides"]
     assert override["target"] == 1.5 and override["applied"] == 2.5
     assert "CI limit in use." in page
-    results = json.loads((run_dir / "results.json").read_text())
+    results = json.loads((run_dir / "results.json").read_text(encoding="utf-8"))
     assert results["limit_overrides"][0]["source"] == "CALLBACK_CI_LATENCY_LIMIT_S"
 
 
@@ -179,7 +180,7 @@ def test_many_scenarios_with_one_problem_read_as_one_problem(tmp_path) -> None:
     from callback_voice.report.summarize import summarize_run
 
     make_run(tmp_path, older=False)
-    result = RunResult.model_validate_json((tmp_path / "results.json").read_text())
+    result = RunResult.model_validate_json((tmp_path / "results.json").read_text(encoding="utf-8"))
     [first] = result.scenarios
     slower = [
         a.model_copy(update={"value": (a.value or 0) + 1.0}) if a.name.startswith("response") else a
