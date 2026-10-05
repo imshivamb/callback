@@ -8,7 +8,7 @@ from callback_voice.audio.format import SAMPLE_RATE, Audio
 from callback_voice.audio.resample import resample
 from callback_voice.audio.trim_silence import trim_silence
 from callback_voice.errors import ProviderUnavailableError
-from callback_voice.providers.tts.find_espeak import find_espeak
+from callback_voice.providers.tts.find_espeak import espeak_install_hint, find_espeak
 from callback_voice.providers.tts.kokoro_files import MODEL_FILE, ensure_kokoro_files
 from callback_voice.providers.tts.kokoro_voices import kokoro_lang, kokoro_voice
 
@@ -58,7 +58,7 @@ def _engine() -> Any:
     if espeak is None:
         raise ProviderUnavailableError(
             "Kokoro needs espeak-ng and none was found",
-            hint="brew install espeak-ng  (macOS)  |  apt install espeak-ng  (Linux)",
+            hint=espeak_install_hint(),
         )
     model, voices = ensure_kokoro_files()
     config = EspeakConfig(lib_path=espeak.library, data_path=espeak.data_path)

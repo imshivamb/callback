@@ -96,12 +96,12 @@ def _check_local_speech() -> None:
             "the demo needs Callback's local speech models",
             hint='pip install "callback-voice[local]"',
         )
-    from callback_voice.providers.tts.find_espeak import find_espeak
+    from callback_voice.providers.tts.find_espeak import espeak_install_hint, find_espeak
 
     if find_espeak() is None:
         raise ConfigError(
             "the demo's local voice needs espeak-ng, which is not installed",
-            hint="macOS: brew install espeak-ng  ·  Debian/Ubuntu: sudo apt install espeak-ng",
+            hint=espeak_install_hint(),
         )
 
 

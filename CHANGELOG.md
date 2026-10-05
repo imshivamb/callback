@@ -1,5 +1,45 @@
 # Changelog
 
+## 0.1.3 (unreleased)
+
+Windows beta. Nothing here has run on a real Windows machine yet; it is tested in CI
+on `windows-latest` only.
+
+### Added
+
+- **Windows (beta).** On Windows, when no eSpeak NG install is found, the local voice
+  uses the espeak-ng copy that the `local` extra already installs (through
+  `espeakng-loader`). The eSpeak NG Windows installer's folder is checked first.
+  macOS and Linux keep using the system espeak-ng only.
+- CI runs on Windows, and on Python 3.12 and 3.13 on all three systems. It also
+  installs the built wheel with plain pip and runs `callback --version` and
+  `callback doctor`. The clean-install check (`callback demo` from a fresh install)
+  runs on Windows too, with no espeak-ng installed.
+- `scripts/measure_tick_lateness.py` measures how late the caller's 20 ms clock runs
+  on a machine, against the 0.1 s chaos timing limit. CI runs it on every system.
+
+### Changed
+
+- Install hints for espeak-ng now fit the system: brew and apt on macOS and Linux, the
+  `local` extra or the eSpeak NG installer on Windows.
+- `callback demo` says it takes about 2 minutes 15 seconds, not 3 minutes.
+- Package metadata: a summary that names the callers, report and replay; more keywords;
+  Windows, Python 3.13 and "Python 3 only" classifiers; links to the results and this
+  changelog.
+
+### Removed
+
+- **The `twilio` extra.** It installed the Twilio SDK, but phone calls are not built
+  yet, so it did nothing. A `twilio` target in `callback.yaml` still loads and still
+  stops with "not implemented yet".
+
+### Fixed
+
+- On Windows, output redirected to a file or pipe no longer fails on the ✓ ✕ ● marks:
+  it is written as UTF-8 instead of the ANSI code page.
+- Downloading the Kokoro model no longer fails on Windows when the target file
+  already exists.
+
 ## 0.1.2 (2026-10-03)
 
 ### Added

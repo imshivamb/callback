@@ -40,4 +40,4 @@ def _download(url: str, target: Path) -> None:
     except httpx.HTTPError as exc:
         partial.unlink(missing_ok=True)
         raise ProviderError(f"could not download {url}: {exc}") from exc
-    partial.rename(target)
+    partial.replace(target)

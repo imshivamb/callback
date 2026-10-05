@@ -3,6 +3,8 @@ name: clean-install
 # What a new user does, on fresh machines: build the package, install it with plain
 # pip (no uv, no caches, models downloaded on first use), run `callback demo`. The
 # demo calls the bundled buggy agent, so success here means exit code 1 and a report.
+# On Windows no espeak-ng is installed: the run checks that the copy bundled with the
+# `local` extra is found. The last step prints the chaos timing drift of each call.
 
 on:
   workflow_dispatch:
@@ -32,7 +34,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/setup-python@v5
         with:
@@ -44,24 +49,43 @@ jobs:
       - name: espeak-ng (the local voice's system dependency)
         run: |
           if [ "$RUNNER_OS" = "Linux" ]; then sudo apt-get update && sudo apt-get install -y espeak-ng
-          else brew install espeak-ng; fi
+          elif [ "$RUNNER_OS" = "macOS" ]; then brew install espeak-ng
+          else echo "Windows: none installed; the bundled copy must be found"; fi
       - name: pip install callback-voice[local] from the built wheel
         run: |
           python -m venv venv
-          venv/bin/python -m pip install --upgrade pip
-          venv/bin/pip install "$(ls dist/*.whl)[local]"
-      - run: venv/bin/callback --version
-      - run: venv/bin/callback doctor
+          bin=venv/bin
+          if [ "$RUNNER_OS" = "Windows" ]; then bin=venv/Scripts; fi
+          echo "VENV_BIN=$PWD/$bin" >> "$GITHUB_ENV"
+          "$bin/python" -m pip install --upgrade pip
+          "$bin/pip" install "$(ls dist/*.whl)[local]"
+      - run: '"$VENV_BIN/callback" --version'
+      - run: '"$VENV_BIN/callback" doctor'
       - name: callback demo (expects exit 1 and a report)
         run: |
           mkdir try && cd try
           set +e
-          ../venv/bin/callback demo --no-open
+          "$VENV_BIN/callback" demo --no-open
           code=$?
           set -e
           echo "exit code: $code"
           ls .callback/runs/*/report.html
           test "$code" -eq 1
+      - name: Chaos timing drift per call (limit 0.1 s)
+        if: always()
+        run: |
+          "$VENV_BIN/python" - <<'EOF'
+          import glob, json
+          for path in glob.glob("try/.callback/runs/*/results.json"):
+              for scenario in json.load(open(path, encoding="utf-8"))["scenarios"]:
+                  for trial in scenario["trials"]:
+                      drift = [m for m in trial["metrics"] if m["name"] == "chaos_drift_max_s"]
+                      print(scenario["scenario_id"], "chaos_drift_max_s", drift[0]["value"] if drift else None)
+          for path in glob.glob("try/.callback/runs/*/calls/*/events.jsonl"):
+              for line in open(path, encoding="utf-8"):
+                  if '"clock_drift"' in line:
+                      print("clock_drift event:", path, line.strip())
+          EOF
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -69,6 +93,7 @@ jobs:
           path: |
             try/.callback/runs/**/report.html
             try/.callback/runs/**/results.json
+            try/.callback/runs/**/events.jsonl
             try/.callback/demo-agent-logs/
           include-hidden-files: true
           if-no-files-found: ignore

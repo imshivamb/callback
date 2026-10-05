@@ -13,7 +13,7 @@ def check_kokoro() -> CheckResult:
             "not installed (local TTS unavailable)",
             'pip install "callback-voice[local]"',
         )
-    from callback_voice.providers.tts.find_espeak import find_espeak
+    from callback_voice.providers.tts.find_espeak import espeak_install_hint, find_espeak
 
     espeak = find_espeak()
     if espeak is None:
@@ -22,7 +22,7 @@ def check_kokoro() -> CheckResult:
             "kokoro-tts",
             "warn",
             "kokoro-onnx installed but no working espeak-ng found",
-            "brew install espeak-ng  (macOS)  |  apt install espeak-ng  (Debian/Ubuntu)",
+            espeak_install_hint(),
         )
     from callback_voice.providers.tts.kokoro_files import kokoro_files_present
 
