@@ -32,6 +32,7 @@ docs/*[Ss]pec*.md
 docs/*[Pp]lan*.md
 docs/*[Rr]oadmap*.md
 docs/internal/
+[Pp][Rr][Oo][Gg][Rr][Ee][Ss][Ss]*.md
 
 # Secrets and local data
 .env
