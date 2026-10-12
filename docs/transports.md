@@ -111,3 +111,52 @@ so does stopping when interrupted, so expect roughly 0.1–0.2 s more than over 
 WebSocket, before any network distance. The `callback init` example expects a stop
 within 0.6 s; over LiveKit the reference agent sits right at that line. Set limits for
 what your callers would experience through your real transport, not the raw socket.
+
+## Phone (Twilio)
+
+**Status: tested only against a simulated Twilio (the REST API and the media stream),
+not yet on a real call.** Opt-in, and it costs money: Twilio bills your account per
+started minute.
+
+**Only call numbers you own or have permission to call.** Callback records both sides
+of every call. Whether you may record a call, and whether the other side must be told,
+depends on where you and the person called are; check the rules that apply to you
+(this is not legal advice). Callback prints this warning before any phone call.
+
+```yaml
+targets:
+  my-phone-agent:
+    transport: twilio
+    to_number: "+15551234567"       # the agent's number (E.164)
+    from_number: "+15557654321"     # a number on your Twilio account
+    public_url: https://abc.example.com   # a tunnel to listen_port on this machine
+    # listen_port: 8766
+    # usd_per_minute: 0.014         # for the estimate only; check your Twilio rates
+    # account_sid_env: TWILIO_ACCOUNT_SID
+    # auth_token_env: TWILIO_AUTH_TOKEN
+```
+
+```bash
+export TWILIO_ACCOUNT_SID=... TWILIO_AUTH_TOKEN=...   # from the Twilio console
+```
+
+For each call Callback serves a WebSocket on `127.0.0.1:<listen_port>`, then asks
+Twilio's REST API to call `to_number` with a `<Connect><Stream>` instruction pointing
+at `public_url`. Twilio needs to reach that port, so run a tunnel (for example ngrok or
+cloudflared) from `public_url` to it. When the call is answered, Twilio streams the
+agent's audio as 8 kHz mu-law and plays back what Callback sends. The stream address
+contains a random token, so nothing else that finds the tunnel can join the call. The
+call id is passed as the stream parameter `callback_call_id`.
+
+- **Cost:** `callback run` adds the phone minutes to its estimate: each call counts its
+  `max_duration_s` rounded up to whole minutes at `usd_per_minute`. A run over
+  `cost_cap_usd` asks first (and refuses without a terminal unless you pass `--yes`).
+- **One call at a time.** A run with a phone target refuses `concurrency` above 1.
+- **No answer within 60 s** hangs up and stops the run with exit code 2.
+- **Keypad input** is played as tones in the audio; Media Streams cannot send digits.
+- **Narrowband audio.** Phone audio is 8 kHz, so speech recognition on both sides works
+  with less detail than over a WebSocket at 16 kHz, and the phone network adds its own
+  delay to every reply and every stop. Set limits for what your callers hear.
+- **Trial accounts** can only call numbers verified in the Twilio console.
+
+`callback doctor` checks that the credentials are set. It never dials.

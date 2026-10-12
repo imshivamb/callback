@@ -4,9 +4,11 @@ from pathlib import Path
 import typer
 
 from callback_voice.cli.console import console
+from callback_voice.cli.render.phone_notice import phone_notice
 from callback_voice.cli.render.run_summary import run_summary
 from callback_voice.cli.render.trial_line import trial_line
 from callback_voice.core.config.load_project_config import load_project_config
+from callback_voice.core.config.target_config import TwilioTarget
 from callback_voice.core.models.scenario import Scenario
 from callback_voice.core.models.trial_result import TrialResult
 from callback_voice.core.runner.compare_calls import compare_calls
@@ -50,6 +52,9 @@ def replay(
         f"[muted]REPLAY[/]  [bold]{call_id}[/] [muted]from run {found.run.run_id} · seed {trial.seed} "
         f"· agent {scenario.agent}[/]\n"
     )
+    target = project.targets.get(scenario.agent)
+    if isinstance(target, TwilioTarget) and (warning := phone_notice({scenario.agent: target})):
+        console.print(warning)
 
     def on_trial(s: Scenario, result: TrialResult) -> None:
         console.print(trial_line(result, s.trials))

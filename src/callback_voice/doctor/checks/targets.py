@@ -3,7 +3,7 @@ import os
 from urllib.parse import urlsplit
 
 from callback_voice.core.config.project_config import ProjectConfig
-from callback_voice.core.config.target_config import LiveKitTarget
+from callback_voice.core.config.target_config import LiveKitTarget, TwilioTarget
 from callback_voice.doctor.check_result import CheckResult
 
 _TIMEOUT_S = 1.5
@@ -19,6 +19,8 @@ def check_targets(config: ProjectConfig) -> list[CheckResult]:
 async def _check_one(name: str, target: object) -> CheckResult:
     transport = getattr(target, "transport", "?")
     url = getattr(target, "url", None)
+    if isinstance(target, TwilioTarget):
+        return _check_phone(name, target)
     if url is None:
         return CheckResult(
             "targets", name, "skip", f"{transport}: not dialled by doctor (costs money)"
@@ -53,3 +55,24 @@ async def _check_one(name: str, target: object) -> CheckResult:
                 "Callback needs the server's API key and secret to create rooms",
             )
     return CheckResult("targets", name, "ok", f"{transport} {url} is reachable")
+
+
+def _check_phone(name: str, target: TwilioTarget) -> CheckResult:
+    """Phone targets are never dialled here: a call costs money. Only the setup is checked."""
+    missing = [e for e in (target.account_sid_env, target.auth_token_env) if not os.environ.get(e)]
+    if missing:
+        return CheckResult(
+            "targets",
+            name,
+            "warn",
+            f"twilio {target.to_number}: {' and '.join(missing)} "
+            f"{'is' if len(missing) == 1 else 'are'} not set",
+            "copy them from the Twilio console",
+        )
+    return CheckResult(
+        "targets",
+        name,
+        "ok",
+        f"twilio {target.to_number}: credentials set; not dialled (costs money). "
+        f"public_url must tunnel to port {target.listen_port}",
+    )

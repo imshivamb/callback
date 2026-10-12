@@ -7,6 +7,7 @@ import typer
 from callback_voice.cli.console import console
 from callback_voice.cli.render.ci_runner_hint import ci_runner_hint
 from callback_voice.cli.render.limit_notice import limit_notice
+from callback_voice.cli.render.phone_notice import phone_notice
 from callback_voice.cli.render.rules_notice import rules_notice
 from callback_voice.cli.render.run_plan import run_plan
 from callback_voice.cli.render.run_summary import run_summary
@@ -15,6 +16,7 @@ from callback_voice.cli.render.usage_line import usage_line
 from callback_voice.core.config.load_project_config import load_project_config
 from callback_voice.core.config.project_config import RecordedMode
 from callback_voice.core.config.provider_config import LOCAL_CALLER_LLM
+from callback_voice.core.config.target_config import TwilioTarget
 from callback_voice.core.models.scenario import Scenario
 from callback_voice.core.models.trial_result import TrialResult
 from callback_voice.core.runner.ci_limits import apply_ci_limits
@@ -62,6 +64,25 @@ def run(
     if agent is not None:
         scenarios = [s.model_copy(update={"agent": agent}) for s in scenarios]
     check_targets_exist(scenarios, project)
+    phones = {
+        s.agent: target
+        for s in scenarios
+        if isinstance(target := project.targets[s.agent], TwilioTarget)
+    }
+    if phones and project.concurrency > 1:
+        raise ConfigError(
+            "phone calls run one at a time",
+            hint="set concurrency: 1 in callback.yaml for runs with a twilio target",
+        )
+    missing = sorted(
+        {e for t in phones.values() for e in (t.account_sid_env, t.auth_token_env)}
+        - set(k for k, v in os.environ.items() if v)
+    )
+    if missing:
+        raise ConfigError(
+            f"phone calls need {' and '.join(missing)} set",
+            hint="copy them from the Twilio console; Callback reads them only from the environment",
+        )
     # Before any call is placed: a missing baseline or a bad min_effect is exit 2 now.
     reference = load_baseline(project.resolve(project.baseline_dir), baseline) if baseline else None
     effects = min_effect(project.min_effect)
@@ -82,8 +103,11 @@ def run(
         runtime.llm.usd_per_1k_tokens if _uses_llm(plan) and mode != "replay" else 0.0,
         replaying=mode == "replay",
         judge_usd_per_1k=judge.usd_per_1k_tokens if judge is not None else None,
+        phone_usd_per_minute={name: t.usd_per_minute for name, t in phones.items()},
     )
     judge_name = project.providers.judge.name if project.providers.judge else None
+    if (warning := phone_notice(phones)) is not None:
+        console.print(warning)
     console.print(run_plan(estimate, f"{llm_choice.name} {runtime.llm.model}", judge_name, mode))
     if estimate.usd > project.cost_cap_usd and not yes:
         if not console.is_terminal:
