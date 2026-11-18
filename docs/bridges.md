@@ -11,7 +11,7 @@ The existing ones are the examples to copy, in `src/callback_voice/transports/`:
 |---|---|---|
 | `websocket_transport.py` | 94 | raw PCM16 over a WebSocket; the smallest one |
 | `livekit_transport.py` + `livekit_room.py` | 171 + 71 | a LiveKit room |
-| `twilio_transport.py` | 206 | a phone number, through Twilio Media Streams |
+| `phone_transport.py` | 141 | a phone number, through any provider with a media-stream API |
 
 ## The interface
 
@@ -42,6 +42,34 @@ class MyTransport(Transport):
   broken connection, `self.mark_closed("connection_lost (...)")`.
 - **`send_dtmf(digits)`**: return `True` if you sent the digits out of band. Return
   `False` (the default) and the caller plays the tones in the audio instead.
+
+## Adding a phone provider
+
+Phone calls are already provider-neutral: `PhoneTransport` (placing calls) and
+`callback agent phone-bridge` (putting a WebSocket agent behind a number) take the
+provider as two small pieces, in `src/callback_voice/telephony/`. Twilio is
+`telephony/twilio.py`, 142 lines. A new provider (Telnyx, Plivo, Vonage, ...) is:
+
+- **A `MediaStreamProtocol`** (`telephony/media_stream.py`): `parse` turns one of the
+  provider's stream messages into a `StreamEvent` (`start`, `media` with decoded
+  audio, `dtmf`, `stop`), and `media` builds one outbound audio message. Set
+  `sample_rate` to the stream's rate; resampling and pacing are shared.
+- **A `PhoneDialer`** (`telephony/dialer.py`): `check_credentials`, `place_call`
+  (dial a number and have its audio streamed to a URL) and `end_call`. Credentials
+  come only from environment variables.
+- **An entry in `telephony/providers.py`**: the protocol, and the text that tells a
+  user what to set on a number so its calls stream to the bridge.
+- **A target** in `core/config/target_config.py` and a branch in `build_transport`
+  that builds `PhoneTransport(protocol, dialer, ...)`.
+
+The warning before calls, the cost estimate and cap, one call at a time, the stream
+token and hanging up are shared, so a new provider gets them for free. The tests in
+`tests/e2e/test_phone_transport.py` and `test_phone_bridge.py` already run every
+case against two providers (Twilio and an invented one, in `tests/e2e/phone_fakes.py`):
+add a `Wire` for the new provider to `WIRES` and they cover it too.
+
+A hosted platform whose agent has a phone number (many do) can be called this way
+already, with no new code.
 
 ## Audio conversion
 

@@ -1,192 +1,124 @@
-"""The Twilio transport against a fake Twilio: the REST API and the phone end of the stream."""
+"""Twilio specifics: the REST dialer, the Media Streams format, and the CLI's phone safety."""
 
-import asyncio
 import base64
-import contextlib
 import json
-import re
-import socket
 from urllib.parse import parse_qs
 
 import httpx
 import numpy as np
 import pytest
-from websockets.asyncio.client import connect
-from websockets.exceptions import ConnectionClosed
 
 from callback_voice.audio.mulaw import mulaw_decode, mulaw_encode
-from callback_voice.core.config.target_config import TwilioTarget
 from callback_voice.errors import TransportError
-from callback_voice.transports.twilio_transport import TwilioTransport
-
-FRAME_8K = 160  # 20 ms of 8 kHz mu-law
-
-
-def _free_port() -> int:
-    with socket.socket() as s:
-        s.bind(("127.0.0.1", 0))
-        return int(s.getsockname()[1])
-
-
-class FakeTwilio:
-    """Answers the REST calls and plays the callee: streams a tone, records what it hears."""
-
-    def __init__(self, port: int, *, answer: bool = True, status: int = 201) -> None:
-        self.port = port
-        self.answer = answer
-        self.status = status
-        self.requests: list[tuple[str, dict[str, list[str]]]] = []
-        self.heard: list[dict[str, object]] = []
-        self.phone: asyncio.Task[None] | None = None
-        self.hang_up = asyncio.Event()
-
-    def handler(self, request: httpx.Request) -> httpx.Response:
-        form = parse_qs(request.content.decode())
-        self.requests.append((request.url.path, form))
-        if request.url.path.endswith("/Calls.json"):
-            if self.status >= 400:
-                return httpx.Response(self.status, json={"message": "The number is unverified"})
-            if self.answer:
-                url = re.search(r'Stream url="([^"]+)"', form["Twiml"][0])
-                assert url is not None
-                path = url.group(1).split("/", 3)[3]
-                self.phone = asyncio.create_task(self._phone(f"ws://127.0.0.1:{self.port}/{path}"))
-            return httpx.Response(201, json={"sid": "CA123"})
-        return httpx.Response(200, json={"sid": "CA123", "status": "completed"})
-
-    async def _phone(self, url: str) -> None:
-        async with connect(url) as ws:
-            await ws.send(json.dumps({"event": "connected"}))
-            await ws.send(json.dumps({"event": "start", "start": {"streamSid": "MZ1"}}))
-            tone = (0.3 * np.sin(2 * np.pi * 440 * np.arange(FRAME_8K * 5) / 8000)).astype(
-                np.float32
-            )
-            payload = base64.b64encode(mulaw_encode(tone)).decode()
-            await ws.send(
-                json.dumps({"event": "media", "media": {"track": "inbound", "payload": payload}})
-            )
-            reader = asyncio.create_task(self._listen(ws))
-            await self.hang_up.wait()
-            with contextlib.suppress(ConnectionClosed):  # Callback may have hung up first
-                await ws.send(json.dumps({"event": "stop"}))
-            reader.cancel()
-
-    async def _listen(self, ws: object) -> None:
-        try:
-            async for message in ws:  # type: ignore[attr-defined]
-                self.heard.append(json.loads(message))
-        except ConnectionClosed:
-            pass
-
-
-def _target(port: int) -> TwilioTarget:
-    return TwilioTarget(
-        to_number="+15550001111",
-        from_number="+15550002222",
-        public_url="https://example.ngrok.app",
-        listen_port=port,
-    )
+from callback_voice.telephony.twilio import API_BASE_ENV, TwilioDialer, TwilioMediaStream
 
 
 @pytest.fixture(autouse=True)
 def credentials(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("TWILIO_ACCOUNT_SID", "AC_test")
     monkeypatch.setenv("TWILIO_AUTH_TOKEN", "secret")
+    monkeypatch.delenv(API_BASE_ENV, raising=False)
 
 
-def _transport(fake: FakeTwilio, **kwargs: float) -> TwilioTransport:
-    http = httpx.AsyncClient(transport=httpx.MockTransport(fake.handler))
-    return TwilioTransport(_target(fake.port), http=http, **kwargs)
+class FakeRest:
+    def __init__(self, status: int = 201) -> None:
+        self.status = status
+        self.requests: list[tuple[str, dict[str, list[str]], str]] = []
+
+    def __call__(self, request: httpx.Request) -> httpx.Response:
+        self.requests.append(
+            (request.url.path, parse_qs(request.content.decode()), request.headers["authorization"])
+        )
+        if self.status >= 400:
+            return httpx.Response(self.status, json={"message": "The number is unverified"})
+        return httpx.Response(201, json={"sid": "CA123"})
 
 
-async def test_a_call_streams_both_ways_and_hangs_up() -> None:
-    fake = FakeTwilio(_free_port())
-    transport = _transport(fake)
-    await transport.connect("call-1")
+def _dialer(rest: FakeRest, **kwargs: str) -> TwilioDialer:
+    return TwilioDialer(http=httpx.AsyncClient(transport=httpx.MockTransport(rest)), **kwargs)
 
-    path, form = fake.requests[0]
+
+async def test_placing_a_call_sends_the_stream_twiml() -> None:
+    rest = FakeRest()
+    sid = await _dialer(rest).place_call(
+        "+15550001111", "+15550002222", "wss://x.app/media/t0k", "c-1"
+    )
+    path, form, auth = rest.requests[0]
+    assert sid == "CA123"
     assert path == "/2010-04-01/Accounts/AC_test/Calls.json"
+    assert auth == "Basic " + base64.b64encode(b"AC_test:secret").decode()
     assert form["To"] == ["+15550001111"] and form["From"] == ["+15550002222"]
-    assert 'Stream url="wss://example.ngrok.app/media/' in form["Twiml"][0]
-    assert 'value="call-1"' in form["Twiml"][0]
+    assert form["Twiml"] == [
+        '<Response><Connect><Stream url="wss://x.app/media/t0k">'
+        '<Parameter name="callback_call_id" value="c-1"/></Stream></Connect></Response>'
+    ]
 
-    for _ in range(50):
-        if transport.inbound.qsize():
-            break
-        await asyncio.sleep(0.01)
-    heard = np.concatenate(transport.drain())
-    assert len(heard) > 0 and np.abs(heard).max() > 0.1  # the callee's tone, at 16 kHz
 
-    await transport.send_audio(np.zeros(320 * 3, dtype=np.float32))
-    for _ in range(50):
-        if fake.heard:
-            break
-        await asyncio.sleep(0.01)
-    sent = fake.heard[0]
-    assert sent["event"] == "media" and sent["streamSid"] == "MZ1"
-    media = sent["media"]
-    assert isinstance(media, dict)
-    assert len(base64.b64decode(str(media["payload"]))) > 0
-
-    await transport.hangup()
-    assert transport.close_reason == "caller_hangup"
-    assert fake.requests[-1] == (
+async def test_ending_a_call_completes_it() -> None:
+    rest = FakeRest()
+    await _dialer(rest).end_call("CA123")
+    assert rest.requests[0][:2] == (
         "/2010-04-01/Accounts/AC_test/Calls/CA123.json",
         {"Status": ["completed"]},
     )
-    fake.hang_up.set()
 
 
-async def test_the_agent_hanging_up_ends_the_call() -> None:
-    fake = FakeTwilio(_free_port())
-    transport = _transport(fake)
-    await transport.connect("call-2")
-    fake.hang_up.set()
-    await asyncio.wait_for(transport.closed.wait(), 2)
-    assert transport.close_reason == "agent_hangup"
-    await transport.hangup()
-
-
-async def test_missing_credentials_stop_before_any_call(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.delenv("TWILIO_AUTH_TOKEN")
-    fake = FakeTwilio(_free_port())
-    with pytest.raises(TransportError, match="TWILIO_AUTH_TOKEN"):
-        await _transport(fake).connect("call-3")
-    assert fake.requests == []
-
-
-async def test_a_refused_call_explains_and_frees_the_port() -> None:
-    fake = FakeTwilio(_free_port(), status=400)
+async def test_a_refused_call_says_why() -> None:
     with pytest.raises(TransportError, match="The number is unverified"):
-        await _transport(fake).connect("call-4")
-    with socket.socket() as s:
-        s.bind(("127.0.0.1", fake.port))  # the media server is gone
+        await _dialer(FakeRest(status=400)).place_call("+1555", "+1556", "wss://x/media/t", "c")
 
 
-async def test_an_unanswered_call_is_hung_up() -> None:
-    fake = FakeTwilio(_free_port(), answer=False)
-    with pytest.raises(TransportError, match="did not answer"):
-        await _transport(fake, answer_timeout_s=0.2).connect("call-5")
-    assert fake.requests[-1][1] == {"Status": ["completed"]}
+def test_missing_credentials_are_named(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("TWILIO_AUTH_TOKEN")
+    with pytest.raises(TransportError, match="TWILIO_AUTH_TOKEN"):
+        TwilioDialer().check_credentials()
 
 
-async def test_a_stranger_without_the_token_is_turned_away() -> None:
-    fake = FakeTwilio(_free_port(), answer=False)
-    transport = _transport(fake, answer_timeout_s=1.0)
-    connecting = asyncio.create_task(transport.connect("call-6"))
-    await asyncio.sleep(0.1)
-    async with connect(f"ws://127.0.0.1:{fake.port}/media/guess") as ws:
-        with pytest.raises(ConnectionClosed):
-            await ws.recv()
-        assert ws.close_code == 1008
-    with pytest.raises(TransportError):
-        await connecting
+async def test_a_simulated_twilio_can_stand_in_for_the_api(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv(API_BASE_ENV, "http://127.0.0.1:9/2010-04-01")
+    rest = FakeRest()
+    await _dialer(rest).place_call("+1555", "+1556", "wss://x/media/t", "c")
+    assert rest.requests[0][0] == "/2010-04-01/Accounts/AC_test/Calls.json"
+
+
+def test_media_stream_messages_round_trip() -> None:
+    stream = TwilioMediaStream()
+    start = stream.parse(
+        json.dumps(
+            {
+                "event": "start",
+                "start": {
+                    "streamSid": "MZ1",
+                    "callSid": "CA1",
+                    "customParameters": {"callback_call_id": "c-1"},
+                },
+            }
+        )
+    )
+    assert (start.kind, start.stream_id, start.call_ref) == ("start", "MZ1", "CA1")
+    assert start.parameters == {"callback_call_id": "c-1"}
+    tone = (0.5 * np.sin(2 * np.pi * 440 * np.arange(160) / 8000)).astype(np.float32)
+    sent = json.loads(stream.media("MZ1", tone))
+    assert sent["event"] == "media" and sent["streamSid"] == "MZ1"
+    back = stream.parse(
+        json.dumps(
+            {"event": "media", "media": {"track": "inbound", "payload": sent["media"]["payload"]}}
+        )
+    )
+    assert (
+        back.kind == "media" and back.audio is not None and np.abs(back.audio - tone).max() < 0.02
+    )
+    outbound = json.dumps(
+        {"event": "media", "media": {"track": "outbound", "payload": sent["media"]["payload"]}}
+    )
+    assert stream.parse(outbound).kind == "other"
+    assert stream.parse(json.dumps({"event": "dtmf", "dtmf": {"digit": "5"}})).digits == "5"
+    assert stream.parse(json.dumps({"event": "stop"})).kind == "stop"
 
 
 def test_mulaw_round_trip_keeps_the_signal() -> None:
     tone = (0.5 * np.sin(2 * np.pi * 440 * np.arange(800) / 8000)).astype(np.float32)
-    back = mulaw_decode(mulaw_encode(tone))
-    assert np.abs(back - tone).max() < 0.02
+    assert np.abs(mulaw_decode(mulaw_encode(tone)) - tone).max() < 0.02
 
 
 PHONE_CONFIG = """targets:

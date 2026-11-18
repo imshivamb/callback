@@ -16,7 +16,7 @@ from callback_voice.cli.render.usage_line import usage_line
 from callback_voice.core.config.load_project_config import load_project_config
 from callback_voice.core.config.project_config import RecordedMode
 from callback_voice.core.config.provider_config import LOCAL_CALLER_LLM
-from callback_voice.core.config.target_config import TwilioTarget
+from callback_voice.core.config.target_config import PhoneTarget
 from callback_voice.core.models.scenario import Scenario
 from callback_voice.core.models.trial_result import TrialResult
 from callback_voice.core.runner.ci_limits import apply_ci_limits
@@ -67,21 +67,21 @@ def run(
     phones = {
         s.agent: target
         for s in scenarios
-        if isinstance(target := project.targets[s.agent], TwilioTarget)
+        if isinstance(target := project.targets[s.agent], PhoneTarget)
     }
     if phones and project.concurrency > 1:
         raise ConfigError(
             "phone calls run one at a time",
-            hint="set concurrency: 1 in callback.yaml for runs with a twilio target",
+            hint="set concurrency: 1 in callback.yaml for runs with a phone target",
         )
     missing = sorted(
-        {e for t in phones.values() for e in (t.account_sid_env, t.auth_token_env)}
+        {e for t in phones.values() for e in t.credential_envs()}
         - set(k for k, v in os.environ.items() if v)
     )
     if missing:
         raise ConfigError(
             f"phone calls need {' and '.join(missing)} set",
-            hint="copy them from the Twilio console; Callback reads them only from the environment",
+            hint="copy them from your phone provider's console; Callback reads them only from the environment",
         )
     # Before any call is placed: a missing baseline or a bad min_effect is exit 2 now.
     reference = load_baseline(project.resolve(project.baseline_dir), baseline) if baseline else None

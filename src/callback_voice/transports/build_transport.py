@@ -24,7 +24,15 @@ def build_transport(target: TargetConfig) -> Transport:
             ) from exc
         return LiveKitTransport(target)
     if isinstance(target, TwilioTarget):
-        from callback_voice.transports.twilio_transport import TwilioTransport
+        from callback_voice.telephony.twilio import TwilioDialer, TwilioMediaStream
+        from callback_voice.transports.phone_transport import PhoneTransport
 
-        return TwilioTransport(target)
+        return PhoneTransport(
+            TwilioMediaStream(),
+            TwilioDialer(target.account_sid_env, target.auth_token_env),
+            to_number=target.to_number,
+            from_number=target.from_number,
+            public_url=target.public_url,
+            listen_port=target.listen_port,
+        )
     raise TransportError(f"unknown transport {getattr(target, 'transport', '?')}")
