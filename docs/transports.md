@@ -160,3 +160,26 @@ call id is passed as the stream parameter `callback_call_id`.
 - **Trial accounts** can only call numbers verified in the Twilio console.
 
 `callback doctor` checks that the credentials are set. It never dials.
+
+Phone calls need no extra: Callback talks to Twilio's REST API and media stream itself.
+
+### Putting a WebSocket agent behind a number
+
+To test a phone path with an agent that speaks the WebSocket protocol above (the
+reference agents, for example), put it behind a Twilio number with the phone bridge:
+
+```bash
+callback agent serve --port 8765                 # or your own WebSocket agent
+callback agent phone-bridge --agent-url ws://127.0.0.1:8765 \
+    --port 8767 --public-url https://def.example.com   # a tunnel to port 8767
+```
+
+It prints the TwiML to set on the number (A call comes in → TwiML Bin). Each call to
+the number is then relayed to the agent, converted between 8 kHz mu-law and 16 kHz
+PCM16, with the call id in `X-Callback-Call-Id`; keypad presses arrive as `dtmf`
+messages and the caller hanging up as `hangup`. The agent closing its WebSocket ends
+the call. The bridge passes the agent's audio on as it arrives, so an agent must send
+it at the pace it should be heard, as over a plain WebSocket. The stream address holds
+a random token; set `CALLBACK_PHONE_BRIDGE_TOKEN` to keep it across restarts.
+`--press-key-after 8` waits that long, presses 1 and only then connects the agent, for
+a trial account's message at the start of each call.

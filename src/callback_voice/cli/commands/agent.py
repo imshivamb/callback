@@ -158,7 +158,11 @@ def phone_bridge(
         console.print(
             f"Phone bridge ({provider}) · ws://{host}:{port} → {agent_url} · Ctrl+C to stop\n"
         )
-        console.print(chosen.number_setup(bridge_stream_url(public_url, token)), markup=False)
+        console.print(
+            chosen.number_setup(bridge_stream_url(public_url, token)),
+            markup=False,
+            soft_wrap=True,  # copied into the provider's console: no inserted line breaks
+        )
         console.print(
             "\n[muted]The URL holds a random token; set CALLBACK_PHONE_BRIDGE_TOKEN to keep "
             "it the same across restarts.[/]"
