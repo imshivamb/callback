@@ -39,11 +39,12 @@ async def run_trial(
             cassette_dir=runtime.cassette_dir,
             llm=caller_llm,
         )
+        transport = build_transport(target)
         setup = CallSetup(
             call_id=call_id,
             spec=scenario.caller,
             max_duration_s=scenario.max_duration_s,
-            transport=build_transport(target),
+            transport=transport,
             brain=brain,
             speech=CallerSpeech(runtime.tts, scenario.caller),
             make_vad=runtime.make_vad,
@@ -66,6 +67,7 @@ async def run_trial(
                 call_id=call_id,
                 scenario_id=scenario.id,
                 trial=trial,
+                call_details=transport.call_details(),
             )
         score = await evaluate_call(
             call_dir,

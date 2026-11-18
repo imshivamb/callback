@@ -37,7 +37,6 @@ local = ["faster-whisper>=1.1", "kokoro-onnx>=0.4"]
 piper = ["piper-tts>=1.2"]
 anthropic = ["anthropic>=1.0"]
 livekit = ["livekit>=1.0", "livekit-api>=1.0"]
-twilio = ["twilio>=9.0"]
 
 [project.scripts]
 callback = "callback_voice.cli.app:main"
@@ -106,7 +105,7 @@ packages = ["callback_voice"]
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["soundfile", "onnxruntime", "faster_whisper", "huggingface_hub", "huggingface_hub.*", "kokoro_onnx", "kokoro_onnx.*", "anthropic", "livekit.*", "twilio.*", "piper.*"]
+module = ["soundfile", "onnxruntime", "faster_whisper", "huggingface_hub", "huggingface_hub.*", "kokoro_onnx", "kokoro_onnx.*", "anthropic", "livekit.*", "piper.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

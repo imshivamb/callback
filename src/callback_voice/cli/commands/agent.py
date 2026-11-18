@@ -16,6 +16,10 @@ def register(app: typer.Typer) -> None:
     agent_app.command(
         "serve", help="Serve the restaurant agent over WebSocket (talk to it at http://HOST:PORT)."
     )(serve)
+    agent_app.command(
+        "phone-bridge",
+        help="Put a WebSocket agent behind a phone number (for testing phone calls).",
+    )(phone_bridge)
     app.add_typer(agent_app, name="agent")
 
 
@@ -96,6 +100,86 @@ def serve(
         asyncio.run(main())
     except KeyboardInterrupt:
         console.print("[muted]stopped[/]")
+
+
+def phone_bridge(
+    public_url: str = typer.Option(
+        ...,
+        "--public-url",
+        help="Public https URL of a tunnel to --port (the provider connects through it).",
+    ),
+    provider: str = typer.Option("twilio", "--provider", help="Phone provider: twilio."),
+    agent_url: str = typer.Option(
+        "ws://127.0.0.1:8765", "--agent-url", help="The agent's WebSocket (raw PCM16, 16 kHz)."
+    ),
+    host: str = typer.Option("127.0.0.1", help="Interface to bind."),
+    port: int = typer.Option(8767, help="Port the provider's media streams arrive on."),
+    press_key_after: float | None = typer.Option(
+        None,
+        "--press-key-after",
+        min=0.0,
+        help="Seconds to wait, then press 1, before connecting the agent "
+        "(for a Twilio trial account's message; try 8).",
+    ),
+) -> None:
+    import os
+    import secrets
+
+    from callback_voice.errors import ConfigError
+    from callback_voice.phone_bridge.serve_phone_bridge import (
+        bridge_stream_url,
+        serve_phone_bridge,
+    )
+    from callback_voice.telephony.providers import PROVIDERS
+
+    if provider not in PROVIDERS:
+        raise ConfigError(
+            f"unknown --provider {provider!r}", hint=f"one of: {', '.join(sorted(PROVIDERS))}"
+        )
+    if not public_url.startswith("https://"):
+        raise ConfigError(f"--public-url must start with https://, got {public_url!r}")
+    if not agent_url.startswith(("ws://", "wss://")):
+        raise ConfigError(f"--agent-url must start with ws:// or wss://, got {agent_url!r}")
+    chosen = PROVIDERS[provider]
+    token = os.environ.get("CALLBACK_PHONE_BRIDGE_TOKEN") or secrets.token_urlsafe(16)
+    ready = asyncio.Event()
+
+    async def main() -> None:
+        task = asyncio.create_task(
+            serve_phone_bridge(
+                chosen.protocol(), agent_url, token, host, port, ready, press_key_after
+            )
+        )
+        await asyncio.wait(
+            {task, asyncio.create_task(ready.wait())}, return_when=asyncio.FIRST_COMPLETED
+        )
+        if task.done():
+            task.result()
+        console.print(
+            f"Phone bridge ({provider}) · ws://{host}:{port} → {agent_url} · Ctrl+C to stop\n"
+        )
+        console.print(
+            chosen.number_setup(bridge_stream_url(public_url, token)),
+            markup=False,
+            soft_wrap=True,  # copied into the provider's console: no inserted line breaks
+        )
+        console.print(
+            "\n[muted]The URL holds a random token; set CALLBACK_PHONE_BRIDGE_TOKEN to keep "
+            "it the same across restarts.[/]"
+        )
+        if press_key_after is not None:
+            console.print(
+                f"[warn]▲[/] presses 1 after {press_key_after:g} s on every call, "
+                "then connects the agent."
+            )
+        await task
+
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        console.print("[muted]stopped[/]")
+    except OSError as exc:
+        raise ConfigError(f"cannot listen on port {port}: {exc}") from exc
 
 
 def _livekit_access(url: str, room_prefix: str) -> "LiveKitAccess":

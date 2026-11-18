@@ -6,12 +6,16 @@ from callback_voice.core.runner.estimate_cost import CostEstimate
 def run_plan(estimate: CostEstimate, llm_name: str, judge_name: str | None, mode: str) -> Text:
     """The pre-run line: how many calls, how long at most, which LLM calls, what it may cost."""
     uses = []
+    if estimate.phone_calls:
+        uses.append(f"phone ×{estimate.phone_calls} ≤ ${estimate.phone_usd:.2f}")
     if estimate.llm_calls:
         uses.append(f"caller LLM ({llm_name}) ×{estimate.llm_calls}")
     if estimate.judge_calls:
         uses.append(f"judge ({judge_name}) ×{estimate.judge_calls}")
     if not uses:
         cost = "no LLM calls"
+    elif estimate.phone_calls and estimate.usd > 0:
+        cost = f"{', '.join(uses)} · ≈ ${estimate.usd:.2f} in all"
     elif estimate.usd > 0:
         cost = f"{', '.join(uses)} ≈ ${estimate.usd:.2f}"
     else:

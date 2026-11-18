@@ -7,14 +7,26 @@ from callback_voice.scoring.verifiers.match_state import match_state
 
 
 async def check_state(
-    check: StateCheck, url: str, *, call_id: str, scenario_id: str, trial: int
+    check: StateCheck,
+    url: str,
+    *,
+    call_id: str,
+    scenario_id: str,
+    trial: int,
+    call_details: dict[str, str] | None = None,
 ) -> VerifierResult:
     """Ask the agent's system what actually happened, and compare it with ``match``.
 
     Run right after the call, while its state is fresh. An unreachable or broken
     webhook raises: the trial becomes an error (exit 2), never a silent pass or fail.
     """
-    params = {"call_id": call_id, "scenario_id": scenario_id, "trial": str(trial)}
+    # call_details (phone calls: numbers and times) helps an agent that never saw call_id.
+    params = {
+        **(call_details or {}),
+        "call_id": call_id,
+        "scenario_id": scenario_id,
+        "trial": str(trial),
+    }
     try:
         async with httpx.AsyncClient(timeout=check.timeout_s) as client:
             response = await client.get(url, params=params)

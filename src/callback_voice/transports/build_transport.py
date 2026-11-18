@@ -1,4 +1,9 @@
-from callback_voice.core.config.target_config import LiveKitTarget, TargetConfig, WebSocketTarget
+from callback_voice.core.config.target_config import (
+    LiveKitTarget,
+    TargetConfig,
+    TwilioTarget,
+    WebSocketTarget,
+)
 from callback_voice.errors import TransportError
 from callback_voice.transports.base import Transport
 
@@ -18,7 +23,16 @@ def build_transport(target: TargetConfig) -> Transport:
                 hint='pip install "callback-voice[livekit]"',
             ) from exc
         return LiveKitTransport(target)
-    raise TransportError(
-        f"the {target.transport} transport is not implemented yet",
-        hint="use a websocket or livekit target; Twilio support is planned",
-    )
+    if isinstance(target, TwilioTarget):
+        from callback_voice.telephony.twilio import TwilioDialer, TwilioMediaStream
+        from callback_voice.transports.phone_transport import PhoneTransport
+
+        return PhoneTransport(
+            TwilioMediaStream(),
+            TwilioDialer(target.account_sid_env, target.auth_token_env),
+            to_number=target.to_number,
+            from_number=target.from_number,
+            public_url=target.public_url,
+            listen_port=target.listen_port,
+        )
+    raise TransportError(f"unknown transport {getattr(target, 'transport', '?')}")

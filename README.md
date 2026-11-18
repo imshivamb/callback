@@ -211,6 +211,8 @@ and went quiet. The write-up is in [RESULTS.md](RESULTS.md); the recordings are 
   test suite.
 - [docs/transports.md](docs/transports.md): connecting to your agent over a WebSocket
   or a LiveKit room, and what LiveKit adds to the numbers.
+- [docs/bridges.md](docs/bridges.md): writing a bridge for a platform Callback does not
+  reach yet.
 - [docs/ci-example.md](docs/ci-example.md): running Callback in your own CI, with a
   baseline and a copy-paste GitHub Actions workflow.
 - [docs/assets/README.md](docs/assets/README.md): what each recording and figure shows.

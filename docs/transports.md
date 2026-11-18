@@ -111,3 +111,86 @@ so does stopping when interrupted, so expect roughly 0.1–0.2 s more than over 
 WebSocket, before any network distance. The `callback init` example expects a stop
 within 0.6 s; over LiveKit the reference agent sits right at that line. Set limits for
 what your callers would experience through your real transport, not the raw socket.
+
+## Phone (Twilio)
+
+**Status: tested only against a simulated Twilio (the REST API and the media stream),
+not yet on a real call.** Opt-in, and it costs money: Twilio bills your account per
+started minute.
+
+**Only call numbers you own or have permission to call.** Callback records both sides
+of every call. Whether you may record a call, and whether the other side must be told,
+depends on where you and the person called are; check the rules that apply to you
+(this is not legal advice). Callback prints this warning before any phone call.
+
+```yaml
+targets:
+  my-phone-agent:
+    transport: twilio
+    to_number: "+15551234567"       # the agent's number (E.164)
+    from_number: "+15557654321"     # a number on your Twilio account
+    public_url: https://abc.example.com   # a tunnel to listen_port on this machine
+    # listen_port: 8766
+    # usd_per_minute: 0.014         # for the estimate only; check your Twilio rates
+    # account_sid_env: TWILIO_ACCOUNT_SID
+    # auth_token_env: TWILIO_AUTH_TOKEN
+```
+
+```bash
+export TWILIO_ACCOUNT_SID=... TWILIO_AUTH_TOKEN=...   # from the Twilio console
+```
+
+For each call Callback serves a WebSocket on `127.0.0.1:<listen_port>`, then asks
+Twilio's REST API to call `to_number` with a `<Connect><Stream>` instruction pointing
+at `public_url`. Twilio needs to reach that port, so run a tunnel (for example ngrok or
+cloudflared) from `public_url` to it. When the call is answered, Twilio streams the
+agent's audio as 8 kHz mu-law and plays back what Callback sends. The stream address
+contains a random token, so nothing else that finds the tunnel can join the call. The
+call id is passed as the stream parameter `callback_call_id`.
+
+- **Cost:** `callback run` adds the phone minutes to its estimate: each call counts its
+  `max_duration_s` rounded up to whole minutes at `usd_per_minute`. A run over
+  `cost_cap_usd` asks first (and refuses without a terminal unless you pass `--yes`).
+- **One call at a time.** A run with a phone target refuses `concurrency` above 1.
+- **No answer within 60 s** hangs up and stops the run with exit code 2.
+- **Keypad input** is played as tones in the audio; Media Streams cannot send digits.
+- **Narrowband audio.** Phone audio is 8 kHz, so speech recognition on both sides works
+  with less detail than over a WebSocket at 16 kHz, and the phone network adds its own
+  delay to every reply and every stop. Set limits for what your callers hear.
+- **Trial accounts** can only call numbers verified in the Twilio console.
+- **End-state checks (`expect.state`).** The phone network does not carry Callback's
+  call id to the number called, so the agent's system cannot look the call up by
+  `call_id`. For a phone target Callback adds what that system can see to the webhook
+  query: `provider`, `from_number`, `to_number`, `provider_call_ref` (the CallSid of
+  Callback's side of the call) and `call_placed_at` / `call_ended_at` (Unix seconds,
+  this machine's clock). Use them to find the call, for example by the caller's number
+  and the time. Give the webhook as a full URL: a phone target has no agent URL for a
+  path to resolve against. The bundled reference agent finds the one call that began
+  in that time and refuses (409) if there are several.
+
+`callback doctor` checks that the credentials are set. It never dials.
+
+Phone calls need no extra: Callback talks to Twilio's REST API and media stream itself.
+
+### Putting a WebSocket agent behind a number
+
+To test a phone path with an agent that speaks the WebSocket protocol above (the
+reference agents, for example), put it behind a Twilio number with the phone bridge:
+
+```bash
+callback agent serve --port 8765                 # or your own WebSocket agent
+callback agent phone-bridge --agent-url ws://127.0.0.1:8765 \
+    --port 8767 --public-url https://def.example.com   # a tunnel to port 8767
+```
+
+It prints the TwiML to set on the number (A call comes in → TwiML Bin). Each call to
+the number is then relayed to the agent, converted between 8 kHz mu-law and 16 kHz
+PCM16. `X-Callback-Call-Id` carries the provider's reference for that call (a Twilio
+CallSid), not Callback's call id: the phone network does not pass it from the caller's
+side to the number. Keypad presses arrive as `dtmf`
+messages and the caller hanging up as `hangup`. The agent closing its WebSocket ends
+the call. The bridge passes the agent's audio on as it arrives, so an agent must send
+it at the pace it should be heard, as over a plain WebSocket. The stream address holds
+a random token; set `CALLBACK_PHONE_BRIDGE_TOKEN` to keep it across restarts.
+`--press-key-after 8` waits that long, presses 1 and only then connects the agent, for
+a trial account's message at the start of each call.

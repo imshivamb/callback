@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from typing import Annotated, Literal
 
 from pydantic import Field
@@ -32,10 +33,11 @@ class LiveKitTarget(StrictModel):
     api_secret_env: str = "LIVEKIT_API_SECRET"
 
 
-class TwilioTarget(StrictModel):
-    """An agent behind a real phone number. Opt-in: costs money per minute."""
+class PhoneTarget(StrictModel):
+    """An agent behind a real phone number, through any phone provider. Opt-in: costs
+    money per minute. Each provider's target subclasses this and adds its credentials;
+    the warning, cost estimate and one-call-at-a-time rule apply to every one."""
 
-    transport: Literal["twilio"] = "twilio"
     to_number: str = Field(pattern=r"^\+[1-9]\d{6,14}$")
     from_number: str = Field(pattern=r"^\+[1-9]\d{6,14}$")
     public_url: str = Field(
@@ -43,9 +45,23 @@ class TwilioTarget(StrictModel):
         description="Public HTTPS base URL that tunnels to Callback's media-stream server",
     )
     listen_port: int = Field(default=8766, ge=1, le=65535)
+    usd_per_minute: float = Field(ge=0, description="For the cost estimate; check your rates")
+
+    @abstractmethod
+    def credential_envs(self) -> tuple[str, ...]:
+        """Environment variables that must be set before any call."""
+
+
+class TwilioTarget(PhoneTarget):
+    """An agent behind a real phone number, called through Twilio."""
+
+    transport: Literal["twilio"] = "twilio"
     account_sid_env: str = "TWILIO_ACCOUNT_SID"
     auth_token_env: str = "TWILIO_AUTH_TOKEN"
     usd_per_minute: float = Field(default=0.014, ge=0)
+
+    def credential_envs(self) -> tuple[str, ...]:
+        return (self.account_sid_env, self.auth_token_env)
 
 
 type TargetConfig = Annotated[
