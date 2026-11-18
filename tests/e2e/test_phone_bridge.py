@@ -155,10 +155,14 @@ async def test_whole_chain_callback_to_agent(wire: Wire, delay_s: float) -> None
         heard = np.concatenate(transport.drain())
         assert np.abs(heard).max() > 0.1  # the agent's greeting, through two resamplings
 
-        for _ in range(10):
+        # Half a second of caller audio, sent in real time, reaches the agent about
+        # delay_s later and still in real time: a delay must not slow the stream down.
+        sent_at = time.monotonic()
+        for _ in range(25):
             await transport.send_audio(tone(16_000, 0.02))
             await asyncio.sleep(0.02)
-        await until(lambda: agent.heard)
+        await until(lambda: sum(len(a) for a in agent.heard) >= 0.45 * 16_000)
+        assert time.monotonic() - sent_at < 0.5 + delay_s + 0.3
 
         await transport.hangup()
         await until(lambda: {"type": "hangup"} in agent.control)

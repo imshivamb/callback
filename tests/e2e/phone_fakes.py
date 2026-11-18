@@ -174,14 +174,29 @@ class FakeNetwork:
                     await ws.close()
 
     async def _pipe(self, source: ClientConnection, sink: ClientConnection) -> None:
-        with contextlib.suppress(ConnectionClosed):
-            async for message in source:
-                audio = self.wire.audio_of(message)
-                if audio is None:
-                    continue
-                if self.delay_s:
-                    await asyncio.sleep(self.delay_s)
-                await sink.send(self.wire.media(audio))
+        """Relay audio with ``delay_s`` of latency but no loss of rate: each frame is
+        sent ``delay_s`` after it arrived (sleeping before each frame would slow the
+        stream down instead of delaying it)."""
+        loop = asyncio.get_running_loop()
+        line: asyncio.Queue[tuple[float, str | bytes]] = asyncio.Queue()
+
+        async def send_when_due() -> None:
+            with contextlib.suppress(ConnectionClosed):
+                while True:
+                    due, message = await line.get()
+                    if (wait := due - loop.time()) > 0:
+                        await asyncio.sleep(wait)
+                    await sink.send(message)
+
+        sender = asyncio.create_task(send_when_due())
+        try:
+            with contextlib.suppress(ConnectionClosed):
+                async for message in source:
+                    audio = self.wire.audio_of(message)
+                    if audio is not None:
+                        line.put_nowait((loop.time() + self.delay_s, self.wire.media(audio)))
+        finally:
+            sender.cancel()
 
 
 class FakeDialer(PhoneDialer):

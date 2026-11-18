@@ -176,7 +176,9 @@ callback agent phone-bridge --agent-url ws://127.0.0.1:8765 \
 
 It prints the TwiML to set on the number (A call comes in → TwiML Bin). Each call to
 the number is then relayed to the agent, converted between 8 kHz mu-law and 16 kHz
-PCM16, with the call id in `X-Callback-Call-Id`; keypad presses arrive as `dtmf`
+PCM16. `X-Callback-Call-Id` carries the provider's reference for that call (a Twilio
+CallSid), not Callback's call id: the phone network does not pass it from the caller's
+side to the number. Keypad presses arrive as `dtmf`
 messages and the caller hanging up as `hangup`. The agent closing its WebSocket ends
 the call. The bridge passes the agent's audio on as it arrives, so an agent must send
 it at the pace it should be heard, as over a plain WebSocket. The stream address holds

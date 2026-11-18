@@ -141,13 +141,27 @@ class Network:
         return False
 
     async def _pipe(self, source: ClientConnection, sink: ClientConnection, sid: str) -> None:
-        with contextlib.suppress(ConnectionClosed):
-            async for message in source:
-                if (audio := audio_of(message)) is None:
-                    continue
-                if self.delay_s:
-                    await asyncio.sleep(self.delay_s)
-                await sink.send(media(sid, audio))
+        """Relay audio with --delay-ms of latency but at the same rate: each frame is sent
+        that long after it arrived (sleeping before each frame would slow the stream)."""
+        loop = asyncio.get_running_loop()
+        line: asyncio.Queue[tuple[float, str]] = asyncio.Queue()
+
+        async def send_when_due() -> None:
+            with contextlib.suppress(ConnectionClosed):
+                while True:
+                    due, message = await line.get()
+                    if (wait := due - loop.time()) > 0:
+                        await asyncio.sleep(wait)
+                    await sink.send(message)
+
+        sender = asyncio.create_task(send_when_due())
+        try:
+            with contextlib.suppress(ConnectionClosed):
+                async for message in source:
+                    if (audio := audio_of(message)) is not None:
+                        line.put_nowait((loop.time() + self.delay_s, media(sid, audio)))
+        finally:
+            sender.cancel()
 
 
 async def serve_rest(network: Network, port: int) -> None:
