@@ -158,6 +158,15 @@ call id is passed as the stream parameter `callback_call_id`.
   with less detail than over a WebSocket at 16 kHz, and the phone network adds its own
   delay to every reply and every stop. Set limits for what your callers hear.
 - **Trial accounts** can only call numbers verified in the Twilio console.
+- **End-state checks (`expect.state`).** The phone network does not carry Callback's
+  call id to the number called, so the agent's system cannot look the call up by
+  `call_id`. For a phone target Callback adds what that system can see to the webhook
+  query: `provider`, `from_number`, `to_number`, `provider_call_ref` (the CallSid of
+  Callback's side of the call) and `call_placed_at` / `call_ended_at` (Unix seconds,
+  this machine's clock). Use them to find the call, for example by the caller's number
+  and the time. Give the webhook as a full URL: a phone target has no agent URL for a
+  path to resolve against. The bundled reference agent finds the one call that began
+  in that time and refuses (409) if there are several.
 
 `callback doctor` checks that the credentials are set. It never dials.
 

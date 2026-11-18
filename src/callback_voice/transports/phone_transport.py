@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import secrets
+import time
 from urllib.parse import urlsplit
 
 from websockets.asyncio.server import Server, ServerConnection, serve
@@ -51,6 +52,8 @@ class PhoneTransport(Transport):
         self._call_ref: str | None = None
         self._ready = asyncio.Event()
         self._ended = False
+        self._placed_at: float | None = None
+        self._ended_at: float | None = None
         self._to_wire = StreamResampler(SAMPLE_RATE, protocol.sample_rate)
         self._from_wire = StreamResampler(protocol.sample_rate, SAMPLE_RATE)
 
@@ -69,6 +72,7 @@ class PhoneTransport(Transport):
                 hint="another call or program uses it; change listen_port in callback.yaml",
             ) from exc
         try:
+            self._placed_at = time.time()
             self._call_ref = await self._dialer.place_call(
                 self._to, self._from, self.stream_url, call_id
             )
@@ -99,10 +103,26 @@ class PhoneTransport(Transport):
     async def send_dtmf(self, digits: str) -> bool:
         return False  # media streams carry audio only; the caller plays in-band tones
 
+    def call_details(self) -> dict[str, str]:
+        """The phone network does not carry Callback's call id to the number called, so
+        the agent's system can find the call only by what it does see: the numbers and
+        the time. Times are Unix seconds on this machine's clock."""
+        details = {
+            "provider": self.name,
+            "from_number": self._from,
+            "to_number": self._to,
+            "provider_call_ref": self._call_ref or "",
+        }
+        if self._placed_at is not None:
+            details["call_placed_at"] = f"{self._placed_at:.3f}"
+            details["call_ended_at"] = f"{self._ended_at or time.time():.3f}"
+        return details
+
     async def hangup(self) -> None:
         if self._ended:
             return
         self._ended = True
+        self._ended_at = self._ended_at or time.time()
         self.mark_closed("caller_hangup")
         if self._call_ref is not None:
             with contextlib.suppress(TransportError):
@@ -134,6 +154,7 @@ class PhoneTransport(Transport):
                     self.inbound.put_nowait(self._from_wire.process(event.audio))
                 elif event.kind == "stop":
                     break
+            self._ended_at = self._ended_at or time.time()
             self.mark_closed("agent_hangup")
         except ConnectionClosed as closed:
             self.mark_closed(f"connection_lost ({closed})")

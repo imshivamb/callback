@@ -37,6 +37,12 @@ class Transport(ABC):
     async def hangup(self) -> None:
         """End the call from the caller's side. Idempotent."""
 
+    def call_details(self) -> dict[str, str]:
+        """Facts about the call that let the agent's own system find it, for transports
+        where the agent cannot learn Callback's call id (a phone call). Sent with the
+        state webhook query, after the call. Empty by default."""
+        return {}
+
     def drain(self) -> list[Audio]:
         """All inbound audio received since the last drain."""
         chunks: list[Audio] = []

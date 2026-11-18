@@ -13,7 +13,8 @@ class StateCheck(StrictModel):
 
     ``webhook`` is a full ``http(s)://`` URL, or a path such as ``/verify`` resolved
     against the agent target's host. Callback sends a GET with ``call_id``,
-    ``scenario_id`` and ``trial`` as query parameters. ``match`` keys are compared for
+    ``scenario_id`` and ``trial`` as query parameters, plus the call's numbers and
+    times for a phone target (the agent never sees ``call_id`` there). ``match`` keys are compared for
     equality (strings case-insensitively), except ``<field>_between: [lo, hi]`` which
     checks ``lo <= field <= hi``.
     """

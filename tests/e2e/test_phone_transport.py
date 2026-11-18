@@ -90,6 +90,13 @@ async def test_a_call_streams_both_ways_and_hangs_up(wire: Wire) -> None:
         assert transport.close_reason == "caller_hangup"
         assert dialer.ended == ["CA1"] and dialer.closed
 
+        # What the state webhook gets, so the agent's side can find this call.
+        details = transport.call_details()
+        assert details["provider"] == wire.protocol.name
+        assert (details["from_number"], details["to_number"]) == ("+15550002222", "+15550001111")
+        assert details["provider_call_ref"] == "CA1"
+        assert float(details["call_placed_at"]) <= float(details["call_ended_at"])
+
 
 @pytest.mark.parametrize("wire", WIRES, ids=lambda w: w.protocol.name)
 async def test_the_far_end_hanging_up_ends_the_call(wire: Wire) -> None:

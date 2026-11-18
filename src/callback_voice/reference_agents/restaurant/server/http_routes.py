@@ -14,7 +14,9 @@ def make_http_routes(registry: CallRegistry, behavior_name: str) -> Any:
     """Plain-HTTP routes served on the agent's WebSocket port.
 
     ``GET /verify?call_id=...`` returns the end state of the booking a call touched,
-    which is what a scenario's ``expect.state`` checks.
+    which is what a scenario's ``expect.state`` checks. For a phone call the agent never
+    sees Callback's call id; with ``call_placed_at`` and ``call_ended_at`` (sent by
+    Callback for phone targets) it finds the one call that began in that time.
     """
 
     def route(connection: ServerConnection, request: Request) -> Response | None:
@@ -42,13 +44,34 @@ def _verify(
 ) -> Response:
     call_id = (query.get("call_id") or [""])[0]
     store = registry.get(call_id)
+    matched_by = "call_id"
+    if store is None and (window := _call_window(query)) is not None:
+        # A phone call: the agent saw the provider's reference, not Callback's id, so
+        # find the one call that began while Callback's call was up.
+        found = registry.opened_between(*window)
+        if len(found) > 1:
+            return _json(
+                connection,
+                {"error": f"{len(found)} calls began in that time; cannot tell which"},
+                HTTPStatus.CONFLICT,
+            )
+        if found:
+            store, matched_by = registry.get(found[0]), "time"
     if store is None:
         return _json(connection, {"error": f"unknown call {call_id!r}"}, HTTPStatus.NOT_FOUND)
     ref = (query.get("booking_ref") or [store.touched or ""])[0]
     booking = store.find(ref) if ref else None
-    if booking is None:
-        return _json(connection, {"status": "untouched"})
-    return _json(connection, booking.to_json())
+    body = {"status": "untouched"} if booking is None else booking.to_json()
+    if matched_by != "call_id":
+        body["matched_by"] = matched_by
+    return _json(connection, body)
+
+
+def _call_window(query: dict[str, list[str]]) -> tuple[float, float] | None:
+    try:
+        return float(query["call_placed_at"][0]), float(query["call_ended_at"][0])
+    except (KeyError, IndexError, ValueError):
+        return None
 
 
 def _json(
